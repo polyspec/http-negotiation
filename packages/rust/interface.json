@@ -38,34 +38,34 @@
   "errors": {
     "classes": {
       "value": {
-        "php": "Polyspec\\HttpNegotiate\\ValueError",
-        "python": "ValueError",
-        "node": "ValueError"
+        "php": "Polyspec\\HttpNegotiate\\NegotiateValueError",
+        "python": "NegotiateValueError",
+        "node": "NegotiateValueError"
       },
       "type": {
-        "php": "Polyspec\\HttpNegotiate\\TypeError",
-        "python": "TypeError",
-        "node": "TypeError"
+        "php": "Polyspec\\HttpNegotiate\\NegotiateTypeError",
+        "python": "NegotiateTypeError",
+        "node": "NegotiateTypeError"
       },
       "io": {
-        "php": "Polyspec\\HttpNegotiate\\IoError",
-        "python": "IoError",
-        "node": "IoError"
+        "php": "Polyspec\\HttpNegotiate\\NegotiateIoError",
+        "python": "NegotiateIoError",
+        "node": "NegotiateIoError"
       },
       "store": {
-        "php": "Polyspec\\HttpNegotiate\\StoreError",
-        "python": "StoreError",
-        "node": "StoreError"
+        "php": "Polyspec\\HttpNegotiate\\NegotiateStoreError",
+        "python": "NegotiateStoreError",
+        "node": "NegotiateStoreError"
       },
       "busy": {
-        "php": "Polyspec\\HttpNegotiate\\BusyError",
-        "python": "BusyError",
-        "node": "BusyError"
+        "php": "Polyspec\\HttpNegotiate\\NegotiateBusyError",
+        "python": "NegotiateBusyError",
+        "node": "NegotiateBusyError"
       },
       "internal": {
-        "php": "Polyspec\\HttpNegotiate\\InternalError",
-        "python": "InternalError",
-        "node": "InternalError"
+        "php": "Polyspec\\HttpNegotiate\\NegotiateInternalError",
+        "python": "NegotiateInternalError",
+        "node": "NegotiateInternalError"
       }
     },
     "fixed": [
@@ -311,7 +311,11 @@
           "type": {
             "optional": "uint"
           },
-          "required": true
+          "required": true,
+          "reason": {
+            "todo": "schema: a record field has no reason yet (T-4)",
+            "found": "NG-10.2"
+          }
         }
       ]
     },

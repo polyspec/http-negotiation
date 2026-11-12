@@ -13,3 +13,7 @@
   lints that deny `unwrap`, `expect` and the methods that turn a failure or an absence into a value.
 - Add the draft interface contract `contracts/interface.json` for the PHP, Python and Node bindings; a range holds the
   `parameter` record of http-media-type.
+- Move the interface contract to `packages/rust/interface.json` and add it to the `include` of the crate, so that a
+  repository that depends on the crate reads the contract from the package that Cargo resolved; the contract of
+  http-media-type is read the same way. The category error classes are named `Negotiate<Category>Error` in every
+  language (`NegotiateValueError` and so on), apart from the built-in classes such as Python `ValueError`.

@@ -14,8 +14,8 @@ HTTP의 media range와 `Accept` field(RFC 9110 12.4.2, 12.5.1절)를 읽고, `Ac
 `invalid_candidate`).
 
 규칙은 [docs/spec/negotiate.md](docs/spec/negotiate.md), case는 [contracts/negotiate.json](contracts/negotiate.json),
-바인딩의 공개 API는 [contracts/interface.json](contracts/interface.json)에 있다. 코어는 `packages/rust`의 Rust
-crate이며, PHP, Python, Node 바인딩은 인터페이스 계약에서 생성하고 아직 없다.
+바인딩의 공개 API는 crate 패키지에 들어가는 [packages/rust/interface.json](packages/rust/interface.json)에 있다. 코어는
+`packages/rust`의 Rust crate이며, PHP, Python, Node 바인딩은 인터페이스 계약에서 생성하고 아직 없다.
 
 ```sh
 make test
