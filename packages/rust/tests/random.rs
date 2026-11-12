@@ -1,9 +1,8 @@
 //! Random inputs: every byte string reads to ranges or to a kind, a written field reads back to its ranges whatever
 //! its formatting, and the weights follow the definitions of NG-8 and NG-9, computed here from the rules directly.
 
-use polyspec_http_negotiate::{
-    parse_media_type, Accept, Candidate, CandidateParameter, Error, Matching, Parameter, Range, Weight,
-};
+use polyspec_http_media_type::Parameter;
+use polyspec_http_negotiate::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
 use proptest::prelude::*;
 use proptest::test_runner::TestCaseError;
 
@@ -282,18 +281,6 @@ proptest! {
     }
 
     #[test]
-    fn any_bytes_read_to_a_media_type_or_its_kind(bytes in proptest::collection::vec(any::<u8>(), 0..40)) {
-        // NG-4, NG-11
-        match parse_media_type(&bytes) {
-            Ok(media_type) => {
-                prop_assert!(media_type.r#type != "*" && media_type.subtype != "*");
-                prop_assert!(media_type.parameters.iter().all(|parameter| parameter.name != "q"));
-            }
-            Err(error) => prop_assert_eq!(error, Error::InvalidMediaType),
-        }
-    }
-
-    #[test]
     fn grammar_bytes_read_to_ranges_or_to_an_accept_kind(text in "[ \t,;=\"\\\\a-cqQ*/.0-9]{0,30}") {
         // NG-5.7: bytes of the grammar reach the deep paths of the reader.
         match Accept::parse(&[text.as_bytes()]) {
@@ -308,7 +295,7 @@ proptest! {
         empties in proptest::collection::vec(any::<bool>(), 6),
         split in 0usize..6,
     ) {
-        // NG-1.3, NG-2.2, NG-3.2, NG-3.4, NG-5.2, NG-5.3, NG-6.2: case, whitespace, quoting, empty elements and
+        // NG-1.5, NG-2.2, NG-3.2, NG-3.4, NG-5.2, NG-5.3, NG-6.2: case, whitespace, quoting, empty elements and
         // parameters and the split into lines change no range.
         let split = split.min(ranges.len());
         let (first, second) = ranges.split_at(split);
@@ -338,19 +325,4 @@ proptest! {
         }
     }
 
-    #[test]
-    fn a_written_media_type_reads_back(range in range(), style in style()) {
-        // NG-4.1, NG-4.4
-        let mut range = range;
-        if range.subtype == "*" {
-            return Ok(());
-        }
-        range.weight = 1000;
-        let mut style = style;
-        style.weight_written = false;
-        let media_type = parse_media_type(&write(&range, &style)).map_err(fail)?;
-        prop_assert_eq!(media_type.r#type, range.r#type);
-        prop_assert_eq!(media_type.subtype, range.subtype);
-        prop_assert_eq!(media_type.parameters, range.parameters);
-    }
 }

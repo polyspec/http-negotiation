@@ -1,16 +1,15 @@
 //! Runs every case of `contracts/negotiate.json` and checks that the cases and the tests cite the rules of
 //! `docs/spec/negotiate.md`.
 //!
-//! A text of the cases is bytes, one character per byte (NG-1.1): a character above U+00FF in a case is a defect of
+//! A text of the cases is bytes, one character per byte (NG-1.4): a character above U+00FF in a case is a defect of
 //! the case. A failure is the object `raises` (kind, status, category, message).
 
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use polyspec_http_negotiate::{
-    parse_media_type, Accept, Candidate, CandidateParameter, Error, Matching, MediaType, Parameter, Range, Weight,
-};
+use polyspec_http_media_type::Parameter;
+use polyspec_http_negotiate::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
 use serde_json::{json, Map, Value};
 
 fn root() -> PathBuf {
@@ -54,7 +53,7 @@ fn text(bytes: &[u8]) -> String {
 /// The category of a kind (NG-11).
 fn category(error: Error) -> &'static str {
     match error {
-        Error::InvalidAccept | Error::InvalidWeight | Error::InvalidMediaType | Error::InvalidCandidate => "value",
+        Error::InvalidAccept | Error::InvalidWeight | Error::InvalidCandidate => "value",
         Error::Internal => "internal",
     }
 }
@@ -81,14 +80,6 @@ fn ranges_of(ranges: &[Range]) -> Value {
             })
             .collect(),
     )
-}
-
-fn media_type_of(media_type: &MediaType) -> Value {
-    json!({
-        "type": media_type.r#type,
-        "subtype": media_type.subtype,
-        "parameters": parameters_of(&media_type.parameters),
-    })
 }
 
 fn weights_of(weights: &[Weight]) -> Value {
@@ -163,18 +154,6 @@ fn accept_cases() -> Result<(), String> {
     for case in group(&cases, "accept")? {
         let outcome = Accept::parse(&lines(case)?);
         compare(&mut failures, case, "ranges", outcome, |accept| ranges_of(accept.ranges()))?;
-    }
-    assert!(failures.is_empty(), "{}", failures.join("\n"));
-    Ok(())
-}
-
-#[test]
-fn media_type_cases() -> Result<(), String> {
-    let cases = cases()?;
-    let mut failures = Vec::new();
-    for case in group(&cases, "mediaType")? {
-        let outcome = parse_media_type(&latin1(field(case, "value")?)?);
-        compare(&mut failures, case, "mediaType", outcome, media_type_of)?;
     }
     assert!(failures.is_empty(), "{}", failures.join("\n"));
     Ok(())
@@ -268,7 +247,7 @@ fn cases_cite_the_rules_of_the_spec() -> Result<(), String> {
     let cases = cases()?;
     let mut failures = Vec::new();
     let mut ids = BTreeSet::new();
-    for name in ["accept", "mediaType", "weigh", "invalidCandidates"] {
+    for name in ["accept", "weigh", "invalidCandidates"] {
         for case in group(&cases, name)? {
             let id = string(case, "id")?;
             if !ids.insert(format!("{name}/{id}")) {

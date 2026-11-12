@@ -1,6 +1,8 @@
-//! Candidates and their weights (NG-7 to NG-10).
+//! Candidates and their weights (NG-7 to NG-10). Two values are equal by NG-8.4.
 
-use crate::syntax::{is_quotable, is_token, lowercase};
+use polyspec_http_media_type::grammar::{is_quotable, is_token, lowercase};
+use polyspec_http_media_type::same_value;
+
 use crate::{Accept, Error, Range};
 
 /// How the parameters of a range match a candidate (NG-8.3).
@@ -101,7 +103,7 @@ fn specificity(range: &Range, candidate: &Checked<'_>) -> Option<(u8, usize)> {
         Matching::Subset | Matching::Exact => {
             let all_served = range.parameters.iter().all(|parameter| {
                 candidate.parameters.iter().any(|(name, values)| {
-                    *name == parameter.name && values.iter().any(|value| equal(name, value, &parameter.value))
+                    *name == parameter.name && values.iter().any(|value| same_value(name, value, &parameter.value))
                 })
             });
             if !all_served {
@@ -115,15 +117,6 @@ fn specificity(range: &Range, candidate: &Checked<'_>) -> Option<(u8, usize)> {
         }
     };
     Some((form, counted))
-}
-
-/// Whether two values of the parameter `name` are equal (NG-8.4).
-fn equal(name: &str, left: &[u8], right: &[u8]) -> bool {
-    if name == "charset" {
-        left.eq_ignore_ascii_case(right)
-    } else {
-        left == right
-    }
 }
 
 /// Checks a candidate (NG-7.2 to NG-7.4).
@@ -147,7 +140,7 @@ fn check(candidate: &Candidate) -> Result<Checked<'_>, Error> {
                 return Err(Error::InvalidCandidate);
             }
             let earlier = parameter.values.get(..index).ok_or(Error::Internal)?;
-            if earlier.iter().any(|other| equal(&name, other, value)) {
+            if earlier.iter().any(|other| same_value(&name, other, value)) {
                 return Err(Error::InvalidCandidate);
             }
         }

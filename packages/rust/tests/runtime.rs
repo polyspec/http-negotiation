@@ -2,9 +2,7 @@
 
 use std::mem::align_of;
 
-use polyspec_http_negotiate::{
-    parse_media_type, Accept, Candidate, CandidateParameter, Error, Matching, MediaType, Parameter, Range, Weight,
-};
+use polyspec_http_negotiate::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
 
 fn send_and_sync<T: Send + Sync>() {}
 
@@ -18,24 +16,20 @@ fn types_are_send_and_sync_and_need_at_most_16_bytes_of_alignment() {
     send_and_sync::<Candidate>();
     send_and_sync::<CandidateParameter>();
     send_and_sync::<Matching>();
-    send_and_sync::<MediaType>();
-    send_and_sync::<Parameter>();
     send_and_sync::<Error>();
     assert!(align_of::<Accept>() <= 16);
     assert!(align_of::<Range>() <= 16);
     assert!(align_of::<Weight>() <= 16);
     assert!(align_of::<Candidate>() <= 16);
-    assert!(align_of::<MediaType>() <= 16);
     assert!(align_of::<Error>() <= 16);
 }
 
 #[test]
 fn every_kind_has_its_status_and_a_fixed_message() {
-    // NG-11, NG-11.1, NG-11.2
+    // NG-11, NG-11.3, NG-11.2
     let table = [
         (Error::InvalidAccept, "invalid_accept", Some(400)),
         (Error::InvalidWeight, "invalid_weight", Some(400)),
-        (Error::InvalidMediaType, "invalid_media_type", None),
         (Error::InvalidCandidate, "invalid_candidate", None),
         (Error::Internal, "internal", None),
     ];
@@ -52,10 +46,6 @@ fn every_kind_has_its_status_and_a_fixed_message() {
             assert!(!error.to_string().contains("secret"));
         }
         Ok(accept) => panic!("{secret} gave {:?}", accept.ranges()),
-    }
-    match parse_media_type(b"x-secret/") {
-        Err(error) => assert!(!error.to_string().contains("secret")),
-        Ok(media_type) => panic!("gave {media_type:?}"),
     }
 }
 

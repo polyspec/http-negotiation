@@ -1,154 +1,445 @@
 {
   "schema": "polyspec/interface@1",
   "library": "http-negotiate",
-  "core": {"crate": "polyspec-http-negotiate", "path": "packages/rust"},
-  "targets": ["php", "python", "node"],
-  "packages": {
-    "php": {"composer": "polyspec/http-negotiate", "namespace": "Polyspec\\HttpNegotiate", "extension": "polyspec_http_negotiate"},
-    "python": {"pypi": "polyspec-http-negotiate", "module": "polyspec_http_negotiate", "native": "polyspec_http_negotiate._native"},
-    "node": {"npm": "@polyspec/http-negotiate", "addon": "http-negotiate", "entries": {".": {"formats": ["import", "require"]}}}
+  "core": {
+    "crate": "polyspec-http-negotiate",
+    "path": "packages/rust"
   },
-  "naming": {"exceptions": []},
+  "targets": [
+    "php",
+    "python",
+    "node"
+  ],
+  "packages": {
+    "php": {
+      "package": "polyspec/http-negotiate",
+      "namespace": "Polyspec\\HttpNegotiate"
+    },
+    "python": {
+      "package": "polyspec-http-negotiate",
+      "module": "polyspec_http_negotiate"
+    },
+    "node": {
+      "package": "@polyspec/http-negotiate",
+      "entries": {
+        ".": {
+          "formats": [
+            "import",
+            "require"
+          ]
+        }
+      }
+    }
+  },
+  "naming": {
+    "exceptions": []
+  },
+  "types": {},
   "errors": {
-    "categories": {
-      "value": {"php": "\\UnexpectedValueException", "python": "ValueError", "node": "Error"},
-      "type": {"php": "\\TypeError", "python": "TypeError", "node": "TypeError"},
-      "io": {"php": "\\RuntimeException", "python": "OSError", "node": "Error"},
-      "store": {"php": "\\RuntimeException", "python": "RuntimeError", "node": "Error"},
-      "busy": {"php": "\\RuntimeException", "python": "RuntimeError", "node": "Error"},
-      "internal": {"php": "\\LogicException", "python": "RuntimeError", "node": "Error"}
+    "classes": {
+      "value": {
+        "php": "Polyspec\\HttpNegotiate\\ValueError",
+        "python": "ValueError",
+        "node": "ValueError"
+      },
+      "type": {
+        "php": "Polyspec\\HttpNegotiate\\TypeError",
+        "python": "TypeError",
+        "node": "TypeError"
+      },
+      "io": {
+        "php": "Polyspec\\HttpNegotiate\\IoError",
+        "python": "IoError",
+        "node": "IoError"
+      },
+      "store": {
+        "php": "Polyspec\\HttpNegotiate\\StoreError",
+        "python": "StoreError",
+        "node": "StoreError"
+      },
+      "busy": {
+        "php": "Polyspec\\HttpNegotiate\\BusyError",
+        "python": "BusyError",
+        "node": "BusyError"
+      },
+      "internal": {
+        "php": "Polyspec\\HttpNegotiate\\InternalError",
+        "python": "InternalError",
+        "node": "InternalError"
+      }
     },
     "fixed": [
-      {"lang": "php", "class": "\\ArgumentCountError", "category": "type", "fixed": true},
-      {"lang": "php", "class": "\\Error", "category": "type", "fixed": true},
-      {"lang": "python", "class": "TypeError", "category": "type", "fixed": true},
-      {"lang": "node", "class": "TypeError", "category": "type", "fixed": true}
+      {
+        "lang": "php",
+        "class": "ArgumentCountError"
+      },
+      {
+        "lang": "php",
+        "class": "Error"
+      },
+      {
+        "lang": "python",
+        "class": "TypeError"
+      },
+      {
+        "lang": "node",
+        "class": "TypeError"
+      }
     ],
     "kinds": [
-      {"variant": "polyspec_http_negotiate::Error::InvalidAccept", "category": "value", "class": "negotiate_error"},
-      {"variant": "polyspec_http_negotiate::Error::InvalidWeight", "category": "value", "class": "negotiate_error"},
-      {"variant": "polyspec_http_negotiate::Error::InvalidMediaType", "category": "value", "class": "negotiate_error"},
-      {"variant": "polyspec_http_negotiate::Error::InvalidCandidate", "category": "value", "class": "negotiate_error"},
-      {"variant": "polyspec_http_negotiate::Error::Internal", "category": "internal"}
-    ]
+      {
+        "variant": "polyspec_http_negotiate::Error::InvalidAccept",
+        "category": "value",
+        "class": "negotiate_error"
+      },
+      {
+        "variant": "polyspec_http_negotiate::Error::InvalidWeight",
+        "category": "value",
+        "class": "negotiate_error"
+      },
+      {
+        "variant": "polyspec_http_negotiate::Error::InvalidCandidate",
+        "category": "value",
+        "class": "negotiate_error"
+      },
+      {
+        "variant": "polyspec_http_negotiate::Error::Internal",
+        "category": "internal"
+      }
+    ],
+    "binding": [],
+    "wrapped": []
   },
   "units": [
     {
-      "id": "negotiate_error", "name": ["negotiate", "error"], "module": "errors", "kind": "error", "category": "value",
-      "visibility": "public", "origin": "generated", "final": true, "members": []
+      "id": "negotiate_error",
+      "name": [
+        "negotiate",
+        "error"
+      ],
+      "module": "errors",
+      "kind": "error",
+      "category": "value",
+      "visibility": "public",
+      "origin": "generated",
+      "final": true,
+      "members": []
     },
     {
-      "id": "parameter", "name": ["parameter"], "module": "media_type", "kind": "record", "visibility": "public", "origin": "generated",
-      "core_type": "polyspec_http_negotiate::Parameter",
+      "id": "range",
+      "name": [
+        "range"
+      ],
+      "module": "accept",
+      "kind": "record",
+      "visibility": "public",
+      "origin": "generated",
+      "core_type": "polyspec_http_negotiate::Range",
       "fields": [
-        {"name": ["name"], "type": "text", "required": true},
-        {"name": ["value"], "type": "latin1", "required": true}
-      ]
-    },
-    {
-      "id": "media_type", "name": ["media", "type"], "module": "media_type", "kind": "record", "visibility": "public", "origin": "generated",
-      "core_type": "polyspec_http_negotiate::MediaType",
-      "fields": [
-        {"name": ["type"], "type": "text", "required": true},
-        {"name": ["subtype"], "type": "text", "required": true},
-        {"name": ["parameters"], "type": "list<parameter>", "required": true}
-      ]
-    },
-    {
-      "id": "media_types", "name": ["media", "types"], "module": "media_type", "kind": "functions", "visibility": "public", "origin": "generated",
-      "members": [
         {
-          "id": "parse_media_type", "name": ["parse", "media", "type"], "kind": "function", "visibility": "public",
-          "parameters": [{"name": ["value"], "type": "latin1", "required": true}],
-          "returns": "media_type",
-          "raises": ["polyspec_http_negotiate::Error::InvalidMediaType"],
-          "wait": "none",
-          "core": "polyspec_http_negotiate::parse_media_type"
+          "name": [
+            "type"
+          ],
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": [
+            "subtype"
+          ],
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": [
+            "parameters"
+          ],
+          "type": {
+            "list": {
+              "unit": "parameter",
+              "library": "http-media-type"
+            }
+          },
+          "required": true
+        },
+        {
+          "name": [
+            "weight"
+          ],
+          "type": "uint",
+          "required": true
         }
       ]
     },
     {
-      "id": "range", "name": ["range"], "module": "accept", "kind": "record", "visibility": "public", "origin": "generated",
-      "core_type": "polyspec_http_negotiate::Range",
-      "fields": [
-        {"name": ["type"], "type": "text", "required": true},
-        {"name": ["subtype"], "type": "text", "required": true},
-        {"name": ["parameters"], "type": "list<parameter>", "required": true},
-        {"name": ["weight"], "type": "uint", "required": true}
-      ]
-    },
-    {
-      "id": "matching", "name": ["matching"], "module": "accept", "kind": "enum", "visibility": "public", "origin": "generated",
+      "id": "matching",
+      "name": [
+        "matching"
+      ],
+      "module": "accept",
+      "kind": "enum",
+      "visibility": "public",
+      "origin": "generated",
       "core_type": "polyspec_http_negotiate::Matching",
       "variants": [
-        {"name": ["ignore"], "value": "ignore"},
-        {"name": ["subset"], "value": "subset"},
-        {"name": ["exact"], "value": "exact"}
+        {
+          "name": [
+            "ignore"
+          ],
+          "value": "ignore"
+        },
+        {
+          "name": [
+            "subset"
+          ],
+          "value": "subset"
+        },
+        {
+          "name": [
+            "exact"
+          ],
+          "value": "exact"
+        }
       ]
     },
     {
-      "id": "candidate_parameter", "name": ["candidate", "parameter"], "module": "accept", "kind": "record", "visibility": "public", "origin": "generated",
+      "id": "candidate_parameter",
+      "name": [
+        "candidate",
+        "parameter"
+      ],
+      "module": "accept",
+      "kind": "record",
+      "visibility": "public",
+      "origin": "generated",
       "core_type": "polyspec_http_negotiate::CandidateParameter",
       "fields": [
-        {"name": ["name"], "type": "text", "required": true},
-        {"name": ["values"], "type": "list<latin1>", "required": true}
+        {
+          "name": [
+            "name"
+          ],
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": [
+            "values"
+          ],
+          "type": {
+            "list": "latin1"
+          },
+          "required": true
+        }
       ]
     },
     {
-      "id": "candidate", "name": ["candidate"], "module": "accept", "kind": "record", "visibility": "public", "origin": "generated",
+      "id": "candidate",
+      "name": [
+        "candidate"
+      ],
+      "module": "accept",
+      "kind": "record",
+      "visibility": "public",
+      "origin": "generated",
       "core_type": "polyspec_http_negotiate::Candidate",
       "fields": [
-        {"name": ["type"], "type": "text", "required": true},
-        {"name": ["subtype"], "type": "text", "required": true},
-        {"name": ["parameters"], "type": "list<candidate_parameter>", "required": true},
-        {"name": ["matching"], "type": "matching", "required": true},
-        {"name": ["wildcards"], "type": "bool", "required": true}
+        {
+          "name": [
+            "type"
+          ],
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": [
+            "subtype"
+          ],
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": [
+            "parameters"
+          ],
+          "type": {
+            "list": {
+              "unit": "candidate_parameter"
+            }
+          },
+          "required": true
+        },
+        {
+          "name": [
+            "matching"
+          ],
+          "type": {
+            "unit": "matching"
+          },
+          "required": true
+        },
+        {
+          "name": [
+            "wildcards"
+          ],
+          "type": "bool",
+          "required": true
+        }
       ]
     },
     {
-      "id": "weight", "name": ["weight"], "module": "accept", "kind": "record", "visibility": "public", "origin": "generated",
+      "id": "weight",
+      "name": [
+        "weight"
+      ],
+      "module": "accept",
+      "kind": "record",
+      "visibility": "public",
+      "origin": "generated",
       "core_type": "polyspec_http_negotiate::Weight",
       "fields": [
-        {"name": ["weight"], "type": "uint", "required": true},
-        {"name": ["range"], "type": "optional<uint>", "required": true, "optional_reason": "NG-10.2"}
+        {
+          "name": [
+            "weight"
+          ],
+          "type": "uint",
+          "required": true
+        },
+        {
+          "name": [
+            "range"
+          ],
+          "type": {
+            "optional": "uint"
+          },
+          "required": true
+        }
       ]
     },
     {
-      "id": "accept", "name": ["accept"], "module": "accept", "kind": "class", "visibility": "public", "origin": "generated",
-      "core_type": "polyspec_http_negotiate::Accept", "constructible": false, "final": true,
+      "id": "accept",
+      "name": [
+        "accept"
+      ],
+      "module": "accept",
+      "kind": "class",
+      "visibility": "public",
+      "origin": "generated",
+      "core_type": "polyspec_http_negotiate::Accept",
+      "constructible": false,
+      "final": true,
       "members": [
         {
-          "id": "accept_parse", "name": ["parse"], "kind": "static", "visibility": "public",
-          "parameters": [{"name": ["lines"], "type": "list<latin1>", "required": true}],
-          "returns": "accept",
-          "raises": ["polyspec_http_negotiate::Error::InvalidAccept", "polyspec_http_negotiate::Error::InvalidWeight"],
+          "id": "accept.parse",
+          "name": [
+            "parse"
+          ],
+          "kind": "static",
+          "visibility": "public",
+          "parameters": [
+            {
+              "name": [
+                "lines"
+              ],
+              "type": {
+                "list": "latin1"
+              },
+              "required": true
+            }
+          ],
+          "returns": {
+            "unit": "accept"
+          },
+          "raises": [
+            "polyspec_http_negotiate::Error::InvalidAccept",
+            "polyspec_http_negotiate::Error::InvalidWeight"
+          ],
           "wait": "none",
           "core": "polyspec_http_negotiate::Accept::parse"
         },
         {
-          "id": "accept_ranges", "name": ["ranges"], "kind": "property", "visibility": "public",
+          "id": "accept.ranges",
+          "name": [
+            "ranges"
+          ],
+          "kind": "property",
+          "visibility": "public",
           "parameters": [],
-          "returns": "list<range>",
+          "returns": {
+            "list": {
+              "unit": "range"
+            }
+          },
           "raises": [],
           "wait": "none",
-          "core": "polyspec_http_negotiate::Accept::ranges"
+          "core": {
+            "path": "polyspec_http_negotiate::Accept::ranges",
+            "receiver": "&self"
+          }
         },
         {
-          "id": "accept_weigh", "name": ["weigh"], "kind": "method", "visibility": "public",
-          "parameters": [{"name": ["candidates"], "type": "list<candidate>", "required": true}],
-          "returns": "list<weight>",
-          "raises": ["polyspec_http_negotiate::Error::InvalidCandidate", "polyspec_http_negotiate::Error::Internal"],
+          "id": "accept.weigh",
+          "name": [
+            "weigh"
+          ],
+          "kind": "method",
+          "visibility": "public",
+          "parameters": [
+            {
+              "name": [
+                "candidates"
+              ],
+              "type": {
+                "list": {
+                  "unit": "candidate"
+                }
+              },
+              "required": true
+            }
+          ],
+          "returns": {
+            "list": {
+              "unit": "weight"
+            }
+          },
+          "raises": [
+            "polyspec_http_negotiate::Error::InvalidCandidate",
+            "polyspec_http_negotiate::Error::Internal"
+          ],
           "wait": "none",
-          "core": "polyspec_http_negotiate::Accept::weigh"
+          "core": {
+            "path": "polyspec_http_negotiate::Accept::weigh",
+            "receiver": "&self"
+          }
         }
       ]
     }
   ],
   "changes": [],
   "cases": [
-    {"member": "parse_media_type", "file": "contracts/negotiate.json", "groups": ["mediaType"]},
-    {"member": "accept_parse", "file": "contracts/negotiate.json", "groups": ["accept", "weigh"]},
-    {"member": "accept_ranges", "file": "contracts/negotiate.json", "groups": ["accept"]},
-    {"member": "accept_weigh", "file": "contracts/negotiate.json", "groups": ["weigh", "invalidCandidates"]}
+    {
+      "member": "accept.parse",
+      "file": "contracts/negotiate.json",
+      "group": "accept"
+    },
+    {
+      "member": "accept.parse",
+      "file": "contracts/negotiate.json",
+      "group": "weigh"
+    },
+    {
+      "member": "accept.ranges",
+      "file": "contracts/negotiate.json",
+      "group": "accept"
+    },
+    {
+      "member": "accept.weigh",
+      "file": "contracts/negotiate.json",
+      "group": "weigh"
+    },
+    {
+      "member": "accept.weigh",
+      "file": "contracts/negotiate.json",
+      "group": "invalidCandidates"
+    }
   ]
 }

@@ -6,8 +6,10 @@ rules of this repository.
 
 ## Scope
 
-- This library reads media types, media ranges and the `Accept` field of HTTP and weighs a list of candidates
-  (`docs/spec/negotiate.md`, NG-1 to NG-12). Which candidates exist, which one is taken, the order of equal weights and
+- This library reads media ranges and the `Accept` field of HTTP and weighs a list of candidates
+  (`docs/spec/negotiate.md`, NG-1 to NG-12). Media types, the grammar of tokens, quoted strings and parameters and the
+  comparison of parameter values belong to the dependency http-media-type (`polyspec-http-media-type`, rules `MT-n`):
+  the spec points to its rules and the code reads that grammar through its module `grammar`, never a copy of it. Which candidates exist, which one is taken, the order of equal weights and
   the response to a request that matches none are decisions of the caller and have no rule here (NG-10.4).
 
 ## Rules and order of work
@@ -27,7 +29,8 @@ rules of this repository.
 
 ## Rust
 
-- `rust-toolchain.toml` pins the toolchain and `Cargo.lock` the dependencies.
+- `rust-toolchain.toml` pins the toolchain and `Cargo.lock` the dependencies. `polyspec-http-media-type` is a path
+  dependency on the checkout `../http-media-type` next to this one.
 - The workspace lints deny every warning, unsafe code, `unwrap`, `expect`, `as` conversions and discarded results;
   `clippy.toml` disallows the methods that turn a failure or an absence into a value (`Option::unwrap_or` and its
   family, `Result::ok`, `map_or`, `map_or_else`). A use that a rule needs carries `#[allow(..., reason = "<rule id>")]`.

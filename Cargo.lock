@@ -197,9 +197,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
+name = "polyspec-http-media-type"
+version = "0.0.1"
+
+[[package]]
 name = "polyspec-http-negotiate"
 version = "0.0.1"
 dependencies = [
+ "polyspec-http-media-type",
  "proptest",
  "serde_json",
 ]

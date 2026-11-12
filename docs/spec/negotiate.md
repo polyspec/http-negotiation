@@ -1,10 +1,12 @@
 <!-- doc-id: spec-negotiate -->
 # http-negotiate specification
 
-This library reads media types and `Accept` field values of HTTP and gives each candidate media type of a list the
-weight that an `Accept` value gives it. It does not choose a candidate, does not order candidates of equal weight, does
+This library reads `Accept` field values of HTTP and gives each candidate media type of a list the weight that an
+`Accept` value gives it. It does not choose a candidate, does not order candidates of equal weight, does
 not decide which candidates exist and writes no response: the caller owns those decisions. Every rule below is in the
-Rust core `packages/rust`; a binding converts types and holds no rule.
+Rust core `packages/rust`; a binding converts types and holds no rule. A media type is read and written by the
+dependency http-media-type, whose rules `MT-n` define the tokens, quoted strings and parameters that a media range is
+written in and the comparison of parameter values; this specification points to them and does not define them again.
 
 The standard is RFC 9110 (HTTP Semantics), with its verified erratum 7138 to section 12.5.1, and the sections that
 each rule names. A rule is a list item `**NG-n**`; its numbered statements are `NG-n.m`, and a test names the
@@ -13,42 +15,25 @@ statements it checks.
 ## Text
 
 - **NG-1** Input and output text.
-  1. NG-1.1 A field value, a media type value and a parameter value are bytes, one character per byte (`latin1` of the
-     interface contract). Bytes 0x80 to 0xFF are `obs-text` (RFC 9110, section 5.5).
+  1. NG-1.4 A field line value and a parameter value of a range are bytes, one character per byte (`latin1` of the
+     interface contract; MT-1.1). Bytes 0x80 to 0xFF are `obs-text` (RFC 9110, section 5.5).
   2. NG-1.2 A type, a subtype and a parameter name are tokens and so ASCII; the library returns them in lowercase.
-  3. NG-1.3 SP and HTAB before the first and after the last other byte of a field line value or a media type value are
-     not part of the value (RFC 9110, section 5.5) and are ignored.
+  3. NG-1.5 SP and HTAB before the first and after the last other byte of a field line value are not part of the value
+     (RFC 9110, section 5.5) and are ignored.
 
 - **NG-2** Tokens and case.
-  1. NG-2.1 A token is one or more `tchar` (RFC 9110, section 5.6.2): ASCII letters and digits and
-     ``!#$%&'*+-.^_`|~``.
-  2. NG-2.2 Types, subtypes and parameter names compare without regard to ASCII case (RFC 9110, sections 8.3.1 and
-     5.6.6), and so does the weight name `q` (section 12.4.2, and RFC 5234, section 2.3, for the literal `"q="`).
+  1. NG-2.1 A token is a token of MT-2.1 (RFC 9110, section 5.6.2).
+  2. NG-2.2 Types, subtypes and parameter names compare without regard to ASCII case (MT-2.2), and so does the weight
+     name `q` (RFC 9110, section 12.4.2, and RFC 5234, section 2.3, for the literal `"q="`).
 
-- **NG-3** Parameters (RFC 9110, section 5.6.6).
-  1. NG-3.1 `parameters = *( OWS ";" OWS [ parameter ] )`, `parameter = parameter-name "=" parameter-value` and
-     `parameter-value = ( token / quoted-string )`. No whitespace stands before or after `=`.
-  2. NG-3.2 A parameter may be empty: `;` followed by another `;`, by the end of the value or, in `Accept`, by `,`
-     (RFC 9110, section 5.6.6 and appendix B.3). An empty parameter and the whitespace around `;` give nothing.
-  3. NG-3.3 A quoted string is `DQUOTE *( qdtext / quoted-pair ) DQUOTE` with `qdtext = HTAB / SP / %x21 / %x23-5B /
-     %x5D-7E / obs-text` and `quoted-pair = "\" ( HTAB / SP / VCHAR / obs-text )` (RFC 9110, section 5.6.4). A
-     quoted string without its closing `"` fails; it never ends at the end of the text.
-  4. NG-3.4 The value of a parameter is its bytes with the quotes removed and each quoted pair replaced by the byte
-     after its backslash; so a quoted value equals the same value unquoted (RFC 9110, sections 5.6.4 and 5.6.6).
-  5. NG-3.5 Two parameters of one media type or media range with the same name, compared by NG-2.2, fail, because a
-     parameter given twice is an error of the media type (RFC 6838, section 4.3) and no rule says which one counts.
-  6. NG-3.6 Parameters keep the order in which the value gives them.
-
-## Media types
-
-- **NG-4** `parse_media_type(value)` reads a media type (RFC 9110, section 8.3.1).
-  1. NG-4.1 `media-type = type "/" subtype parameters`, after NG-1.3; anything else in the value fails.
-  2. NG-4.2 A type or subtype `*` fails, because `*` means any type or subtype in a media range (RFC 9110, section
-     12.5.1) and a media type is no range.
-  3. NG-4.3 A parameter named `q` fails, because the media type registry disallows that name (RFC 9110, section
-     12.5.1, note).
-  4. NG-4.4 The result is the type, the subtype and the parameters (NG-3.4, NG-3.6). A failure is kind
-     `invalid_media_type` (NG-11).
+- **NG-3** The parameters of a media range are the parameters of MT-3 (RFC 9110, section 5.6.6), read by the parameter
+  reader of MT-7 with the stop name `q` (NG-5.5).
+  1. NG-3.1 Their grammar, without whitespace around `=`, is MT-3.1.
+  2. NG-3.2 An empty parameter, also one followed by the `,` that ends a list element, gives nothing (MT-3.2).
+  3. NG-3.3 A quoted string is that of MT-3.3; one without its closing `"` fails.
+  4. NG-3.4 The value of a parameter is its bytes without quoting (MT-3.4).
+  5. NG-3.5 Two parameters of one range with the same name fail (MT-3.5).
+  6. NG-3.6 Parameters keep the order in which the field gives them (MT-3.6).
 
 ## Accept
 
@@ -84,10 +69,10 @@ statements it checks.
 - **NG-7** A candidate is a media type that the caller can serve, with the way ranges match it.
   1. NG-7.1 A candidate has `type` and `subtype`, `parameters` (each a name and the nonempty list of the values that the
      candidate serves for it), `matching` (NG-8.3) and `wildcards` (NG-8.2).
-  2. NG-7.2 The type and subtype are tokens other than `*` (NG-4.2); a parameter name is a token other than `q`
-     (NG-4.3), and two names equal by NG-2.2 fail (NG-3.5). Case does not matter (NG-2.2).
+  2. NG-7.2 The type and subtype are tokens other than `*` (MT-4.2); a parameter name is a token other than `q`
+     (MT-4.3), and two names equal by NG-2.2 fail (NG-3.5). Case does not matter (NG-2.2).
   3. NG-7.3 A value holds only HTAB, SP and the bytes 0x21 to 0x7E and 0x80 to 0xFF, the bytes that a quoted string can
-     carry (NG-3.3), so that some range can name it; the empty value is valid. Two values of one parameter that are
+     carry (MT-3.3), so that some range can name it; the empty value is valid. Two values of one parameter that are
      equal by NG-8.4 fail.
   4. NG-7.4 A candidate with `matching` `ignore` and a parameter fails, because its parameters would never be compared
      (NG-8.3).
@@ -103,10 +88,9 @@ statements it checks.
      5.1); `subset`, every parameter of the range is a parameter of the candidate with one of its values (RFC 9110,
      section 12.5.1: `text/plain;format=flowed` does not apply to `text/plain`); `exact`, as `subset`, and every
      parameter of the candidate is also a parameter of the range.
-  4. NG-8.4 A value of a range equals a value of a candidate when the bytes are equal (NG-3.4: quoting does not
-     matter). The values of the parameter `charset` compare without regard to ASCII case, because a charset is a
-     case-insensitive token (RFC 9110, section 8.3.2). The library knows the meaning of no other parameter and compares
-     the bytes of every other value exactly (RFC 9110, section 5.6.6: the case of a value depends on its parameter).
+  4. NG-8.4 A value of a range equals a value of a candidate when the two are the same value of their parameter by
+     MT-5: equal bytes after NG-3.4, so quoting does not matter (MT-5.1), the values of `charset` without regard to
+     ASCII case (MT-5.2) and every other value exactly (MT-5.3).
 
 - **NG-9** The range that decides the weight of a candidate.
   1. NG-9.1 The specificity of a matching range is first its form, `type/subtype` above `type/*` above `*/*`, and then
@@ -130,13 +114,11 @@ statements it checks.
   |---|---|---|---|
   | `invalid_accept` | 400 | value | NG-5.7, a field line that does not follow the grammar |
   | `invalid_weight` | 400 | value | NG-5.7, a weight that is not a qvalue |
-  | `invalid_media_type` | none | value | NG-4.4 |
   | `invalid_candidate` | none | value | NG-7.5 |
   | `internal` | none | internal | an index that does not fit the integer of the interface; it cannot happen in memory |
 
-  1. NG-11.1 An `Accept` field is always a request field, so its two failures carry status 400, malformed request
-     syntax (RFC 9110, section 15.5.1). A media type value and a candidate come from the caller, which decides the
-     status.
+  1. NG-11.3 An `Accept` field is always a request field, so its two failures carry status 400, malformed request
+     syntax (RFC 9110, section 15.5.1). A candidate comes from the caller, which decides the status.
   2. NG-11.2 The message of an error is the fixed sentence of its kind and names no input.
 
 - **NG-12** Every function is pure: no I/O, no state between calls, no wait (`wait: none` of the interface contract).
@@ -151,16 +133,21 @@ Each row is an input that changes no result; the case named in the last column s
 
 | Rule | Bytes ignored | Basis | Case |
 |---|---|---|---|
-| NG-1.3 | SP and HTAB around a field line value or a media type value | RFC 9110, 5.5 | `accept`/`white_space_around_a_line_is_ignored`, `mediaType`/`white_space_around_the_value_is_ignored` |
-| NG-5.3 | empty list elements and the whitespace around `,` | RFC 9110, 5.6.1.2 | `accept`/`empty_list_elements_are_ignored` |
-| NG-3.2 | empty parameters and the whitespace around `;` | RFC 9110, 5.6.6 and B.3 | `accept`/`empty_parameters_are_ignored`, `mediaType`/`a_trailing_semicolon_is_an_empty_parameter` |
-| NG-3.4 | the quotes of a quoted value and the backslash of a quoted pair | RFC 9110, 5.6.4 and 5.6.6 | `accept`/`a_quoted_value_unquotes_its_pairs_and_keeps_its_commas`, `weigh`/`a_quoted_value_matches_the_same_value` |
-| NG-2.2 | the case of a type, a subtype, a parameter name and `q` | RFC 9110, 8.3.1, 5.6.6 and 12.4.2 | `accept`/`names_and_q_are_read_in_lower_case`, `weigh`/`names_compare_without_regard_to_case` |
-| NG-8.3 | the parameters of a range for a candidate whose `matching` is `ignore` | RFC 2045, 5.1 | `weigh`/`an_ignore_candidate_matches_whatever_the_parameters` |
-| NG-8.4 | the case of a `charset` value | RFC 9110, 8.3.2 | `weigh`/`charset_values_compare_without_case` |
+| NG-1.5 | SP and HTAB around a field line value | RFC 9110, 5.5 | `accept/white_space_around_a_line_is_ignored` |
+| NG-5.3 | empty list elements and the whitespace around `,` | RFC 9110, 5.6.1.2 | `accept/empty_list_elements_are_ignored` |
+| NG-3.2 (MT-3.2) | empty parameters and the whitespace around `;` | RFC 9110, 5.6.6 and B.3 | `accept/empty_parameters_are_ignored`, `accept/a_trailing_semicolon_is_an_empty_parameter` |
+| NG-3.4 (MT-3.4) | the quotes of a quoted value and the backslash of a quoted pair | RFC 9110, 5.6.4 and 5.6.6 | `accept/a_quoted_value_unquotes_its_pairs_and_keeps_its_commas`, `weigh/a_quoted_value_matches_the_same_value` |
+| NG-2.2 (MT-2.2) | the case of a type, a subtype, a parameter name and `q` | RFC 9110, 8.3.1, 5.6.6 and 12.4.2 | `accept/names_and_q_are_read_in_lower_case`, `weigh/names_compare_without_regard_to_case` |
+| NG-8.3 | the parameters of a range for a candidate whose `matching` is `ignore` | RFC 2045, 5.1 | `weigh/an_ignore_candidate_matches_whatever_the_parameters` |
+| NG-8.4 (MT-5.2) | the case of a `charset` value | RFC 9110, 8.3.2 | `weigh/charset_values_compare_without_case` |
 
 ## Choices that the standard leaves open
 
 These rules decide what RFC 9110 does not, each for the reason that its rule states: NG-3.5 (a parameter given twice
-fails), NG-5.2 (each field line is read on its own), NG-8.4 (only `charset` has a known case rule), NG-9.1 (the number
+fails, MT-3.5), NG-5.2 (each field line is read on its own), NG-8.4 (only `charset` has a known case rule, MT-5.2 and MT-5.3), NG-9.1 (the number
 of parameters counts in specificity) and NG-9.2 (highest weight, then field order, among equally specific ranges).
+
+## Retired statements
+
+NG-1.1, NG-1.3, NG-4 with NG-4.1 to NG-4.4 and NG-11.1 are retired: this library reads no media type value, which is
+MT-4 of http-media-type, and NG-1.4, NG-1.5 and NG-11.3 state the rest of NG-1.1, NG-1.3 and NG-11.1.

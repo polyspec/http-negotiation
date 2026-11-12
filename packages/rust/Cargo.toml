@@ -1,6 +1,6 @@
 [package]
 name = "polyspec-http-negotiate"
-description = "Media types, media ranges and Accept of HTTP, and the weight of each candidate media type"
+description = "Media ranges and Accept of HTTP, and the weight of each candidate media type"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -11,6 +11,9 @@ publish = false
 [lib]
 name = "polyspec_http_negotiate"
 path = "src/lib.rs"
+
+[dependencies]
+polyspec-http-media-type = { path = "../../../http-media-type/packages/rust" }
 
 [dev-dependencies]
 serde_json = "1"
