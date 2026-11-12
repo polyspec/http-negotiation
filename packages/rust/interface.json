@@ -312,10 +312,7 @@
             "optional": "uint"
           },
           "required": true,
-          "reason": {
-            "todo": "schema: a record field has no reason yet (T-4)",
-            "found": "NG-10.2"
-          }
+          "reason": "NG-10.2"
         }
       ]
     },
