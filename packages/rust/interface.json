@@ -17,7 +17,7 @@
     },
     "python": {
       "package": "polyspec-http-negotiate",
-      "module": "polyspec_http_negotiate"
+      "module": "polyspec.http_negotiate"
     },
     "node": {
       "package": "@polyspec/http-negotiate",
@@ -89,18 +89,15 @@
     "kinds": [
       {
         "variant": "polyspec_http_negotiate::Error::InvalidAccept",
-        "category": "value",
-        "class": "negotiate_error"
+        "category": "value"
       },
       {
         "variant": "polyspec_http_negotiate::Error::InvalidWeight",
-        "category": "value",
-        "class": "negotiate_error"
+        "category": "value"
       },
       {
         "variant": "polyspec_http_negotiate::Error::InvalidCandidate",
-        "category": "value",
-        "class": "negotiate_error"
+        "category": "value"
       },
       {
         "variant": "polyspec_http_negotiate::Error::Internal",
@@ -111,20 +108,6 @@
     "wrapped": []
   },
   "units": [
-    {
-      "id": "negotiate_error",
-      "name": [
-        "negotiate",
-        "error"
-      ],
-      "module": "errors",
-      "kind": "error",
-      "category": "value",
-      "visibility": "public",
-      "origin": "generated",
-      "final": true,
-      "members": []
-    },
     {
       "id": "range",
       "name": [

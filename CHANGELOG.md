@@ -17,3 +17,6 @@
   repository that depends on the crate reads the contract from the package that Cargo resolved; the contract of
   http-media-type is read the same way. The category error classes are named `Negotiate<Category>Error` in every
   language (`NegotiateValueError` and so on), apart from the built-in classes such as Python `ValueError`.
+- The contract drops the error class `NegotiateError`, which held every kind of the category `value` and no property:
+  a failure of reading or weighing is a `NegotiateValueError` with its kind. The Python module is
+  `polyspec.http_negotiate`, the one form of the package names of polyspec.

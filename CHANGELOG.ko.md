@@ -17,3 +17,6 @@
   Cargo가 해석한 패키지에서 계약을 읽게 하기 위해서이며, http-media-type의 계약도 같은 방법으로 읽는다. category
   오류 클래스 이름은 모든 언어에서 `Negotiate<Category>Error`(`NegotiateValueError` 등)이며 Python `ValueError` 같은
   내장 클래스와 겹치지 않는다.
+- 계약에서 오류 클래스 `NegotiateError`를 없앤다. category `value`의 모든 kind를 담고 속성이 없었다. 읽기와 무게
+  계산의 실패는 kind를 가진 `NegotiateValueError`다. Python 모듈은 polyspec 패키지 이름의 한 형식인
+  `polyspec.http_negotiate`다.
