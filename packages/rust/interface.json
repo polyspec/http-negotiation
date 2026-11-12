@@ -39,32 +39,32 @@
     "classes": {
       "value": {
         "php": "Polyspec\\HttpNegotiation\\HttpNegotiationValueError",
-        "python": "HttpNegotiationValueError",
+        "python": "HTTPNegotiationValueError",
         "node": "HttpNegotiationValueError"
       },
       "type": {
         "php": "Polyspec\\HttpNegotiation\\HttpNegotiationTypeError",
-        "python": "HttpNegotiationTypeError",
+        "python": "HTTPNegotiationTypeError",
         "node": "HttpNegotiationTypeError"
       },
       "io": {
         "php": "Polyspec\\HttpNegotiation\\HttpNegotiationIoError",
-        "python": "HttpNegotiationIoError",
+        "python": "HTTPNegotiationIoError",
         "node": "HttpNegotiationIoError"
       },
       "store": {
         "php": "Polyspec\\HttpNegotiation\\HttpNegotiationStoreError",
-        "python": "HttpNegotiationStoreError",
+        "python": "HTTPNegotiationStoreError",
         "node": "HttpNegotiationStoreError"
       },
       "busy": {
         "php": "Polyspec\\HttpNegotiation\\HttpNegotiationBusyError",
-        "python": "HttpNegotiationBusyError",
+        "python": "HTTPNegotiationBusyError",
         "node": "HttpNegotiationBusyError"
       },
       "internal": {
         "php": "Polyspec\\HttpNegotiation\\HttpNegotiationInternalError",
-        "python": "HttpNegotiationInternalError",
+        "python": "HTTPNegotiationInternalError",
         "node": "HttpNegotiationInternalError"
       }
     },
@@ -402,7 +402,7 @@
     {
       "id": "change-names",
       "rule": "N-1",
-      "reason": "plan N-1, N-2: a repository is named after what it handles, a noun, and a library of one part of an HTTP message has the prefix http-, so the repository is http-negotiation; design P-1 and E-2 give its package, module and error class names: Composer polyspec/http-negotiation, PHP Polyspec\\HttpNegotiation, PyPI polyspec-http-negotiation, Python polyspec.http_negotiation, npm @polyspec/http-negotiation, PHP extension polyspec_http_negotiation, HttpNegotiation<Category>Error",
+      "reason": "plan N-1, N-2: a repository is named after what it handles, a noun, and a library of one part of an HTTP message has the prefix http-, so the repository is http-negotiation; design P-1 and E-2 give its package, module and error class names: Composer polyspec/http-negotiation, PHP Polyspec\\HttpNegotiation, PyPI polyspec-http-negotiation, Python polyspec.http_negotiation, npm @polyspec/http-negotiation, PHP extension polyspec_http_negotiation, the error classes HttpNegotiation<Category>Error in PHP and Node and HTTPNegotiation<Category>Error in Python (N-2: an acronym word is one capital word in PHP and Node and all capitals in Python)",
       "symbol": "polyspec/http-negotiate, Polyspec\\HttpNegotiate, polyspec-http-negotiate, polyspec.http_negotiate, @polyspec/http-negotiate",
       "from": {
         "php": "Composer polyspec/http-negotiate, namespace Polyspec\\HttpNegotiate, extension polyspec_http_negotiate, Negotiate<Category>Error",

@@ -3,11 +3,11 @@ CARGO := cargo
 # Extra arguments of every cargo build, for example --ignore-rust-version on a machine without the pinned release.
 CARGOFLAGS ?=
 CORE := polyspec-http-negotiation
-BINDGEN := node scripts/bindgen.mts
+BINDING := node scripts/binding.mts
 
 .PHONY: check test lint test-rust lint-rust bindings bindings-check
 
-# The core and the contract; none of them needs the generator (bindgen design L-2).
+# The core and the contract; none of them needs the generator (binding design L-2).
 check: lint test bindings-check
 
 test: test-rust
@@ -24,10 +24,10 @@ lint-rust:
 	$(CARGO) fmt -p $(CORE) --check
 	$(CARGO) clippy $(CARGOFLAGS) -p $(CORE) --locked --all-targets -- -D warnings
 
-# The contract check and the comparison of the tracked binding packages with what bindgen scaffold writes (L-2).
+# The contract check and the comparison of the tracked binding packages with what binding scaffold writes (L-2).
 bindings-check:
-	$(BINDGEN) check packages/rust/interface.json
+	$(BINDING) check packages/rust/interface.json
 
 # Writes the generated sources into packages/{php-ext,python,ts}/generated, which are not tracked (G-6, L-1).
 bindings:
-	$(BINDGEN) generate --root .
+	$(BINDING) generate --root .

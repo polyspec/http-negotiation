@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 
 use polyspec_http_media_type::Parameter;
 use polyspec_http_negotiation::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
-use serde_json::{json, Map, Value};
+use serde_json::{json, Value};
 
 fn root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
@@ -63,7 +63,9 @@ fn raises(error: Error) -> Value {
 }
 
 fn parameters_of(parameters: &[Parameter]) -> Value {
-    Value::Array(parameters.iter().map(|parameter| json!([parameter.name, text(&parameter.value)])).collect())
+    Value::Array(
+        parameters.iter().map(|parameter| json!({"name": parameter.name, "value": text(&parameter.value)})).collect(),
+    )
 }
 
 fn ranges_of(ranges: &[Range]) -> Value {
@@ -90,11 +92,7 @@ fn lines(case: &Value) -> Result<Vec<Vec<u8>>, String> {
     array(case, "lines")?.iter().map(latin1).collect()
 }
 
-fn candidate(value: &Value, named: &Map<String, Value>) -> Result<Candidate, String> {
-    let value = match value.as_str() {
-        Some(name) => named.get(name).ok_or(format!("no candidate {name}"))?,
-        None => value,
-    };
+fn candidate(value: &Value) -> Result<Candidate, String> {
     let matching = match string(value, "matching")? {
         "ignore" => Matching::Ignore,
         "subset" => Matching::Subset,
@@ -103,12 +101,10 @@ fn candidate(value: &Value, named: &Map<String, Value>) -> Result<Candidate, Str
     };
     let parameters = array(value, "parameters")?
         .iter()
-        .map(|pair| {
-            let name = pair.get(0).and_then(Value::as_str).ok_or(format!("no name in {pair}"))?;
-            let values = pair.get(1).and_then(Value::as_array).ok_or(format!("no values in {pair}"))?;
+        .map(|parameter| {
             Ok(CandidateParameter {
-                name: name.to_owned(),
-                values: values.iter().map(latin1).collect::<Result<_, _>>()?,
+                name: string(parameter, "name")?.to_owned(),
+                values: array(parameter, "values")?.iter().map(latin1).collect::<Result<_, _>>()?,
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
@@ -162,11 +158,9 @@ fn accept_cases() -> Result<(), String> {
 #[test]
 fn weigh_cases() -> Result<(), String> {
     let cases = cases()?;
-    let named = field(&cases, "candidates")?.as_object().ok_or("candidates is no object")?;
     let mut failures = Vec::new();
     for case in group(&cases, "weigh")? {
-        let candidates =
-            array(case, "candidates")?.iter().map(|value| candidate(value, named)).collect::<Result<Vec<_>, _>>()?;
+        let candidates = array(case, "candidates")?.iter().map(candidate).collect::<Result<Vec<_>, _>>()?;
         let outcome = Accept::parse(&lines(case)?).and_then(|accept| accept.weigh(&candidates));
         compare(&mut failures, case, "weights", outcome, |weights| weights_of(weights))?;
     }
@@ -176,15 +170,15 @@ fn weigh_cases() -> Result<(), String> {
 
 #[test]
 fn invalid_candidate_cases() -> Result<(), String> {
-    // NG-7.5: an invalid candidate fails the whole call, also after a valid one.
+    // NG-7.5: an invalid candidate fails the whole call, also after a valid one: a case gives a valid candidate and then
+    // the invalid one, and the invalid one alone fails the same way.
     let cases = cases()?;
-    let named = field(&cases, "candidates")?.as_object().ok_or("candidates is no object")?;
     let accept = Accept::parse(&["*/*"]).map_err(|error| error.to_string())?;
     let mut failures = Vec::new();
     for case in group(&cases, "invalidCandidates")? {
-        let invalid = candidate(field(case, "candidate")?, named)?;
-        let page = candidate(&json!("page"), named)?;
-        for candidates in [vec![invalid.clone()], vec![page, invalid]] {
+        let candidates = array(case, "candidates")?.iter().map(candidate).collect::<Result<Vec<_>, _>>()?;
+        let invalid = candidates.last().ok_or(format!("no candidate in {case}"))?.clone();
+        for candidates in [vec![invalid], candidates] {
             compare(&mut failures, case, "weights", accept.weigh(&candidates), |weights| weights_of(weights))?;
         }
     }

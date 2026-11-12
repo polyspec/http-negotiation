@@ -1,9 +1,10 @@
 
-- The repository is http-negotiation: a repository is named after what it handles, a noun, with the prefix `http-` for
-  a part of an HTTP message (plan N-1, N-2). Every name follows it (design P-1, E-2): the crate
-  `polyspec-http-negotiation`, the Composer package `polyspec/http-negotiation` with the namespace
-  `Polyspec\HttpNegotiation` and the extension `polyspec_http_negotiation`, the PyPI package `polyspec-http-negotiation`
-  with the module `polyspec.http_negotiation`, the npm package `@polyspec/http-negotiation` and the error classes
-  `HttpNegotiation<Category>Error`. The contract records the change in `changes`.
-- `polyspec-http-media-type` is a Git dependency on the branch `v1/rust-core`, whose commit `Cargo.lock` pins, instead of
-  a path dependency on the checkout next to this one, so that the build reads no working tree of another repository.
+- The repository depends on `polyspec-binding-core` of the repository binding (`binding_core`, the Git dependency
+  `https://github.com/polyspec/binding.git`, which `Cargo.lock` pins), the new name of bindgen, and runs its tool with
+  `scripts/binding.mts`; the binding packages are those that `binding scaffold` writes, and `Cargo.lock` takes the
+  commit of `polyspec-http-media-type` that depends on the same crate. The Python error classes are
+  `HTTPNegotiation<Category>Error`, the class form of the repository name in Python (design N-2: an acronym word is all
+  capitals in Python and one capital word in PHP and Node, which keep `HttpNegotiation<Category>Error`).
+- The cases follow the case convention of binding (G-5): a case of `weigh` holds its candidates as record objects, a
+  case of `invalidCandidates` holds the list `candidates` (a valid candidate, then the invalid one), and a parameter of
+  a range is `{"name", "value"}`. The named candidates of the file are gone.

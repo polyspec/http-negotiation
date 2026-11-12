@@ -48,9 +48,9 @@ impl fmt::Display for Error {
 
 impl std::error::Error for Error {}
 
-/// The kind interface that the generated bindings read (bindgen design E-1, E-3): the kind and the status of NG-11,
+/// The kind interface that the generated bindings read (binding design E-1, E-3): the kind and the status of NG-11,
 /// and no errno, since the library does no I/O.
-impl bindgen_core::Kinds for Error {
+impl binding_core::Kinds for Error {
     fn kind(&self) -> &'static str {
         Error::kind(self)
     }

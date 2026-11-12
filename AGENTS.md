@@ -20,6 +20,8 @@ rules of this repository.
 - A statement keeps its id only while its meaning stays; a change of meaning retires the id and adds a new statement.
 - A text of `contracts/negotiate.json` is bytes, one character per byte (U+0000 to U+00FF). A failure is the object
   `raises` with `kind`, `status`, `category` and `message`, and a case that fails has no result key.
+- A case follows the case convention of binding (G-5): its keys are the parameter names of its member in snake_case,
+  and a record is the object of its fields, such as a candidate of `candidates` and a parameter `{"name", "value"}`.
 - Every rule is in the Rust core `packages/rust`. A binding converts types and holds no rule; the bindings are
   generated from the interface contract `packages/rust/interface.json` and are not written by hand. The contract is
   in the crate package (`include` of `packages/rust/Cargo.toml`), so that a repository that depends on the crate reads
@@ -32,7 +34,7 @@ rules of this repository.
 ## Rust
 
 - `rust-toolchain.toml` pins the toolchain and `Cargo.lock` the dependencies. `polyspec-http-media-type` is a Git
-  dependency on the branch `v1/rust-core` of its repository, whose commit `Cargo.lock` pins, as `polyspec-bindgen-core`
+  dependency on the branch `v1/rust-core` of its repository, whose commit `Cargo.lock` pins, as `polyspec-binding-core`
   is; the build reads no other checkout.
 - The workspace lints deny every warning, unsafe code, `unwrap`, `expect`, `as` conversions and discarded results;
   `clippy.toml` disallows the methods that turn a failure or an absence into a value (`Option::unwrap_or` and its
@@ -42,13 +44,13 @@ rules of this repository.
 ## Bindings
 
 - The repository is one Cargo workspace: the core `packages/rust` and the binding crates `packages/python`,
-  `packages/ts` and `packages/php-ext`, which `bindgen scaffold` writes and `make bindings-check` compares; their
+  `packages/ts` and `packages/php-ext`, which `binding scaffold` writes and `make bindings-check` compares; their
   `generated/` is not tracked. `Cargo.lock` at the root pins every dependency.
-- `polyspec-bindgen-core` is a Git dependency of the core and of the binding crates (branch `v1/rust-core` of the
-  bindgen repository) until bindgen is released; `Cargo.lock` pins its commit. The core implements
-  `bindgen_core::Kinds` for its error (NG-11).
-- `scripts/bindgen.mts` runs bindgen from the checkout that Cargo made of the commit that `Cargo.lock` pins, so that the
-  generator and `bindgen_core` are one version, until bindgen is released. `make bindings` generates; bindgen does not
+- `polyspec-binding-core` is a Git dependency of the core and of the binding crates (branch `v1/rust-core` of the
+  binding repository) until binding is released; `Cargo.lock` pins its commit. The core implements
+  `binding_core::Kinds` for its error (NG-11).
+- `scripts/binding.mts` runs binding from the checkout that Cargo made of the commit that `Cargo.lock` pins, so that the
+  generator and `binding_core` are one version, until binding is released. `make bindings` generates; binding does not
   generate this contract yet, so the bindings are not built or tested yet.
 
 ## Checks
