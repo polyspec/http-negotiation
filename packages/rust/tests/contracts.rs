@@ -173,9 +173,9 @@ fn invalid_candidate_cases() -> Result<(), String> {
     // NG-7.5: an invalid candidate fails the whole call, also after a valid one: a case gives a valid candidate and then
     // the invalid one, and the invalid one alone fails the same way.
     let cases = cases()?;
-    let accept = Accept::parse(&["*/*"]).map_err(|error| error.to_string())?;
     let mut failures = Vec::new();
     for case in group(&cases, "invalidCandidates")? {
+        let accept = Accept::parse(&lines(case)?).map_err(|error| error.to_string())?;
         let candidates = array(case, "candidates")?.iter().map(candidate).collect::<Result<Vec<_>, _>>()?;
         let invalid = candidates.last().ok_or(format!("no candidate in {case}"))?.clone();
         for candidates in [vec![invalid], candidates] {
