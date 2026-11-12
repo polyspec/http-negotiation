@@ -1089,12 +1089,13 @@ dependencies = [
 [[package]]
 name = "polyspec-http-media-type"
 version = "0.0.1"
+source = "git+https://github.com/polyspec/http-media-type.git?branch=v1%2Frust-core#4b94c5b9d08a922b82ae562401f687e206c6ccd6"
 dependencies = [
  "polyspec-bindgen-core",
 ]
 
 [[package]]
-name = "polyspec-http-negotiate"
+name = "polyspec-http-negotiation"
 version = "0.0.1"
 dependencies = [
  "polyspec-bindgen-core",
@@ -1104,31 +1105,31 @@ dependencies = [
 ]
 
 [[package]]
-name = "polyspec-http-negotiate-node"
+name = "polyspec-http-negotiation-node"
 version = "0.0.1"
 dependencies = [
  "napi",
  "napi-build",
  "napi-derive",
  "polyspec-bindgen-core",
- "polyspec-http-negotiate",
+ "polyspec-http-negotiation",
 ]
 
 [[package]]
-name = "polyspec-http-negotiate-php-ext"
+name = "polyspec-http-negotiation-php-ext"
 version = "0.0.1"
 dependencies = [
  "ext-php-rs",
  "polyspec-bindgen-core",
- "polyspec-http-negotiate",
+ "polyspec-http-negotiation",
 ]
 
 [[package]]
-name = "polyspec-http-negotiate-python"
+name = "polyspec-http-negotiation-python"
 version = "0.0.1"
 dependencies = [
  "polyspec-bindgen-core",
- "polyspec-http-negotiate",
+ "polyspec-http-negotiation",
  "pyo3",
 ]
 

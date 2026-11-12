@@ -1,7 +1,7 @@
 {
-  "name": "@polyspec/http-negotiate",
+  "name": "@polyspec/http-negotiation",
   "version": "0.0.1",
-  "description": "The http-negotiate library of polyspec for Node",
+  "description": "The http-negotiation library of polyspec for Node",
   "license": "MIT",
   "main": "./generated/index.cjs",
   "types": "./generated/index.d.ts",

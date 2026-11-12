@@ -2,7 +2,7 @@
 //! its formatting, and the weights follow the definitions of NG-8 and NG-9, computed here from the rules directly.
 
 use polyspec_http_media_type::Parameter;
-use polyspec_http_negotiate::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
+use polyspec_http_negotiation::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
 use proptest::prelude::*;
 use proptest::test_runner::TestCaseError;
 

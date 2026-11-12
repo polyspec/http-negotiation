@@ -2,7 +2,7 @@
 CARGO := cargo
 # Extra arguments of every cargo build, for example --ignore-rust-version on a machine without the pinned release.
 CARGOFLAGS ?=
-CORE := polyspec-http-negotiate
+CORE := polyspec-http-negotiation
 BINDGEN := node scripts/bindgen.mts
 
 .PHONY: check test lint test-rust lint-rust bindings bindings-check

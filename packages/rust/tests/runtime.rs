@@ -2,7 +2,7 @@
 
 use std::mem::align_of;
 
-use polyspec_http_negotiate::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
+use polyspec_http_negotiation::{Accept, Candidate, CandidateParameter, Error, Matching, Range, Weight};
 
 fn send_and_sync<T: Send + Sync>() {}
 

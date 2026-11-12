@@ -1,5 +1,5 @@
 [package]
-name = "polyspec-http-negotiate"
+name = "polyspec-http-negotiation"
 description = "Media ranges and Accept of HTTP, and the weight of each candidate media type"
 version.workspace = true
 edition.workspace = true
@@ -12,7 +12,7 @@ publish = false
 include = ["/src/**/*.rs", "/interface.json"]
 
 [lib]
-name = "polyspec_http_negotiate"
+name = "polyspec_http_negotiation"
 path = "src/lib.rs"
 
 [dependencies]
@@ -20,7 +20,10 @@ path = "src/lib.rs"
 # source is the bindgen repository on the branch that every repository uses; Cargo.lock pins its commit, the same
 # bindgen_core as the generated binding crates.
 polyspec-bindgen-core = { git = "https://github.com/polyspec/bindgen.git", branch = "v1/rust-core" }
-polyspec-http-media-type = { path = "../../../http-media-type/packages/rust" }
+# The media type grammar and its parameter values (NG-2, MT-3, MT-5). Like bindgen_core, a Git dependency on the branch
+# that every repository uses until it is released; Cargo.lock pins its commit, so the build never reads another
+# checkout's working tree (S15).
+polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", branch = "v1/rust-core" }
 
 [dev-dependencies]
 serde_json = "1"

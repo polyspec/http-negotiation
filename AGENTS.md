@@ -31,8 +31,9 @@ rules of this repository.
 
 ## Rust
 
-- `rust-toolchain.toml` pins the toolchain and `Cargo.lock` the dependencies. `polyspec-http-media-type` is a path
-  dependency on the checkout `../http-media-type` next to this one.
+- `rust-toolchain.toml` pins the toolchain and `Cargo.lock` the dependencies. `polyspec-http-media-type` is a Git
+  dependency on the branch `v1/rust-core` of its repository, whose commit `Cargo.lock` pins, as `polyspec-bindgen-core`
+  is; the build reads no other checkout.
 - The workspace lints deny every warning, unsafe code, `unwrap`, `expect`, `as` conversions and discarded results;
   `clippy.toml` disallows the methods that turn a failure or an absence into a value (`Option::unwrap_or` and its
   family, `Result::ok`, `map_or`, `map_or_else`). A use that a rule needs carries `#[allow(..., reason = "<rule id>")]`.

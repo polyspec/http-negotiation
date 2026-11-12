@@ -1,5 +1,5 @@
 <!-- doc-id: spec-negotiate -->
-# http-negotiate specification
+# http-negotiation specification
 
 This library reads `Accept` field values of HTTP and gives each candidate media type of a list the weight that an
 `Accept` value gives it. It does not choose a candidate, does not order candidates of equal weight, does

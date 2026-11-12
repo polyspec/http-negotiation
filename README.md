@@ -1,4 +1,4 @@
-# http-negotiate
+# http-negotiation
 
 [한국어](README.ko.md)
 

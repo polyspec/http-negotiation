@@ -1,4 +1,4 @@
-# http-negotiate
+# http-negotiation
 
 [English](README.md)
 
