@@ -38,10 +38,23 @@ rules of this repository.
   family, `Result::ok`, `map_or`, `map_or_else`). A use that a rule needs carries `#[allow(..., reason = "<rule id>")]`.
 - No function performs I/O, keeps state or waits (NG-12).
 
+## Bindings
+
+- The repository is one Cargo workspace: the core `packages/rust` and the binding crates `packages/python`,
+  `packages/ts` and `packages/php-ext`, which `bindgen scaffold` writes and `make bindings-check` compares; their
+  `generated/` is not tracked. `Cargo.lock` at the root pins every dependency.
+- `polyspec-bindgen-core` is a Git dependency of the core and of the binding crates (branch `v1/rust-core` of the
+  bindgen repository) until bindgen is released; `Cargo.lock` pins its commit. The core implements
+  `bindgen_core::Kinds` for its error (NG-11).
+- `scripts/bindgen.mts` runs bindgen from the checkout that Cargo made of the commit that `Cargo.lock` pins, so that the
+  generator and `bindgen_core` are one version, until bindgen is released. `make bindings` generates; bindgen does not
+  generate this contract yet, so the bindings are not built or tested yet.
+
 ## Checks
 
-- `make test` runs the contract cases, the citation checks, the random tests and the runtime properties.
-- `make lint` runs `cargo fmt --check` and clippy with every warning denied.
+- `make test` runs the contract cases, the citation checks, the random tests and the runtime properties of the core.
+- `make lint` runs `cargo fmt --check` and clippy of the core with every warning denied; `make check` runs both and
+  `make bindings-check`.
 
 ## Commits and changes
 

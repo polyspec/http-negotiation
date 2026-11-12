@@ -20,3 +20,6 @@
 - 계약에서 오류 클래스 `NegotiateError`를 없앤다. category `value`의 모든 kind를 담고 속성이 없었다. 읽기와 무게
   계산의 실패는 kind를 가진 `NegotiateValueError`다. Python 모듈은 polyspec 패키지 이름의 한 형식인
   `polyspec.http_negotiate`다.
+- 저장소는 `bindgen scaffold`가 쓰는 바인딩 crate `packages/python`, `packages/ts`, `packages/php-ext`를 가진 Cargo
+  workspace 하나다. 코어는 `polyspec-bindgen-core`에 의존하고 오류에 `Kinds`를 구현하며, `make bindings-check`가
+  계약과 바인딩 패키지를 검사한다. 바인딩은 아직 생성하지 않는다.

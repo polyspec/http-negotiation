@@ -20,3 +20,6 @@
 - The contract drops the error class `NegotiateError`, which held every kind of the category `value` and no property:
   a failure of reading or weighing is a `NegotiateValueError` with its kind. The Python module is
   `polyspec.http_negotiate`, the one form of the package names of polyspec.
+- The repository is one Cargo workspace with the binding crates `packages/python`, `packages/ts` and `packages/php-ext`
+  that `bindgen scaffold` writes. The core depends on `polyspec-bindgen-core` and implements `Kinds` for its error, and
+  `make bindings-check` checks the contract and the binding packages. The bindings are not generated yet.
