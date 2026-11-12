@@ -1,0 +1,20 @@
+[package]
+name = "polyspec-http-negotiate"
+description = "Media types, media ranges and Accept of HTTP, and the weight of each candidate media type"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+name = "polyspec_http_negotiate"
+path = "src/lib.rs"
+
+[dev-dependencies]
+serde_json = "1"
+proptest = "1"
+
+[lints]
+workspace = true
