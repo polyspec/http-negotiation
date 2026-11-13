@@ -1,7 +1,12 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 622f6625989e04def43e2725515c7cca10cd2ff26d39e8e01b6aa6b61f7cc8ac -->
+<!-- source-sha256: a573246ea4c2d63b42bc49e9724ece4194af58922dbfa030272df1620e181cee -->
 
 ## Unreleased
+
+- WASM 바인딩에서 group internal의 contract case(`packages/ts/tests/cases.wasm.test.mjs`)가 생성된 시험처럼
+  wasm-bindgen이 쓴 모듈의 `__armFaults`와 `__faultLeft`로 fault를 건다(binding GN-5). 전에는 그 둘을 export하지
+  않는 subpath `./wasm`의 모듈에서 찾았으므로, `make test-wasm`이 case `a_broken_index_is_internal`을 "the module has
+  no entry point that arms faults"로 실패시켰다.
 
 - `make bindings`, `make bindings-check`와 `node_modules` 설치가 `var/tools`의 Node.js와 npm(Makefile의 `$(NODE)`와
   `$(NPM)`)을 실행한다. make는 shell 문법이 없는 recipe 줄을 Makefile이 export하는 `PATH`가 아니라 자기 환경의

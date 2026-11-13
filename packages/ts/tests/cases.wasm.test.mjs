@@ -1,9 +1,9 @@
 // The contract cases of http-negotiation run against the WASM binding of the installed package, its subpath ./wasm
 // (NG-1 to NG-12, binding P-5). HTTP_NEGOTIATION_CASES is the path of contracts/negotiate.json; make test-wasm sets it.
 // A text of the cases is latin1 (NG-1.4), which the module takes and gives as a string of U+0000 to U+00FF. A case of
-// the group internal arms its faults for the member through the entry points of the feature fault-test of the module,
-// as a generated test does (binding G-5, NG-11.4), and a fault that did not fire fails it; a module without those
-// entry points fails the case.
+// the group internal arms its faults for the member through the entry points of the feature fault-test, which the
+// module that wasm-bindgen writes holds beside the module of the subpath, as a generated test does (binding G-5, GN-5,
+// NG-11.4), and a fault that did not fire fails it; a module without those entry points fails the case.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
@@ -11,10 +11,12 @@ import * as negotiation from '@polyspec/http-negotiation/wasm';
 
 const cases = JSON.parse(readFileSync(process.env.HTTP_NEGOTIATION_CASES, 'utf8'));
 
-// The module, which holds the entry points of the feature fault-test.
-function addon() {
-  assert.equal(typeof negotiation.__armFaults, 'function', 'the module has no entry point that arms faults (binding G-5)');
-  return negotiation;
+// The module that wasm-bindgen writes, which holds the entry points of the feature fault-test (binding GN-5); the module
+// of the subpath ./wasm has loaded it when its import ends.
+async function addon() {
+  const glue = await import(new URL('./http_negotiation_wasm.js', import.meta.resolve('@polyspec/http-negotiation/wasm')).href);
+  assert.equal(typeof glue.__armFaults, 'function', 'the module has no entry point that arms faults (binding G-5)');
+  return glue;
 }
 
 const rangesOf = (accept) =>
@@ -40,14 +42,14 @@ function check(kase, call, expected) {
   }
 }
 
-function weigh(kase) {
+function weigh(kase, glue) {
   const accept = negotiation.Accept.parse(kase.lines);
   if (kase.faults === undefined) return accept.weigh(kase.candidates);
-  const armed = addon().__armFaults('accept.weigh', JSON.stringify(kase.faults));
+  const armed = glue.__armFaults('accept.weigh', JSON.stringify(kase.faults));
   try {
     return accept.weigh(kase.candidates);
   } finally {
-    assert.deepEqual(addon().__faultLeft(armed), [], kase.id);
+    assert.deepEqual(glue.__faultLeft(armed), [], kase.id);
   }
 }
 
@@ -58,10 +60,11 @@ test('accept', () => {
   }
 });
 
-test('weigh', () => {
+test('weigh', async () => {
+  const glue = await addon();
   assert.ok(cases.weigh.length > 0 && cases.internal.length > 0);
   for (const kase of [...cases.weigh, ...cases.internal]) {
-    check({ ...kase, expected: kase.weights }, () => weigh(kase), weightsOf);
+    check({ ...kase, expected: kase.weights }, () => weigh(kase, glue), weightsOf);
   }
 });
 

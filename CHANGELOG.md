@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- The contract case of the group internal on the WASM binding (`packages/ts/tests/cases.wasm.test.mjs`) arms its
+  faults through `__armFaults` and `__faultLeft` of the module that wasm-bindgen writes, as the generated tests do
+  (binding GN-5). It looked for them on the module of the subpath `./wasm`, which does not export them, so `make
+  test-wasm` failed the case `a_broken_index_is_internal` with "the module has no entry point that arms faults".
+
 - `make bindings`, `make bindings-check` and the install of `node_modules` run the Node.js and the npm of `var/tools`
   (`$(NODE)` and `$(NPM)` of the Makefile). make runs a recipe line without shell syntax through the `PATH` of its own
   environment and not through the `PATH` that the Makefile exports, so `npm ci` ran the npm of the machine, which
