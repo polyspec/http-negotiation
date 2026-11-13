@@ -1,5 +1,17 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 512af8463abf1f23d8cd53889ca47119069d3d513c2ffbc6e0927c9e924dfaea -->
+<!-- source-sha256: bf9b58f2a65fd282377fdcf54788b888334c6ac33502a01a965da02b0a364fe8 -->
+
+- 계약이 binding의 다섯 target을 적는다(BD-27): `packages/rust/interface.json`의 `targets`는 php, python, node,
+  go, wasm이고, `packages.go`는 Go 모듈 `github.com/polyspec/http-negotiation/packages/go`를 적으며, npm 패키지의 entry
+  `.`는 조건 `{node: napi, browser: wasm}`을 받고, 각 오류 클래스는 WASM 클래스로 Node의 것을 적으며,
+  `errors.fixed`는 Node처럼 WASM에도 `TypeError`를 적는다. 전에는 계약이 php, python, node만 적어 Go와 WASM 바인딩이
+  생성되지 않았다. 추적되는 바인딩 패키지에 binding scaffold가 두 target을 위해 쓰는 것(`packages/go/go.mod`,
+  `packages/go/internal/ffi`, `packages/ts/wasm`, `packages/ts/package.json`의 브라우저 exports)이 더해지고, 두
+  crate가 workspace의 member가 된다. 계약 검사는 이 변경 전에 있던 finding 하나를 그대로 낸다: CK-22, kind
+  `internal`을 위해 점 `http_negotiation.internal`을 broken으로 켜는 case가 없다(X-1). Go와 WASM 바인딩을 빌드하거나
+  시험하는 make target은 아직 없다. `make fmt-check`는 `packages/go/internal/ffi/src/lib.rs`에서 실패한다: binding
+  scaffold가 그 `allow` 속성을 125자의 한 줄로 쓰는데 `rustfmt.toml`의 `max_width = 120`을 넘고, 이 파일은 손으로
+  고치지 않는다.
 
 - `Cargo.lock`은 값 alias, 실패 주입, 오류 unit의 생성기를 한 개발 줄기에 가진 binding을 고정하고(CK-20), 바인딩
   package는 그 scaffold가 쓰는 것이다. 각 바인딩 crate는 `polyspec-binding-core`를 feature `construct`와 `lock`과 함께

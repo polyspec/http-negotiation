@@ -1106,6 +1106,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "polyspec-http-negotiation-go"
+version = "0.0.1"
+dependencies = [
+ "polyspec-binding-core",
+ "polyspec-http-negotiation",
+]
+
+[[package]]
 name = "polyspec-http-negotiation-node"
 version = "0.0.1"
 dependencies = [
@@ -1135,6 +1143,16 @@ dependencies = [
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
  "pyo3",
+]
+
+[[package]]
+name = "polyspec-http-negotiation-wasm"
+version = "0.0.1"
+dependencies = [
+ "js-sys",
+ "polyspec-binding-core",
+ "polyspec-http-negotiation",
+ "wasm-bindgen",
 ]
 
 [[package]]

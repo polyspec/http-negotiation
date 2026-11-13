@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 92082d5a109e7204c10069c79b56eae34962566e7181bfbc84395af3a3756cd9 -->
+<!-- source-sha256: e5d23e72c74270cf5cbe76ccc08d532774c457beb295ee6fbc7902a44804cb71 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -44,8 +44,8 @@
 
 ## 바인딩
 
-- 이 레포는 하나의 Cargo workspace다. 코어 `packages/rust`와 바인딩 crate `packages/python`,
-  `packages/ts`, `packages/php-ext`로 이루어지며, 바인딩 crate는 `binding scaffold`가 쓰고 `make bindings-check`가 비교한다. 바인딩 crate의
+- 이 레포는 하나의 Cargo workspace다. 코어 `packages/rust`와 다섯 target(binding BD-27)의 바인딩 crate `packages/python`,
+  `packages/ts`, `packages/ts/wasm`, `packages/php-ext`, `packages/go/internal/ffi`(와 `packages/go/go.mod`)로 이루어지며, 바인딩 crate는 `binding scaffold`가 쓰고 `make bindings-check`가 비교한다. 바인딩 crate의
   `generated/`는 추적하지 않는다. 루트의 `Cargo.lock`이 모든 의존성을 고정한다.
 - `polyspec-binding-core`는 binding이 release될 때까지 코어와 바인딩 crate의 Git 의존성이다(binding 레포의
   브랜치 `v1/rust-core`). `Cargo.lock`이 그 커밋을 고정한다. 코어는 자기 오류에 대해

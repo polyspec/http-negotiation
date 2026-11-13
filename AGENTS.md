@@ -43,9 +43,10 @@ rules of this repository.
 
 ## Bindings
 
-- The repository is one Cargo workspace: the core `packages/rust` and the binding crates `packages/python`,
-  `packages/ts` and `packages/php-ext`, which `binding scaffold` writes and `make bindings-check` compares; their
-  `generated/` is not tracked. `Cargo.lock` at the root pins every dependency.
+- The repository is one Cargo workspace: the core `packages/rust` and the binding crates of the five targets
+  (binding BD-27) `packages/python`, `packages/ts`, `packages/ts/wasm`, `packages/php-ext` and
+  `packages/go/internal/ffi` (with `packages/go/go.mod`), which `binding scaffold` writes and `make bindings-check`
+  compares; their `generated/` is not tracked. `Cargo.lock` at the root pins every dependency.
 - `polyspec-binding-core` is a Git dependency of the core and of the binding crates (branch `v1/rust-core` of the
   binding repository) until binding is released; `Cargo.lock` pins its commit. The core implements
   `binding_core::Kinds` for its error (NG-11).
