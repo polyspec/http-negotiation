@@ -4,6 +4,7 @@ name = "polyspec-http-negotiation-go"
 version = "0.0.1"
 edition = "2021"
 rust-version = "1.99.0"
+license = "MIT"
 publish = false
 
 [lib]
@@ -13,6 +14,7 @@ crate-type = ["staticlib"]
 
 [features]
 panic-test = []
+fault-test = ["polyspec-http-negotiation/fault-test"]
 codec-test = []
 
 [dependencies]

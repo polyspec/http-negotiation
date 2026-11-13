@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- `Cargo.lock` pins `polyspec-binding-core` and `polyspec-http-media-type` at the heads of the branch `v1/rust-core`
+  of their repositories, and the binding packages are the ones that binding scaffold of that binding writes, so `make
+  bindings-check` reports no finding. Before, it reported the lock (CK-20) and thirteen items (CK-19), one of them the
+  Go module, which the scaffold did not write because the pinned http-media-type had no Go module. Each binding crate
+  and `packages/python/pyproject.toml` name the licence `MIT` of the core (CK-71), and each `src/lib.rs` holds its
+  allow attributes on one line, so `make fmt-check` passes (T1.10). `packages/python/build.rs` is new: it declares the
+  cfg `pyo3_disable_reference_pool`, with which the generated code refuses a build (binding GN-6u).
+  `packages/ts/package.json` has `"type": "module"`, `napi.binaryName` and `napi.targets` and no
+  `optionalDependencies`: a release writes the platform packages into the manifest that it packs (binding GN-3c).
+  `packages/php-ext/composer.json` requires the extension and the package of http-media-type, whose class the
+  generated code needs when it is loaded (binding GN-3e), and names `php-ext.download-url-method`
+  `pre-packaged-binary`. `packages/go/go.mod` requires the Go module of http-media-type in the development form
+  `v0.0.0` (binding GN-15f). binding generates the five targets of the contract, Go included. `.gitignore` names the
+  generated Go files `zz_generated_*.go`, which are not tracked: a release adds them and the static library of each
+  platform in the commit of its Go tag (binding GN-15g).
+
 - No tracked file names a Git commit. The changelog and the checklist named commits of this repository and of binding,
   which say nothing to a reader without the repository and name nothing after a history is joined or written again.
   Each record keeps its fact and states the binding as the pinned one or a later one. `AGENTS.md` holds the rule, and

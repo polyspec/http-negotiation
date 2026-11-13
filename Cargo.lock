@@ -1080,7 +1080,7 @@ checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 [[package]]
 name = "polyspec-binding-core"
 version = "0.0.1"
-source = "git+https://github.com/polyspec/binding.git?branch=v1%2Frust-core#49a4e973be04e1a593eff33fc7ad9531daa04b2b"
+source = "git+https://github.com/polyspec/binding.git?branch=v1%2Frust-core#369fcec3e14d7e013cf217cb9c33c554b291e042"
 dependencies = [
  "indexmap",
  "libc",
@@ -1092,7 +1092,7 @@ dependencies = [
 [[package]]
 name = "polyspec-http-media-type"
 version = "0.0.1"
-source = "git+https://github.com/polyspec/http-media-type.git?branch=v1%2Frust-core#d3ca379d8afd09f1129f164e630dead12750a1bc"
+source = "git+https://github.com/polyspec/http-media-type.git?branch=v1%2Frust-core#31f08f37b023426e67b1a7d3c5026dd55665dc3e"
 dependencies = [
  "polyspec-binding-core",
 ]

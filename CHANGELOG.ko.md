@@ -1,7 +1,23 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 1b92f0e4d9953e8b9cea13a205b86723284a63e7546c4d26b9184cb5d21e9efc -->
+<!-- source-sha256: c045e566035357fd60354cd47351925f3d2efcf5c498a2a02ca65d6214e26e2a -->
 
 ## Unreleased
+
+- `Cargo.lock`은 `polyspec-binding-core`와 `polyspec-http-media-type`을 각 저장소의 branch `v1/rust-core`의 head에
+  pin하고, 바인딩 package는 그 binding의 scaffold가 쓰는 것과 같다. 그래서 `make bindings-check`는 finding을 보고하지
+  않는다. 전에는 lock(CK-20)과 항목 열세 개(CK-19)를 보고했다. 그 가운데 하나는 Go module이었다. pin된
+  http-media-type에 Go module이 없어서 scaffold가 그것을 쓰지 않았다. 각 바인딩 crate와
+  `packages/python/pyproject.toml`은 코어의 licence `MIT`를 적고(CK-71), 각 `src/lib.rs`는 allow 속성을 한 줄로
+  가진다. 그래서 `make fmt-check`가 통과한다(T1.10). `packages/python/build.rs`가 새로 생겼다. 이 파일은 cfg
+  `pyo3_disable_reference_pool`을 선언하고, 생성된 코드는 그 cfg가 있는 build를 거부한다(binding GN-6u).
+  `packages/ts/package.json`에는 `"type": "module"`, `napi.binaryName`, `napi.targets`가 있고
+  `optionalDependencies`는 없다. release가 자신이 pack하는 manifest에 플랫폼 package를 쓴다(binding GN-3c).
+  `packages/php-ext/composer.json`은 http-media-type의 확장과 package를 require한다. 생성된 코드가 load될 때 그
+  class가 필요하기 때문이다(binding GN-3e). 그리고 `php-ext.download-url-method`로 `pre-packaged-binary`를 적는다.
+  `packages/go/go.mod`는 http-media-type의 Go module을 개발 형태 `v0.0.0`으로 require한다(binding GN-15f). binding은
+  계약의 다섯 target을 Go를 포함해 모두 생성한다. `.gitignore`는 생성된 Go 파일 `zz_generated_*.go`를 적고, 그
+  파일들은 추적하지 않는다. release가 그 파일들과 각 플랫폼의 정적 라이브러리를 Go tag의 commit에 더한다(binding
+  GN-15g).
 
 - 추적 파일은 Git commit을 적지 않는다. changelog와 checklist가 이 저장소와 binding의 commit을 적고 있었는데, commit은
   저장소 없이 읽는 사람에게 아무것도 알려 주지 않고 history가 합쳐지거나 다시 쓰이면 아무것도 가리키지 않는다. 각
