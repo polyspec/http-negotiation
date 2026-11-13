@@ -1,5 +1,5 @@
 <!-- doc-id: readme -->
-<!-- source-sha256: e5218936b783cd18db590668b8200c3f646f17e5a361358c475cddbd34d3cc59 -->
+<!-- source-sha256: 7845f4d82b59e024971a2921358c87f84e4496d799f8ce223fd07a70bf064bae -->
 # http-negotiation
 
 [English](README.md)
@@ -18,9 +18,9 @@ HTTP의 media range와 `Accept` field(RFC 9110 12.4.2, 12.5.1절)를 읽고, `Ac
 규칙은 [docs/spec/negotiate.md](docs/spec/negotiate.md), case는 [contracts/negotiate.json](contracts/negotiate.json),
 바인딩의 공개 API는 crate 패키지에 들어가는 [packages/rust/interface.json](packages/rust/interface.json)에 있다. 코어는
 `packages/rust`의 Rust crate이며, 모든 계약이 적는 다섯 target(binding BD-27)인 PHP, Python, Node,
-브라우저(WASM), Go 바인딩은 인터페이스 계약에서 생성한다. 생성기는 Go와 WASM의 feature fault-test 진입점을 아직
-생성하지 않으므로 이 계약을 아직 받지 않는다. 그래서 `make bindings`는 아무것도 쓰지 않고 `make test-bindings`는
-그 원인으로 실패한다.
+브라우저(WASM), Go 바인딩은 인터페이스 계약에서 생성한다. 생성기는 PHP, Python, Node, WASM 바인딩을 쓰고 Go는
+거부한다. Go의 feature fault-test 진입점, class unit, 다른 저장소의 record를 아직 생성하지 않기 때문이다. 그래서
+`make bindings-go`와 `make test-go`가 그 원인으로 실패한다.
 
 ```sh
 make bootstrap       # devEngines의 npm으로 @polyspec/kit을 포함한 package-lock.json 설치

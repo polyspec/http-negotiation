@@ -1,7 +1,14 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 64e250afaf397e72cb2ffa14e68a6f78881014cf01bdb691330273ab66c3aa1b -->
+<!-- source-sha256: 936ca5d11b9ea3b40577db75f7afb2f349dcbadd4696ecfec2041dddcf252fc3 -->
 
 ## Unreleased
+
+- `make bindings`가 계약의 각 target을 자기 target `make bindings-<target>`(`binding generate --target <target>`)에서
+  생성하고, 각 바인딩 target은 그것에 의존한다. `make test-python`은 `bindings-python`에, `make node-package`와 `make
+  check-declarations`는 `bindings-node`와 `bindings-wasm`에, `make test-php`는 `bindings-php`에, `make test-go`는
+  `bindings-go`에 의존한다(binding GN-1c). 전에는 `make bindings`가 모든 target을 한 번에 생성했으므로, binding 49a4e97이
+  상태 1로 끝내는 go의 거부가 binding이 생성하는 php, python, node, wasm의 target을 멈췄다. `AGENTS.md`와 `README.md`는
+  binding이 그 넷을 생성하고 go를 거부한다고 적는다.
 
 - `Cargo.lock`이 `polyspec-binding-core`를 binding의 commit 49a4e97로 고정한다. 그 commit의 결함 주입점은 macro
   `binding_core::fault::point!`이며, 그것을 쓰는 crate의 feature `fault-test`로 판정된다(binding GN-5).

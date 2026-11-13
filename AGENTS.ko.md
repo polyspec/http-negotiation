@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 0183c042c80788a82c292fba90635ccf20ea4d049aedb4f0a0470cb6b2ded32c -->
+<!-- source-sha256: 583e893c08aa81303e2dc56ed24ed0c3fb6041daf5b7bb0878c7d8d3c6b80c0c -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -62,10 +62,12 @@
 - range는 http-media-type의 record `Parameter`를 담고, 그 클래스는 http-media-type의 Python 패키지와 PHP 확장이
   준다(binding T-3). `make test-python`은 이 저장소의 wheel 곁에 wheel `HTTP_MEDIA_TYPE_WHEEL`을 설치하고, `make
   test-php`는 이 확장보다 먼저 확장 `HTTP_MEDIA_TYPE_EXTENSION`을 로드한다. 둘 다 http-media-type checkout의 빌드가
-  쓰는 파일이고, 각 recipe는 그 파일이 없으면 실패한다. 고정된 binding은 Go와 WASM의 feature fault-test 진입점을
-  아직 생성하지 않으므로 계약의 생성을 거부한다(G-4). 그래서 `make bindings`는 아무것도 쓰지 않고, `make
-  test-bindings`의 모든 target이 그 원인으로 실패한다.
-- `make bindings`가 생성한다. 바인딩을 빌드하거나 시험하는 모든 make target은 그것을 먼저 실행한다. `make test-bindings`는
+  쓰는 파일이고, 각 recipe는 그 파일이 없으면 실패한다. 고정된 binding은 php, python, node, wasm을 생성하고 go를
+  거부한다(G-4). Go의 feature fault-test 진입점, class unit, 다른 저장소의 record를 아직 생성하지 않기 때문이다. 그래서
+  `make bindings-go`, `make lint-bindings`, `make test-go`가 그 원인으로 실패한다.
+- `make bindings`는 다섯 target을 각각 자기 target `make bindings-<target>`(`binding generate --target <target>`)에서
+  생성하고, 바인딩을 빌드하거나 시험하는 모든 make target은 자기가 쓰는 target의 생성을 먼저 실행한다. 그래서 binding이
+  거부하는 target은 자기 이름으로 실패하고 다른 target을 멈추지 않는다(binding GN-1c). `make test-bindings`는
   workspace 전체에 clippy를 실행하고, `make check-declarations`를 실행하고, 그다음 계약의 다섯 target마다 하나씩
   `make test-python`, `make test-node`, `make test-wasm`, `make test-php`, `make test-go`를 실행한다. 각각은 binding이
   생성한 시험과 그 바인딩의 contract case를 그 언어의 표준 runner로 실행한다. runner는 unittest, node --test(Node와

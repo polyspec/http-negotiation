@@ -63,10 +63,12 @@ rules of this repository.
   http-media-type give (binding T-3). `make test-python` installs the wheel `HTTP_MEDIA_TYPE_WHEEL` beside the wheel of
   this repository and `make test-php` loads the extension `HTTP_MEDIA_TYPE_EXTENSION` before this one; both are files
   that a build of the checkout of http-media-type writes, and each recipe fails while its file is missing. The pinned
-  binding refuses to generate the contract (G-4), because it does not generate the entry points of the feature
-  fault-test for Go and WASM yet, so `make bindings` writes nothing and every target of `make test-bindings` fails
-  with that cause.
-- `make bindings` generates; every make target that builds or tests a binding runs it first. `make test-bindings` runs
+  binding generates php, python, node and wasm and refuses go (G-4), because it does not generate the entry points of
+  the feature fault-test, a class unit or a record of another repository for Go yet, so `make bindings-go`, `make
+  lint-bindings` and `make test-go` fail with that cause.
+- `make bindings` generates the five targets, each in its own target `make bindings-<target>` (`binding generate
+  --target <target>`), and every make target that builds or tests a binding runs the generation of the targets it uses
+  first, so that a target that binding refuses fails with its name and does not stop the others (binding GN-1c). `make test-bindings` runs
   clippy on the whole workspace, `make check-declarations`, then `make test-python`, `make test-node`, `make
   test-wasm`, `make test-php` and `make test-go`, one for each of the five targets of the contract, each of which runs
   the tests that binding generates and the contract cases of the binding on the standard runner of its language:

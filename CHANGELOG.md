@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- `make bindings` generates each target of the contract in its own target `make bindings-<target>` (`binding generate
+  --target <target>`), on which each binding target depends: `make test-python` on `bindings-python`, `make
+  node-package` and `make check-declarations` on `bindings-node` and `bindings-wasm`, `make test-php` on
+  `bindings-php` and `make test-go` on `bindings-go` (binding GN-1c). Before, `make bindings` generated every target at
+  once, so the refusal of go, which binding 49a4e97 ends with status 1, stopped the targets of php, python, node and
+  wasm, which binding generates. `AGENTS.md` and `README.md` state that binding generates those four and refuses go.
+
 - `Cargo.lock` pins `polyspec-binding-core` at the commit 49a4e97 of binding, whose fault injection point is the macro
   `binding_core::fault::point!`, judged by the feature `fault-test` of the crate that writes it (binding GN-5): the
   point of `packages/rust/src/candidate.rs` is `point!(crate::fault::INTERNAL)`, and `make test` runs the tests of the

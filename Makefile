@@ -63,7 +63,7 @@ export PHP PHP_CONFIG
 # "Platforms").
 CDYLIB := $(if $(filter Darwin,$(shell uname -s)),dylib,so)
 
-.PHONY: bootstrap install install-tools install-packages toolchain-lock check test lint lint-rust fmt-check bindings-check bindings test-bindings lint-bindings test-python test-node test-php \
+.PHONY: bootstrap install install-tools install-packages toolchain-lock check test lint lint-rust fmt-check bindings-check bindings $(BINDING_PHONY) test-bindings lint-bindings test-python test-node test-php \
 	test-wasm test-go node-package check-declarations
 
 # The npm that devEngines of package.json names installs the lock, @polyspec/kit included, before the tools of the checkout
@@ -120,9 +120,14 @@ fmt-check:
 bindings-check:
 	$(BINDING) check packages/rust/interface.json
 
-# Writes the generated sources into packages/{php-ext,python,ts}/generated, which are not tracked (G-6, L-1).
-bindings:
-	$(BINDING) generate --root .
+# Writes the generated sources into packages/{php-ext,python,ts,ts/wasm,go/internal/ffi}/generated, which are not
+# tracked (G-6, L-1): each target in its own target bindings-<target>, so that a target that binding refuses fails with
+# its name and the targets that build on another target still run (binding GN-1c).
+BINDING_TARGETS := php python node wasm go
+BINDING_PHONY = $(foreach target,$(BINDING_TARGETS),bindings-$(target))
+bindings: $(BINDING_PHONY)
+$(BINDING_PHONY):
+	$(BINDING) generate --root . --target $(@:bindings-%=%)
 
 test-bindings: lint-bindings check-declarations test-python test-node test-wasm test-php test-go
 
@@ -133,12 +138,12 @@ lint-bindings: bindings
 node_modules/.package-lock.json: package-lock.json
 	$(NPM) ci --no-audit --no-fund
 
-check-declarations: bindings node_modules/.package-lock.json
+check-declarations: bindings-node bindings-wasm node_modules/.package-lock.json
 	node_modules/.bin/tsc --noEmit --strict packages/ts/generated/index.d.ts
 	node_modules/.bin/tsc --noEmit --strict packages/ts/wasm/generated/index.d.ts
 
 # The wheel, installed into a virtual environment; the generated tests (G-5) and the contract cases (NG-1 to NG-12).
-test-python: bindings
+test-python: bindings-python
 	test -f "$(HTTP_MEDIA_TYPE_WHEEL)"
 	$(PYTHON) -m venv --clear $(VAR)/venv
 	$(VAR)/venv/bin/pip install -q $(MATURIN)
@@ -155,7 +160,7 @@ test-python: bindings
 PLATFORM := $(shell node -p 'process.platform + "-" + process.arch + (process.platform === "linux" ? "-gnu" : "")')
 NODE_ADDON := http-negotiation.$(PLATFORM).node
 WASM_BINDGEN_RELEASE := $(shell sed -n 's/^wasm-bindgen = "=\(.*\)"$$/\1/p' packages/ts/wasm/Cargo.toml)
-node-package: bindings
+node-package: bindings-node bindings-wasm
 	test "$$($(WASM_BINDGEN) --version)" = "wasm-bindgen $(WASM_BINDGEN_RELEASE)"
 	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-wasm --locked --target wasm32-unknown-unknown --features $(TEST_FEATURES)
 	$(WASM_BINDGEN) --target web --out-dir packages/ts/wasm/generated --out-name http_negotiation_wasm \
@@ -176,7 +181,7 @@ test-node: node-package
 
 # The extension built against PHP_CONFIG and loaded into PHP; the stub is linted, then the generated tests and the
 # contract cases run on PHPUnit.
-test-php: bindings
+test-php: bindings-php
 	test -f "$(HTTP_MEDIA_TYPE_EXTENSION)"
 	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-php-ext --locked --features $(TEST_FEATURES)
 	$(PHP) -l packages/php-ext/generated/polyspec_http_negotiation.stub.php
@@ -195,7 +200,7 @@ test-wasm: node-package
 # release than the go directive fails instead of fetching that release.
 GO_RELEASE := $(shell sed -n 's/^go \(.*\)$$/\1/p' packages/go/go.mod)
 GO_ENV := GOTOOLCHAIN=local CGO_LDFLAGS=-L$(CARGO_TARGET_DIR)/debug GOFLAGS=-tags=polyspec_panic_test,polyspec_codec_test
-test-go: bindings
+test-go: bindings-go
 	test "$$($(GO_ENV) $(GO) env GOVERSION)" = "go$(GO_RELEASE)"
 	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-go --locked --features panic-test,codec-test
 	test -z "$$(cd packages/go && $(GOFMT) -l .)"
