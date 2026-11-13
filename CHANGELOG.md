@@ -1,3 +1,8 @@
+<!-- doc-id: changelog -->
+
+- Every tracked document is an English file and its Korean twin: `AGENTS.ko.md` and `docs/spec/negotiate.ko.md` are
+  added, `README.md` and `CHANGELOG.md` begin with the marker `doc-id`, and each Korean file holds the same `doc-id`
+  and `source-sha256`, the sha256 of its English file.
 
 - `scripts/binding.mts` clones the checkout that Cargo made of the pinned binding commit into `var/binding/<commit>`
   and no longer copies its files. `binding check` reads its own commit from its Git checkout and compares it with the

@@ -1,3 +1,5 @@
+<!-- doc-id: readme -->
+<!-- source-sha256: 2a7971453fdbe58c85848e6a649dfbd88c2d8bbcc454dd011a07d28a212b3a7e -->
 # http-negotiation
 
 [English](README.md)
