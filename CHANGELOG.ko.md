@@ -1,7 +1,13 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: b9776edeb3e99d7ec8db2f09a189ce99bea0def3de67c06af23c15823f7306e1 -->
+<!-- source-sha256: 64e250afaf397e72cb2ffa14e68a6f78881014cf01bdb691330273ab66c3aa1b -->
 
 ## Unreleased
+
+- `Cargo.lock`이 `polyspec-binding-core`를 binding의 commit 49a4e97로 고정한다. 그 commit의 결함 주입점은 macro
+  `binding_core::fault::point!`이며, 그것을 쓰는 crate의 feature `fault-test`로 판정된다(binding GN-5).
+  `packages/rust/src/candidate.rs`의 주입점은 `point!(crate::fault::INTERNAL)`이고, `make test`는 core의 시험을 그
+  feature `fault-test`와 함께 실행한다. contract 시험이 주입점을 걸려면 그 feature가 필요하다. `make lint-rust`는 core를
+  그 feature가 있을 때와 없을 때 모두 lint한다. 전에는 core가 함수 `fault::point`이 없는 binding 49a4e97로 컴파일되지 않았다.
 
 - `Cargo.lock`이 `polyspec-binding-core`를 binding의 commit 1bf0025로 고정하고, 바인딩 crate는 그 commit의 binding
   scaffold가 쓰는 것이다(binding BD-9, GN-3d). 각 crate는 `[lints] workspace = true`로 workspace의 lint를 받고,

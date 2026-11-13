@@ -79,7 +79,7 @@ impl Accept {
             None => Ok(Weight { weight: 0, range: None }),
             Some((index, _, weight)) => {
                 // NG-11.4: the point imitates an index that does not fit the integer of the interface.
-                if binding_core::fault::point(crate::fault::INTERNAL).is_some() {
+                if binding_core::fault::point!(crate::fault::INTERNAL).is_some() {
                     return Err(Error::Internal);
                 }
                 let index = u64::try_from(index).map_err(|_overflow| Error::Internal)?;

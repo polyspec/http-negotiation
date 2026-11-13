@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- `Cargo.lock` pins `polyspec-binding-core` at the commit 49a4e97 of binding, whose fault injection point is the macro
+  `binding_core::fault::point!`, judged by the feature `fault-test` of the crate that writes it (binding GN-5): the
+  point of `packages/rust/src/candidate.rs` is `point!(crate::fault::INTERNAL)`, and `make test` runs the tests of the
+  core with its feature `fault-test`, which the contract test needs to arm the point; `make lint-rust` lints the core
+  with and without it. Before, the core did not compile with binding 49a4e97, which has no function `fault::point`.
+
 - `Cargo.lock` pins `polyspec-binding-core` at the commit 1bf0025 of binding, and the binding crates are the ones
   that binding scaffold of that commit writes (binding BD-9, GN-3d): each crate takes the lints of the workspace through
   `[lints] workspace = true`, the attributes of `src/lib.rs` are in the form that binding scaffold writes, the Go and
