@@ -1,7 +1,18 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 85fc8d5fae4ffd65c6b2695ebea8478300e66572e51902dbf84fcdac211df2ed -->
+<!-- source-sha256: 81a714a91c6d51ce9ace697b0f9b6c34ee96d34365ad47ef5ab3c2f6ef8e8a80 -->
 
 ## Unreleased
+
+- 저장소에 GitHub의 검사와 release가 생겼다. 전에는 어떤 workflow도 검사를 실행하지 않았고, 어떤 step도 commit을
+  tag하거나 GitHub Release를 만들지 않았다. `.github/workflows/ci.yml`은 `main`의 push와 수동 실행에서
+  `ubuntu-26.04-arm` 위에 `make check`, `make test-bindings`, `make release-coverage`를 job `core`와 `bindings`로
+  실행한다. 각 대상은 `make ci-targets`로 실행하고, 마지막 job `ci-passed`는 두 job이 모두 통과했을 때만 통과한다.
+  `.github/workflows/release.yml`은 그런 실행의 commit을 `CHANGELOG.md` 맨 위 section의 version으로 tag하고 그 GitHub
+  Release를 만든다. `config/release.json`은 코어 crate를 Git tag로 release하고 archive는 release하지 않는다. Makefile에
+  `install-php-tools`, CI 대상, release 대상이 생겼다. `make release-coverage`는 "No rule to make target"으로 실패했고,
+  지금은 모든 package 파일이 분류되었다고 보고한다. job `bindings`는 `make test-python`과 `make test-php`에서
+  실패한다. 그 대상이 읽는 wheel과 PHP 확장을 http-media-type의 release가 가질 때까지 그렇다. Go 대상에서는 binding이
+  계약의 Go를 생성할 때까지 실패한다(T1.7).
 
 - 저장소가 다른 polyspec 저장소의 꼴로 계획 `docs/plans/rust-core/plan.md`와 그 checklist
   `docs/plans/rust-core/checklist.md`를 각각 한국어 쌍과 함께 가진다. checklist는 코어, 인터페이스 계약, 바인딩 crate의

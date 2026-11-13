@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- The repository has its checks on GitHub and its release. Before, no workflow ran a check and no step tagged a
+  commit or created a GitHub Release. `.github/workflows/ci.yml` runs `make check`, `make test-bindings` and `make
+  release-coverage` on `ubuntu-26.04-arm` for the push of `main` and a manual run, in the jobs `core` and `bindings`,
+  each target through `make ci-targets`, and its last job `ci-passed` passes only when both passed.
+  `.github/workflows/release.yml` tags the commit of such a run with the version of the top section of `CHANGELOG.md`
+  and creates its GitHub Release. `config/release.json` releases the core crate as a Git tag and no archive. The
+  Makefile adds `install-php-tools`, the CI targets and the release targets. `make release-coverage` failed with "No
+  rule to make target" and now reports that every package file is classified. The job `bindings` fails on `make
+  test-python` and `make test-php` until a release of http-media-type holds the wheel and the PHP extension that they
+  read, and on the Go targets until binding generates Go for the contract (T1.7).
+
 - The repository has the plan `docs/plans/rust-core/plan.md` and its checklist `docs/plans/rust-core/checklist.md`, each
   with its Korean twin, in the form of the other polyspec repositories. The checklist records the steps of the core,
   the interface contract, the workspace of the binding crates, the bindings and the end-to-end check as done with the
