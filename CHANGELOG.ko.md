@@ -1,5 +1,19 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: bf9b58f2a65fd282377fdcf54788b888334c6ac33502a01a965da02b0a364fe8 -->
+<!-- source-sha256: 7857a0bc6d876ae637816153a38613659afb0608319c0e7aaa282f6b0ab7bf8b -->
+
+- kind `internal`이 자기 case를 갖는다(binding CK-22, X-1). 어떤 입력도 그 kind에 닿지 않으므로, 코어는
+  `Accept::weigh`에서 후보를 정하는 range의 index를 인터페이스의 정수로 바꾸는 자리에 결함 주입점
+  `http_negotiation.internal`(`fault::INTERNAL`)을 두고, 계약은 그 점을 `faults`에 적는다(inject `broken`, fills
+  `internal`). group `weigh`의 case `a_broken_index_is_internal`은 그 점을 arm하고 kind `internal`을 낸다.
+  `tests/contracts.rs`는 생성된 binding 시험처럼 그 점을 arm하고, 터지지 않은 결함을 실패시킨다. 코어는
+  `polyspec-binding-core`의 feature를 켜는 feature `fault-test`를 가지며, Python, Node, PHP의 binding crate는
+  binding scaffold가 쓰는 대로 그 feature를 켠다. 코어 시험은 `polyspec-binding-core`에 대한 dev-dependency로 그
+  feature를 켠다. spec은 NG-11.4에 그 점과 그 표를 적는다. `make bindings-check`는 finding 없이 통과한다.
+  `make bindings`는 계약을 이름으로 거부한다: 고정된 생성기는 아직 Go와 WASM의 fault-test entry point를 쓰지
+  않는다(G-5).
+
+- 후보 값의 검사가 실패할 수 없는 앞선 값의 slice에서 더는 `internal`을 내지 않는다. 지금 값 앞의 값들을 `take`로
+  읽으므로, `internal`은 NG-11의 표가 적는 대로 후보를 정하는 range의 index에서만 나온다.
 
 - 계약이 binding의 다섯 target을 적는다(BD-27): `packages/rust/interface.json`의 `targets`는 php, python, node,
   go, wasm이고, `packages.go`는 Go 모듈 `github.com/polyspec/http-negotiation/packages/go`를 적으며, npm 패키지의 entry

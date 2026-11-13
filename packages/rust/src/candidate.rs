@@ -78,6 +78,10 @@ impl Accept {
             // NG-10.2: no range matches.
             None => Ok(Weight { weight: 0, range: None }),
             Some((index, _, weight)) => {
+                // NG-11.4: the point imitates an index that does not fit the integer of the interface.
+                if binding_core::fault::point(crate::fault::INTERNAL).is_some() {
+                    return Err(Error::Internal);
+                }
                 let index = u64::try_from(index).map_err(|_overflow| Error::Internal)?;
                 Ok(Weight { weight, range: Some(index) })
             }
@@ -139,8 +143,7 @@ fn check(candidate: &Candidate) -> Result<Checked<'_>, Error> {
             if !value.iter().all(|&byte| is_quotable(byte)) {
                 return Err(Error::InvalidCandidate);
             }
-            let earlier = parameter.values.get(..index).ok_or(Error::Internal)?;
-            if earlier.iter().any(|other| same_value(&name, other, value)) {
+            if parameter.values.iter().take(index).any(|other| same_value(&name, other, value)) {
                 return Err(Error::InvalidCandidate);
             }
         }

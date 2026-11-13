@@ -1,5 +1,20 @@
 <!-- doc-id: changelog -->
 
+- The kind `internal` has its case (binding CK-22, X-1). No input reaches it, so the core marks the fault injection
+  point `http_negotiation.internal` (`fault::INTERNAL`) in `Accept::weigh`, where the index of the deciding range is
+  converted to the integer of the interface, and the contract names it in `faults` (inject `broken`, fills
+  `internal`). The case `a_broken_index_is_internal` of the group `weigh` arms the point and raises the kind
+  `internal`; `tests/contracts.rs` arms it as a generated binding test does and fails a fault that did not fire. The
+  core has the feature `fault-test`, which turns on that of `polyspec-binding-core`, and the binding crates of Python,
+  Node and PHP turn it on, as binding scaffold writes; the core tests turn it on through the dev-dependency on
+  `polyspec-binding-core`. The spec states the point and its table in NG-11.4. `make bindings-check` passes with no
+  finding. `make bindings` refuses the contract by name: the pinned generator writes no fault-test entry points for
+  Go and WASM yet (G-5).
+
+- The check of the candidate values no longer returns `internal` for a slice of the earlier values that cannot fail:
+  the values before the current one are read with `take`, so `internal` comes from the index of the deciding range
+  alone, as the table of NG-11 states.
+
 - The contract names the five targets of binding (BD-27): `targets` of `packages/rust/interface.json` is php, python,
   node, go and wasm, `packages.go` names the Go module `github.com/polyspec/http-negotiation/packages/go`, the entry `.`
   of the npm package takes the conditions `{node: napi, browser: wasm}`, each error class names its WASM class, the

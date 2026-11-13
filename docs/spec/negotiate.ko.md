@@ -1,5 +1,5 @@
 <!-- doc-id: spec-negotiate -->
-<!-- source-sha256: c486d8d0d5028c664ca02e167edfd04d05c9d4fa4063f3a3eff3940306698c4a -->
+<!-- source-sha256: 1237bc0e34eba14e805b5ab127cc2c579d7be43a6b61ce62e9d1b1be9e80cac4 -->
 # http-negotiation 명세
 
 이 라이브러리는 HTTP의 `Accept` field 값을 읽고, 후보 media type 목록의 각 후보에 `Accept` 값이 그 후보에 주는
@@ -121,6 +121,15 @@ parameter 값의 비교를 정의한다. 이 명세는 그 규칙을 가리키�
   1. NG-11.3 `Accept` field는 언제나 요청 field이므로, 그 두 실패는 status 400, 잘못된 형식의 요청
      문법을 가진다(RFC 9110 15.5.1절). 후보는 호출자에게서 오며, 호출자가 status를 정한다.
   2. NG-11.2 오류의 message는 그 kind의 고정된 문장이며 입력을 적지 않는다.
+  3. NG-11.4 어떤 입력도 kind `internal`에 닿지 않으므로, 결함 주입점이 그 kind를 낸다(binding 설계 G-5, X-1).
+     point `http_negotiation.internal`은 주입 `broken`으로 `Accept::weigh`가 후보를 정하는 range의 index를
+     인터페이스의 정수에 들어가지 않는 index로 다루게 한다. case `a_broken_index_is_internal`이 그 point를 arm하고
+     kind, category, status를 확인하며, 생성된 binding 시험은 그 case로 target마다 오류 class를 확인한다. 이 point는
+     코어의 feature `fault-test`가 켜지지 않으면 아무것도 하지 않으며, 그 feature는 시험만 켠다.
+
+     | id | 자리(함수) | inject | fills | 흉내 내는 조건의 규칙 id | arming이 이어지는가 |
+     |---|---|---|---|---|---|
+     | `internal` | `Accept::weigh` | `broken` | `internal` | NG-11 | task나 thread를 시작하지 않는다. 호출은 그 entry point의 thread에서 돈다 |
 
 - **NG-12** 모든 함수는 순수하다. I/O가 없고, 호출 사이의 상태가 없고, 기다림이 없다(인터페이스 계약의 `wait: none`).
   1. NG-12.1 모든 type은 `Send + Sync`이며 최대 16 byte의 alignment를 필요로 한다.

@@ -12,3 +12,12 @@ mod error;
 pub use accept::{Accept, Range, FULL_WEIGHT};
 pub use candidate::{Candidate, CandidateParameter, Matching, Weight};
 pub use error::Error;
+
+/// The fault injection points of the library (binding design G-5, X-1; `docs/spec/negotiate.md`, NG-11.4), which the
+/// interface contract names in `faults`. A point does nothing unless the feature `fault-test` is on.
+pub mod fault {
+    /// The index of the deciding range in `Accept::weigh`, treated as not fitting the integer of the interface: the
+    /// kind `internal`, which no input reaches.
+    #[doc(hidden)]
+    pub const INTERNAL: &str = "http_negotiation.internal";
+}

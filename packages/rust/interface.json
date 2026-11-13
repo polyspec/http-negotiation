@@ -126,6 +126,20 @@
     "binding": [],
     "wrapped": []
   },
+  "faults": [
+    {
+      "id": "internal",
+      "core": "polyspec_http_negotiation::fault::INTERNAL",
+      "inject": [
+        "broken"
+      ],
+      "fills": [
+        "internal"
+      ],
+      "reason": "NG-11.4",
+      "place": "polyspec_http_negotiation::Accept::weigh"
+    }
+  ],
   "units": [
     {
       "id": "range",

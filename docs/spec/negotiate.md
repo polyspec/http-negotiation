@@ -120,6 +120,16 @@ statements it checks.
   1. NG-11.3 An `Accept` field is always a request field, so its two failures carry status 400, malformed request
      syntax (RFC 9110, section 15.5.1). A candidate comes from the caller, which decides the status.
   2. NG-11.2 The message of an error is the fixed sentence of its kind and names no input.
+  3. NG-11.4 No input reaches the kind `internal`, so a fault injection point gives it (binding design G-5, X-1): the
+     point `http_negotiation.internal`, with the injection `broken`, makes `Accept::weigh` treat the index of the range
+     that decides a candidate as an index that does not fit the integer of the interface. The case
+     `a_broken_index_is_internal` arms it and checks the kind, the category and the status; a generated binding test
+     checks the error class of each target with it. The point does nothing unless the feature `fault-test` of the core
+     is on, which only tests turn on.
+
+     | id | Place (function) | inject | fills | Rule id of the imitated condition | Does the arming carry over |
+     |---|---|---|---|---|---|
+     | `internal` | `Accept::weigh` | `broken` | `internal` | NG-11 | no task or thread is started: the call runs on the thread of its entry point |
 
 - **NG-12** Every function is pure: no I/O, no state between calls, no wait (`wait: none` of the interface contract).
   1. NG-12.1 Every type is `Send + Sync` and needs at most 16 bytes of alignment.

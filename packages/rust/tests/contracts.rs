@@ -117,6 +117,21 @@ fn candidate(value: &Value) -> Result<Candidate, String> {
     })
 }
 
+/// Calls a member under the faults that a case arms, as a generated binding test does (binding design G-5, NG-11.4):
+/// it arms the list for the member, the call takes the arming as the entry point of the member does, and a fault that
+/// did not fire fails the case. A case without `faults` calls the member with no arming.
+fn armed<T>(case: &Value, member: &str, call: impl FnOnce() -> T) -> Result<T, String> {
+    let Some(faults) = case.get("faults") else { return Ok(call()) };
+    let id = binding_core::fault::arm(member, &faults.to_string()).map_err(|error| error.to_string())?;
+    let outcome = binding_core::fault::take(member).run(call);
+    let left = binding_core::fault::left(id).map_err(|error| error.to_string())?;
+    if left.is_empty() {
+        Ok(outcome)
+    } else {
+        Err(format!("{}: the faults of {} did not fire", string(case, "id")?, left.join(", ")))
+    }
+}
+
 /// Compares the one result key of a case, `raises` or `expected_key`, with the outcome.
 fn compare<T>(
     failures: &mut Vec<String>,
@@ -161,7 +176,10 @@ fn weigh_cases() -> Result<(), String> {
     let mut failures = Vec::new();
     for case in group(&cases, "weigh")? {
         let candidates = array(case, "candidates")?.iter().map(candidate).collect::<Result<Vec<_>, _>>()?;
-        let outcome = Accept::parse(&lines(case)?).and_then(|accept| accept.weigh(&candidates));
+        let outcome = match Accept::parse(&lines(case)?) {
+            Ok(accept) => armed(case, "accept.weigh", || accept.weigh(&candidates))?,
+            Err(error) => Err(error),
+        };
         compare(&mut failures, case, "weights", outcome, |weights| weights_of(weights))?;
     }
     assert!(failures.is_empty(), "{}", failures.join("\n"));
