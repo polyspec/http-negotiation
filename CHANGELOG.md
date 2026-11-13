@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- `Cargo.lock` pins `polyspec-binding-core` at the commit 1bf0025 of binding, and the binding crates are the ones
+  that binding scaffold of that commit writes (binding BD-9, GN-3d): each crate takes the lints of the workspace through
+  `[lints] workspace = true`, the attributes of `src/lib.rs` are in the form that binding scaffold writes, the Go and
+  WASM crates name `polyspec-http-media-type`, and the PHP crate has `build.rs`, which tells the macOS linker to leave
+  the symbols of PHP undefined for its library alone, with `test = false` and `doctest = false` in `[lib]`.
+  `.cargo/config.toml` is removed: it gave the same link setting to every crate of the workspace, the test executables
+  of the core included. The Node addon takes it from `napi_build::setup()` of its `build.rs`. Before, `make
+  bindings-check` with binding 1bf0025 reported CK-19 for each crate. `cargo fmt --all --check` (`make fmt-check`)
+  fails on the four `src/lib.rs` files that binding scaffold writes, because `rustfmt.toml` sets `use_small_heuristics
+  = "Max"`, which puts each attribute on one line, and binding writes the attributes in the form of the default width.
+
 - The contract case of the group internal on the WASM binding (`packages/ts/tests/cases.wasm.test.mjs`) arms its
   faults through `__armFaults` and `__faultLeft` of the module that wasm-bindgen writes, as the generated tests do
   (binding GN-5). It looked for them on the module of the subpath `./wasm`, which does not export them, so `make

@@ -1,7 +1,17 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: a573246ea4c2d63b42bc49e9724ece4194af58922dbfa030272df1620e181cee -->
+<!-- source-sha256: b9776edeb3e99d7ec8db2f09a189ce99bea0def3de67c06af23c15823f7306e1 -->
 
 ## Unreleased
+
+- `Cargo.lock`이 `polyspec-binding-core`를 binding의 commit 1bf0025로 고정하고, 바인딩 crate는 그 commit의 binding
+  scaffold가 쓰는 것이다(binding BD-9, GN-3d). 각 crate는 `[lints] workspace = true`로 workspace의 lint를 받고,
+  `src/lib.rs`의 attribute는 binding scaffold가 쓰는 꼴이며, Go와 WASM crate는 `polyspec-http-media-type`을 적고, PHP
+  crate는 `build.rs`를 가져 macOS 링커에게 자기 라이브러리에만 PHP의 기호를 정의하지 않은 채 두게 하며 `[lib]`에
+  `test = false`와 `doctest = false`를 둔다. `.cargo/config.toml`은 지운다. 그 파일은 core의 시험 실행 파일까지
+  workspace의 모든 crate에 같은 링크 설정을 주었다. Node addon은 그 설정을 `build.rs`의 `napi_build::setup()`에서 받는다.
+  전에는 binding 1bf0025의 `make bindings-check`가 crate마다 CK-19를 보고했다. `cargo fmt --all --check`(`make
+  fmt-check`)는 binding scaffold가 쓰는 `src/lib.rs` 네 파일에서 실패한다. `rustfmt.toml`이 `use_small_heuristics =
+  "Max"`로 각 attribute를 한 줄에 두는데, binding은 기본 폭의 꼴로 attribute를 쓰기 때문이다.
 
 - WASM 바인딩에서 group internal의 contract case(`packages/ts/tests/cases.wasm.test.mjs`)가 생성된 시험처럼
   wasm-bindgen이 쓴 모듈의 `__armFaults`와 `__faultLeft`로 fault를 건다(binding GN-5). 전에는 그 둘을 export하지
