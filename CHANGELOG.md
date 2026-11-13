@@ -6,7 +6,7 @@
   binding imports the Go module of http-media-type, which `packages/go/go.mod` requires in the development form and no
   tracked file resolves, and `go vet` of a tree of the tracked files fails with a missing `go.sum` entry for it. Row
   T1.7 is open again and no longer bypassed: its cause was that binding refused Go, and what is left is the recipe of
-  `make test-go`, which gives neither that module nor its static library. Row T1.10 is done: `make fmt-check` passes
+  `make test-go`, which gives neither that module nor its static library, and the end-to-end check of binding on the target go, whose run gives the copy no `go.work` for that module. Row T1.10 is done: `make fmt-check` passes
   on the committed tree. `AGENTS.md` states that the generated Go files `zz_generated_*.go` are not tracked and why.
 
 - `Cargo.lock` pins `polyspec-binding-core` and `polyspec-http-media-type` at the heads of the branch `v1/rust-core`
