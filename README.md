@@ -18,10 +18,15 @@ The rules are in [docs/spec/negotiate.md](docs/spec/negotiate.md), the cases in
 [contracts/negotiate.json](contracts/negotiate.json) and the public API of the bindings in
 [packages/rust/interface.json](packages/rust/interface.json), which the crate package holds. The core is the Rust crate in
 `packages/rust`; the PHP, Python, Node, browser (WASM) and Go bindings, the five targets that every contract names
-(binding BD-27), are generated from the interface contract. The end-to-end check of binding builds and tests the PHP,
-Python and Node bindings; the generator does not take the contract for Go and WASM yet.
+(binding BD-27), are generated from the interface contract. The generator does not take the contract yet, because it does not
+generate the entry points of the feature fault-test for Go and WASM, so `make bindings` writes nothing and `make
+test-bindings` fails with that cause.
 
 ```sh
-make test
-make lint
+make bootstrap       # package-lock.json, @polyspec/kit included, with the npm of devEngines
+make install         # the tools of mise.toml, rust-toolchain.toml and .php-version into var/tools
+make test            # the core: the contract cases and the tests
+make lint            # the core: rustfmt --check and clippy -D warnings
+make bindings        # generate the bindings into packages/*/generated
+make test-bindings   # clippy of the workspace, then the bindings built, installed and tested in each language
 ```

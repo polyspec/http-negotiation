@@ -50,15 +50,52 @@ rules of this repository.
 - `polyspec-binding-core` is a Git dependency of the core and of the binding crates (branch `v1/rust-core` of the
   binding repository) until binding is released; `Cargo.lock` pins its commit. The core implements
   `binding_core::Kinds` for its error (NG-11).
-- `scripts/binding.mts` runs binding from a clone, in `var/binding/<commit>`, of the checkout that Cargo made of the
-  commit that `Cargo.lock` pins, so that the generator and `binding_core` are one version, until binding is released.
+- binding itself is the TypeScript tool of the same repository, which no registry holds yet. `scripts/binding.mts` takes
+  it from the checkout that Cargo made of the commit that `Cargo.lock` pins, clones it into `var/binding/<commit>` and
+  installs its dependencies there by its `package-lock.json`, so that the generator and `binding_core` are one version.
   The clone is a Git checkout of binding at that commit: binding check reads its own commit from it and compares it with
-  the commit of `Cargo.lock` (CK-20), which a copy of the files alone fails. `make bindings` generates every target at
-  once; the pinned binding refuses the contract for Go and WASM by name (G-4), so it writes nothing.
-- The bindings are built and tested by the end-to-end check of binding (`make e2e` of binding, GN-14), which generates,
-  builds and tests each of the five targets on its own on the standard runner of its language and names each target
-  that fails with its causes. No make target of this repository builds or tests a binding, and a target that the
-  generator refuses stays a failure of that check, never left out of `targets`.
+  the commit of `Cargo.lock` (CK-20), which a copy of the files alone fails. This holds only until the first release of
+  binding.
+- A case of `contracts/negotiate.json` follows the case convention of binding (G-5): its keys are the parameter names
+  in snake_case (`lines`, `candidates`), and a record is the object of its fields (a candidate is
+  `{"type", "subtype", "parameters", "matching", "wildcards"}`).
+- A range holds the record `Parameter` of http-media-type, whose class the Python package and the PHP extension of
+  http-media-type give (binding T-3). `make test-python` installs the wheel `HTTP_MEDIA_TYPE_WHEEL` beside the wheel of
+  this repository and `make test-php` loads the extension `HTTP_MEDIA_TYPE_EXTENSION` before this one; both are files
+  that a build of the checkout of http-media-type writes, and each recipe fails while its file is missing. The pinned
+  binding refuses to generate the contract (G-4), because it does not generate the entry points of the feature
+  fault-test for Go and WASM yet, so `make bindings` writes nothing and every target of `make test-bindings` fails
+  with that cause.
+- `make bindings` generates; every make target that builds or tests a binding runs it first. `make test-bindings` runs
+  clippy on the whole workspace, `make check-declarations`, then `make test-python`, `make test-node`, `make
+  test-wasm`, `make test-php` and `make test-go`, one for each of the five targets of the contract, each of which runs
+  the tests that binding generates and the contract cases of the binding on the standard runner of its language:
+  unittest, node --test (Node and WASM, the WASM binding through the subpath `./wasm` of the same installed package),
+  PHPUnit and go test. The contract cases are `packages/python/tests`, `packages/ts/tests/cases.test.mjs`,
+  `packages/ts/tests/cases.wasm.test.mjs`, `packages/php-ext/tests` and `packages/go/tests`. A target that the
+  generator cannot take stays a failing target with its cause; no target is left out or skipped (binding BD-27).
+- In the Go module binding owns the files `zz_generated_*.go` (binding GN-3); they are tracked, because a Go module is
+  fetched as source, and `make bindings` writes them again. `packages/ts/wasm/generated` and
+  `packages/go/internal/ffi/generated` are not tracked; wasm-bindgen writes the module and its glue into the first.
+  The variables `PYTHON` (3.14 or later), `PHP`, `PHP_CONFIG`, `PHPUNIT`, `GO`, `GOFMT` and `WASM_BINDGEN` name the
+  runtimes. `make test-go` fails a Go of another release than the go directive of `packages/go/go.mod` and runs it with
+  `GOTOOLCHAIN=local`, so that it fetches no toolchain, and `make test-wasm` fails a wasm-bindgen CLI of another release
+  than the `wasm-bindgen` crate of `packages/ts/wasm/Cargo.toml`, because the CLI reads only a module of its own
+  release (binding GN-18). `CARGOFLAGS` adds
+  arguments to every cargo build. On macOS a PHP extension and a Node addon take the symbols of their runtime when it
+  loads them, so `.cargo/config.toml` tells the linker to leave them undefined, and the recipes name the library that
+  Cargo builds by the extension of the platform (`dylib` on macOS, `so` on Linux).
+- The tools are pinned in tracked files and installed into `var/tools` of the checkout, as in binding: `mise.toml`
+  names Node.js, npm, Go, Python, Composer and the wasm-bindgen CLI at the releases of binding and `mise.lock` their
+  digests, `config/toolchain.json` the release of mise and its digests, `rust-toolchain.toml` the Rust toolchain with
+  the target `wasm32-unknown-unknown` and `.php-version` the PHP of the machine, which the wrappers of `var/tools/bin`
+  run. A fresh checkout runs `make bootstrap`, which installs `package-lock.json` with the npm of `devEngines` of
+  `package.json`, then `make install`, which runs the installers of `@polyspec/kit` (`make install-tools`). Every recipe
+  runs with `var/tools/bin` and the shims of mise first on `PATH`; `GO`, `GOFMT` and `WASM_BINDGEN` name the shims of
+  mise and `PHP` and `PHP_CONFIG` the wrappers of `var/tools/bin`.
+- The development tools are dependencies of the repository: TypeScript and `@polyspec/kit` in `package.json`, pinned by
+  `package-lock.json`, and PHPUnit in `require-dev` of `composer.json`, installed into `vendor/` by `composer install`
+  and pinned by `composer.lock`.
 
 ## Checks
 

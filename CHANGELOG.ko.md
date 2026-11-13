@@ -1,7 +1,39 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 9948e1d8f5c8a77932b4a05cffbc5e4e9e39e6b04878314a17c53757df5f7dc3 -->
+<!-- source-sha256: 547da6d883d3aa3695b4a48c0e6a676d4208e6358c4db7690349118ddeedc940 -->
 
 ## Unreleased
+
+- 도구가 binding처럼 고정되고 checkout의 `var/tools`에 설치된다. `mise.toml`과 `mise.lock`은 Node.js 26.12.0, npm
+  12.2.0, Go 1.27.3, Python 3.14.8, Composer 2.10.3, wasm-bindgen CLI 0.2.130을 binding의 digest로 고정하고,
+  `config/toolchain.json`은 mise 2026.10.10을 고정하며, `.php-version`은 PHP 8.4를 적고, `rust-toolchain.toml`은
+  target `wasm32-unknown-unknown`을 더한다. 새 `package.json`은 `devEngines`에 npm 12.2.0을 적고 TypeScript 7.0.2와 `@polyspec/kit`
+  0.0.109를 적는다. binding의 recipe처럼 `make bootstrap`, `make install`, `make install-tools`, `make install-packages`, `make
+  toolchain-lock`이 그 설치기를 실행한다. 모든 recipe는 `var/tools/bin`과 mise의 shim을 `PATH` 앞에 두고 실행하며,
+  `GO`, `GOFMT`, `WASM_BINDGEN`, `PHP`, `PHP_CONFIG`는 `var/tools`의 도구를 가리킨다. 전에는 모든 recipe가 기계의
+  `PATH`가 가리키는 도구를 고정된 판 없이 실행했다.
+
+- `make test-bindings`가 계약의 모든 target을 빌드하고 시험한다(binding BD-27). `make test-python`, `make
+  test-node`, `make test-wasm`, `make test-php`, `make test-go`는 각각 binding이 생성한 시험과 그 바인딩의 새 contract
+  case를 그 언어의 표준 runner로 실행한다. `packages/python/tests/test_cases.py`는 unittest로,
+  `packages/ts/tests/cases.test.mjs`와 `packages/ts/tests/cases.wasm.test.mjs`는 node --test로(WASM 바인딩은 설치된
+  패키지의 subpath `./wasm`으로, 모듈은 둘이 함께 쓰는 단계 `node-package`에서 wasm-bindgen CLI가 쓴다),
+  `packages/php-ext/tests/CasesTest.php`는 PHPUnit으로, `packages/go/tests/cases_test.go`는 `packages/go/go.mod`의 go
+  지시문의 판인 Go와 `GOTOOLCHAIN=local`로 go test로 실행한다. 각 runner는 `contracts/negotiate.json`의 group
+  `accept`, `weigh`, `invalidCandidates`, `internal`의 모든 case를 받아 그 range, weight, 또는 `raises`를 비교한다.
+  `internal`의 case는 `accept.weigh`에 그 fault를 걸고, fault가 일어나지 않으면 실패한다. Go와 WASM runner는 그
+  case를 실패시킨다. 그 바인딩들에는 fault를 거는 진입점이 없기 때문이다. 계약에 fault 주입 지점이 있으므로 Python, Node, PHP, WASM crate는 feature `panic-test`와
+  `fault-test`(`TEST_FEATURES`)로 빌드되고 lint된다(binding GN-5). `make check-declarations`는 `package.json`의
+  TypeScript로 Node와 WASM 바인딩의 선언을 검사한다. `make test-python`은 http-media-type의 wheel
+  `HTTP_MEDIA_TYPE_WHEEL`을 설치하고 `make test-php`는 그 확장 `HTTP_MEDIA_TYPE_EXTENSION`을 로드한다. range가 그
+  record `Parameter`를 담기 때문이다. `make fmt-check`는 코어만이 아니라 workspace 전체에 `cargo fmt --all --check`를
+  실행하고, `make lint-rust`는 코어의 clippy이며, `make lint`는 그 둘을, `make test`는 코어의 시험을 실행한다.
+  PHPUnit은 `composer.json`의 의존성이고 `composer.lock`이 고정하며, `.cargo/config.toml`은 macOS에서 PHP와 Node
+  런타임의 기호를 정의하지 않은 채 둔다. `.gitignore`는 `packages/ts/wasm/generated/`와
+  `packages/go/internal/ffi/generated/`를 적으므로, `make bindings`가 쓰는 Go 파일 `zz_generated_*.go`는 추적된다
+  (binding GN-3). 전에는 이 저장소의 바인딩을 빌드하거나 시험하는 make target이 없었다. 고정된 binding은 Go와 WASM의
+  feature fault-test 진입점을 생성하지 않으므로 계약의 생성을 거부한다(G-4). 그래서 `make bindings`는 파일을 쓰지
+  않고, 추적할 Go 파일도 생성되지 않으며, `make test-bindings`의 모든 target이 그 원인으로 실패한다. `make
+  fmt-check`는 `packages/go/internal/ffi/src/lib.rs`에서 실패한다. binding scaffold가 쓰는 125자의 줄 때문이다.
 
 - binding의 커밋 8faad21의 end-to-end 검사(GN-14)가 이 계약의 바인딩을 target마다 빌드하고 시험한다. 계약이 record
   `parameter`를 적는 레포로 http-media-type을 함께 쓴다. PHP는 PHPUnit에서 생성된 시험 94개, Python은 unittest에서
