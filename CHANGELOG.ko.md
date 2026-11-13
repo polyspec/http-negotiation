@@ -1,5 +1,12 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: c49653f4110f3fec6f39129b0ac18ab13402542a10fdcd3804a6be488e64feb8 -->
+<!-- source-sha256: 512af8463abf1f23d8cd53889ca47119069d3d513c2ffbc6e0927c9e924dfaea -->
+
+- `Cargo.lock`은 값 alias, 실패 주입, 오류 unit의 생성기를 한 개발 줄기에 가진 binding을 고정하고(CK-20), 바인딩
+  package는 그 scaffold가 쓰는 것이다. 각 바인딩 crate는 `polyspec-binding-core`를 feature `construct`와 `lock`과 함께
+  받고, lock에는 `polyspec-binding-core`의 의존으로 `tokio`가 더해진다. `make bindings-check`는 여전히 CK-22 지적
+  하나로 실패하고, 그 때문에 `make bindings`는 아무것도 쓰지 않는다. 검사는 이제 실패 주입점
+  `http_negotiation.internal`을 `broken`으로 장전하고 category `internal`의 kind를 내는 case 하나를 요구한다. 계약은
+  실패 주입점을 선언하지 않고 코어에도 없다.
 
 - 추적하는 모든 문서는 영어 파일과 그 한국어 쌍이다. `AGENTS.ko.md`와 `docs/spec/negotiate.ko.md`를
   더했고, `README.md`와 `CHANGELOG.md`는 marker `doc-id`로 시작하며, 각 한국어 파일은 같은 `doc-id`와
