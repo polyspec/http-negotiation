@@ -1,7 +1,12 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: ba34e2b39612d67c249032af86be19074efcff67ff9d84253c6ab005d0147cc9 -->
+<!-- source-sha256: 1b92f0e4d9953e8b9cea13a205b86723284a63e7546c4d26b9184cb5d21e9efc -->
 
 ## Unreleased
+
+- 추적 파일은 Git commit을 적지 않는다. changelog와 checklist가 이 저장소와 binding의 commit을 적고 있었는데, commit은
+  저장소 없이 읽는 사람에게 아무것도 알려 주지 않고 history가 합쳐지거나 다시 쓰이면 아무것도 가리키지 않는다. 각
+  기록은 사실을 그대로 두고 binding을 고정된 것 또는 더 뒤의 것으로 적는다. `AGENTS.md`에 규칙이 있고, `make
+  test-scripts`가 `tests/scripts/commits.test.mts`를 실행한다. 이 시험은 commit된 tree에서 실패했고 지금 통과한다.
 
 - release는 release commit에 Go module `packages/go`를 `packages/go/vX.Y.Z`로 tag한다. `config/release.json`의
   `goModules`가 그 module을 가리킨다. 전에는 `goModules`가 비어 있었고 규칙은 tag가 Go module을 tag하지 않는다고 했다.
@@ -29,30 +34,30 @@
 
 - core의 시험이 feature `fault-test`를 켠 core 자신에 의존한다(`packages/rust/Cargo.toml`의 `[dev-dependencies]`). 그래서
   `cargo test -p polyspec-http-negotiation`은 flag 없이 case `a_broken_index_is_internal`의 결함 주입점을 걸고, `make
-  test`는 feature를 넘기지 않는다. 전에는 binding 49a4e97의 주입점이 그것을 쓰는 crate의 feature로만 살아 있으므로(binding
+  test`는 feature를 넘기지 않는다. 전에는 고정된 binding의 주입점이 그것을 쓰는 crate의 feature로만 살아 있으므로(binding
   GN-5), binding의 end-to-end 검사가 실행하는 core의 `cargo test`가 그 case를 "the faults of http_negotiation.internal did
   not fire"로 실패시켰다.
 
 - `make bindings`가 계약의 각 target을 자기 target `make bindings-<target>`(`binding generate --target <target>`)에서
   생성하고, 각 바인딩 target은 그것에 의존한다. `make test-python`은 `bindings-python`에, `make node-package`와 `make
   check-declarations`는 `bindings-node`와 `bindings-wasm`에, `make test-php`는 `bindings-php`에, `make test-go`는
-  `bindings-go`에 의존한다(binding GN-1c). 전에는 `make bindings`가 모든 target을 한 번에 생성했으므로, binding 49a4e97이
+  `bindings-go`에 의존한다(binding GN-1c). 전에는 `make bindings`가 모든 target을 한 번에 생성했으므로, 고정된 binding이
   상태 1로 끝내는 go의 거부가 binding이 생성하는 php, python, node, wasm의 target을 멈췄다. `AGENTS.md`와 `README.md`는
   binding이 그 넷을 생성하고 go를 거부한다고 적는다.
 
-- `Cargo.lock`이 `polyspec-binding-core`를 binding의 commit 49a4e97로 고정한다. 그 commit의 결함 주입점은 macro
+- `Cargo.lock`이 `polyspec-binding-core`를 binding의 더 뒤 commit으로 고정한다. 그 commit의 결함 주입점은 macro
   `binding_core::fault::point!`이며, 그것을 쓰는 crate의 feature `fault-test`로 판정된다(binding GN-5).
   `packages/rust/src/candidate.rs`의 주입점은 `point!(crate::fault::INTERNAL)`이고, `make test`는 core의 시험을 그
   feature `fault-test`와 함께 실행한다. contract 시험이 주입점을 걸려면 그 feature가 필요하다. `make lint-rust`는 core를
-  그 feature가 있을 때와 없을 때 모두 lint한다. 전에는 core가 함수 `fault::point`이 없는 binding 49a4e97로 컴파일되지 않았다.
+  그 feature가 있을 때와 없을 때 모두 lint한다. 전에는 core가 함수 `fault::point`이 없는 고정된 binding으로 컴파일되지 않았다.
 
-- `Cargo.lock`이 `polyspec-binding-core`를 binding의 commit 1bf0025로 고정하고, 바인딩 crate는 그 commit의 binding
+- `Cargo.lock`이 `polyspec-binding-core`를 binding의 더 뒤 commit으로 고정하고, 바인딩 crate는 그 commit의 binding
   scaffold가 쓰는 것이다(binding BD-9, GN-3d). 각 crate는 `[lints] workspace = true`로 workspace의 lint를 받고,
   `src/lib.rs`의 attribute는 binding scaffold가 쓰는 꼴이며, Go와 WASM crate는 `polyspec-http-media-type`을 적고, PHP
   crate는 `build.rs`를 가져 macOS 링커에게 자기 라이브러리에만 PHP의 기호를 정의하지 않은 채 두게 하며 `[lib]`에
   `test = false`와 `doctest = false`를 둔다. `.cargo/config.toml`은 지운다. 그 파일은 core의 시험 실행 파일까지
   workspace의 모든 crate에 같은 링크 설정을 주었다. Node addon은 그 설정을 `build.rs`의 `napi_build::setup()`에서 받는다.
-  전에는 binding 1bf0025의 `make bindings-check`가 crate마다 CK-19를 보고했다. `cargo fmt --all --check`(`make
+  전에는 고정된 binding의 `make bindings-check`가 crate마다 CK-19를 보고했다. `cargo fmt --all --check`(`make
   fmt-check`)는 binding scaffold가 쓰는 `src/lib.rs` 네 파일에서 실패한다. `rustfmt.toml`이 `use_small_heuristics =
   "Max"`로 각 attribute를 한 줄에 두는데, binding은 기본 폭의 꼴로 attribute를 쓰기 때문이다.
 
@@ -99,14 +104,14 @@
   않고, 추적할 Go 파일도 생성되지 않으며, `make test-bindings`의 모든 target이 그 원인으로 실패한다. `make
   fmt-check`는 `packages/go/internal/ffi/src/lib.rs`에서 실패한다. binding scaffold가 쓰는 125자의 줄 때문이다.
 
-- binding의 커밋 8faad21의 end-to-end 검사(GN-14)가 이 계약의 바인딩을 target마다 빌드하고 시험한다. 계약이 record
+- binding의 end-to-end 검사(GN-14)가 이 계약의 바인딩을 target마다 빌드하고 시험한다. 계약이 record
   `parameter`를 적는 레포로 http-media-type을 함께 쓴다. PHP는 PHPUnit에서 생성된 시험 94개, Python은 unittest에서
   94개, Node는 `node --test`에서 95개를 통과하며, 실패하거나 건너뛴 시험은 없다. Go와 WASM은 생성에서 이름이 붙은
   거절로 실패한다(G-4). 둘 다 feature `fault-test`의 진입점(G-5)과 다른 레포의 record `http-media-type.parameter`가
   거절되고, Go는 class unit `accept`도 거절된다. 생성된 시험은 실패하는 case(B-4)를 실행하고 case의 결과는 비교하지
   않으며(binding GN-13a), binding에는 이 라이브러리의 case runner가 없으므로(V-1), 실패하지 않는 case 71개는 코어
   시험만 확인한다. 바인딩 패키지에는 그 커밋의 binding scaffold가 쓰는 `packages/php-ext`의 `build.rs`(BD-9)가 없다.
-  `Cargo.lock`은 브랜치의 head인 binding f63a655를 고정하며, 그 파일은 더 뒤의 커밋을 고정할 때 들어온다.
+  `Cargo.lock`은 브랜치의 head인 binding을 고정하며, 그 파일은 더 뒤의 커밋을 고정할 때 들어온다.
   `AGENTS.md`와 `README.md`는 binding의 end-to-end 검사가 바인딩을 빌드하고 시험한다고 적는다.
 
 - case `a_broken_index_is_internal`은 member `accept.weigh`만 읽는 자기 group `internal`에 있다
@@ -155,6 +160,6 @@
   더 이상 그 파일을 복사하지 않는다. `binding check`는 자기 Git checkout에서 자기 커밋을 읽어 `Cargo.lock`의 커밋과 비교한다(CK-20). 파일
   복사본에서는 커밋을 찾지 못해 `make bindings-check`가 실패했다.
 
-- `Cargo.lock`은 같은 라이브러리 묶음의 모든 레포가 고정하는 binding 9de9d03과 그 위의 `polyspec-http-media-type` 커밋을
+- `Cargo.lock`은 같은 라이브러리 묶음의 모든 레포가 고정하는 binding commit과 그 위의 `polyspec-http-media-type` 커밋을
   고정한다(CK-20). 바인딩 package는 그 scaffold가 쓰는 것이며, Node 패키지는 addon의 플랫폼 패키지마다 optional
   dependency를 가진다.

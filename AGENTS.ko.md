@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: be3cf208724838cfdfa97aee3ed8f1b1d730839c32cf494e9d7dfb7643ad7850 -->
+<!-- source-sha256: 343b024c6a1bc8258ce647b3930a09bf3547bf7acc7adb0fb67e2b7ff3e86c11 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -110,7 +110,7 @@
 ## CI와 release
 
 - `.github/workflows/ci.yml`은 `main`의 push와 수동 실행에서 돈다. matrix 항목마다 job 하나다. `core`는 `lint-rust`,
-  `fmt-check`, `test`, `bindings-check`, `docs-check`, `release-coverage`를 실행하고, `bindings`는 `make test-bindings`의
+  `fmt-check`, `test`, `bindings-check`, `docs-check`, `test-scripts`, `release-coverage`를 실행하고, `bindings`는 `make test-bindings`의
   대상을 실행한다. 각 job은 그 대상을 `make ci-targets`로 실행한다. `make ci-targets`는 모든 대상을 끝까지 실행하고
   보고서 `var/ci/<name>/`을 쓴다. 마지막 job `ci-passed`는 다른 모든 job이 통과했을 때만 통과한다. job은
   `ubuntu-26.04-arm`에서 돌고, 모든 action을 commit으로 고정하며, `timeout-minutes`를 두지 않고, step의 모든 명령을 make
@@ -148,3 +148,8 @@
   줄을 바꾼 본문이 온다.
 - 동작 변경, 그 spec, 그 case, `CHANGELOG.md`와 `CHANGELOG.ko.md`의 `## Unreleased` 아래 항목은
   하나의 변경이다.
+- 추적 파일은 이 저장소든 다른 저장소든 Git commit을 적지 않는다. 기록은 무엇이 바뀌었고 검사가 무엇을 냈는지를 적고,
+  의존은 `Cargo.lock`이 고정한 것("고정된 binding")이나 그 release로 가리킨다. commit id는 저장소 없이 읽는 사람에게
+  아무것도 알려 주지 않고, history가 다른 history와 합쳐지거나 다시 쓰이면 아무것도 가리키지 않는다. `v1/rust-core`를
+  `main`으로 옮길 때가 그렇다. commit으로 고정하는 파일은 예외다. lock 파일과 workflow의 action이다. `make
+  test-scripts`는 `tests/scripts/commits.test.mts`를 실행하며, 이 시험은 commit id를 가진 추적 파일을 실패로 본다.

@@ -115,7 +115,7 @@ rules of this repository.
 ## CI and release
 
 - `.github/workflows/ci.yml` runs on the push of `main` and on a manual run, one job per matrix entry: `core` runs
-  `lint-rust`, `fmt-check`, `test`, `bindings-check`, `docs-check` and `release-coverage`, and `bindings` runs the
+  `lint-rust`, `fmt-check`, `test`, `bindings-check`, `docs-check`, `test-scripts` and `release-coverage`, and `bindings` runs the
   targets of `make test-bindings`. Each job runs them with `make ci-targets`, which runs every target to its end and
   writes the report `var/ci/<name>/`, and the last job `ci-passed` passes only when every other job passed. The jobs
   run on `ubuntu-26.04-arm`, pin every action by its commit, set no `timeout-minutes` and run every command of a step
@@ -156,3 +156,9 @@ rules of this repository.
   wrapped at 72 characters.
 - A behavior change, its spec, its cases and its entry under `## Unreleased` of `CHANGELOG.md` and `CHANGELOG.ko.md`
   are one change.
+- No tracked file names a Git commit, of this repository or of another: a record states what changed and what a
+  check gave, and names a dependency by what `Cargo.lock` pins ("the pinned binding") or by its release. A commit id
+  says nothing to a reader without the repository, and it names nothing after a history is joined with another or
+  written again, as the move of `v1/rust-core` onto `main` does. The files that pin by a commit are the exceptions:
+  the lock files and the actions of the workflows. `make test-scripts` runs `tests/scripts/commits.test.mts`, which
+  fails a tracked file that holds a commit id.
