@@ -1,7 +1,13 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 81a714a91c6d51ce9ace697b0f9b6c34ee96d34365ad47ef5ab3c2f6ef8e8a80 -->
+<!-- source-sha256: ba34e2b39612d67c249032af86be19074efcff67ff9d84253c6ab005d0147cc9 -->
 
 ## Unreleased
+
+- release는 release commit에 Go module `packages/go`를 `packages/go/vX.Y.Z`로 tag한다. `config/release.json`의
+  `goModules`가 그 module을 가리킨다. 전에는 `goModules`가 비어 있었고 규칙은 tag가 Go module을 tag하지 않는다고 했다.
+  Go는 저장소 루트 아래의 module을 그 형태의 tag로만 가져오므로, 다른 저장소가 그 module을 version으로 요구할 수
+  없었다(binding GN-15g). `make release-coverage`는 모든 package 파일이 분류되었다고 보고한다. `AGENTS.md`는 첫 release
+  전에 열려 있는 일을 적는다. `origin`의 `main`, 그리고 kit 0.0.111과 binding의 release를 기다리는 바인딩의 package다.
 
 - 저장소에 GitHub의 검사와 release가 생겼다. 전에는 어떤 workflow도 검사를 실행하지 않았고, 어떤 step도 commit을
   tag하거나 GitHub Release를 만들지 않았다. `.github/workflows/ci.yml`은 `main`의 push와 수동 실행에서

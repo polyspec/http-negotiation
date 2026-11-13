@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 064a1d549f72f551834a0519e94c50483eb1aa3cf61eb78a10706d7188ed98fe -->
+<!-- source-sha256: be3cf208724838cfdfa97aee3ed8f1b1d730839c32cf494e9d7dfb7643ad7850 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -122,9 +122,12 @@
   http-media-type의 release가 두 파일을 가질 때까지 그렇다.
 - `config/release.json`은 모든 package 파일을 분류하고, `make release-coverage`가 그것을 검사한다. tag `vX.Y.Z`는 코어
   crate `packages/rust`를 Git tag로 release한다. Cargo 의존은 그것을 `tag = "vX.Y.Z"`로 가리킨다. 그 tag는 binding
-  manifest의 version이기도 하며, binding scaffold가 코어의 version으로 그 manifest를 쓴다. tag는 archive를 release하지
-  않고 Go module을 tag하지 않는다. 바인딩은 플랫폼마다 빌드되는데(abi3 wheel, PHP 확장, npm 플랫폼 package, Go 정적
-  라이브러리), kit 0.0.109의 release 도구는 npm package, Composer 소스 archive, 순수 Python wheel만 묶기 때문이다.
+  manifest의 version이기도 하며, binding scaffold가 코어의 version으로 그 manifest를 쓴다. release는 release commit에 Go module
+  `packages/go`를 `packages/go/vX.Y.Z`로도 tag한다(`config/release.json`의 `goModules`). Go는 저장소 루트 아래의 module을
+  그 형태의 tag로 가져오고, Go 바인딩이 이 저장소의 record를 가리키는 저장소는 그 module을 그 version으로 요구하기
+  때문이다(binding GN-15g). tag는 아직 archive를 release하지 않는다. 바인딩은 플랫폼마다 빌드되는데(abi3 wheel, PHP 확장,
+  npm package와 그 플랫폼 package, Go 정적 라이브러리), kit 0.0.109의 release 도구는 npm package, Composer 소스 archive, 순수
+  Python wheel만 묶기 때문이다.
 - release는 `main`에서 성공한 `ci.yml`의 push 실행이나 수동 실행의 commit이다. version-bump commit `chore(release):
   Release X.Y.Z`는 코어의 version(루트 `Cargo.toml`의 `[workspace.package]`의 `version`)을 정하고, binding
   scaffold(`node scripts/binding.mts scaffold --contract packages/rust/interface.json`)로 binding manifest를 다시 쓰며,
@@ -132,6 +135,11 @@
   `## Unreleased`를 둔다. 그 push의 CI 실행이 성공하면 `.github/workflows/release.yml`이 스스로 시작하고, `gh workflow run
   release.yml -f run=<id>`가 그것을 다시 시작한다. `make release-tag`가 그 commit에 annotated tag `vX.Y.Z`를 만들어
   push하고, `make release-publish`와 `make release-undraft`가 GitHub Release를 만든다. tag를 손으로 만들지 않는다.
+- 첫 release 전에 열려 있는 일이며, 이것 없이는 release가 끝난 것이 아니다. `origin`에 `main`이 없으므로 release는
+  `v1/rust-core`를 `main`으로 push하고 `main`을 기본 브랜치로 만든다. 바인딩의 package(abi3 wheel, PHP 확장, npm package와
+  그 플랫폼 package)는 kit 0.0.111과 binding의 release가 있어야 `config/release.json`의 행이 된다. kit 0.0.109가 그 kind를
+  거부하기 때문이다. 첫 release는 http-media-type의 release와 Go 바인딩도 기다리고(T1.9), `make fmt-check`는 scaffold가 allow 속성을 한 줄로
+  쓰는 binding을 `Cargo.lock`이 고정할 때까지 실패한다(T1.10).
 
 ## Commit과 변경
 
