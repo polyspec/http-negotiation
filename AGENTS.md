@@ -49,8 +49,10 @@ rules of this repository.
 - `polyspec-binding-core` is a Git dependency of the core and of the binding crates (branch `v1/rust-core` of the
   binding repository) until binding is released; `Cargo.lock` pins its commit. The core implements
   `binding_core::Kinds` for its error (NG-11).
-- `scripts/binding.mts` runs binding from the checkout that Cargo made of the commit that `Cargo.lock` pins, so that the
-  generator and `binding_core` are one version, until binding is released. `make bindings` generates; binding does not
+- `scripts/binding.mts` runs binding from a clone, in `var/binding/<commit>`, of the checkout that Cargo made of the
+  commit that `Cargo.lock` pins, so that the generator and `binding_core` are one version, until binding is released.
+  The clone is a Git checkout of binding at that commit: binding check reads its own commit from it and compares it with
+  the commit of `Cargo.lock` (CK-20), which a copy of the files alone fails. `make bindings` generates; binding does not
   generate this contract yet, so the bindings are not built or tested yet.
 
 ## Checks
