@@ -26,7 +26,9 @@ CARGO := cargo
 # Extra arguments of every cargo build, for example --ignore-rust-version on a machine without the pinned release.
 CARGOFLAGS ?=
 CORE := polyspec-http-negotiation
-BINDING := node scripts/binding.mts
+# make runs a recipe line without shell syntax through the PATH of its own environment, not the PATH that this file
+# exports, so the recipes name the node and the npm of var/tools by their paths.
+BINDING := $(NODE) scripts/binding.mts
 CASES := $(CURDIR)/contracts/negotiate.json
 VAR := $(CURDIR)/var
 export CARGO_TARGET_DIR ?= $(CURDIR)/target
@@ -126,7 +128,7 @@ lint-bindings: bindings
 
 # The TypeScript compiler of package-lock.json checks the generated declarations of the Node binding.
 node_modules/.package-lock.json: package-lock.json
-	npm ci --no-audit --no-fund
+	$(NPM) ci --no-audit --no-fund
 
 check-declarations: bindings node_modules/.package-lock.json
 	node_modules/.bin/tsc --noEmit --strict packages/ts/generated/index.d.ts

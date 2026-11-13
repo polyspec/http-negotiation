@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- `make bindings`, `make bindings-check` and the install of `node_modules` run the Node.js and the npm of `var/tools`
+  (`$(NODE)` and `$(NPM)` of the Makefile). make runs a recipe line without shell syntax through the `PATH` of its own
+  environment and not through the `PATH` that the Makefile exports, so `npm ci` ran the npm of the machine, which
+  refuses the npm 12.2.0 of `devEngines` (`EBADDEVENGINES`) and failed `make check-declarations` in a checkout without
+  `node_modules`, and `scripts/binding.mts` ran on the Node.js of the machine instead of Node.js 26.12.0.
+
 - The tools are pinned and installed into `var/tools` of the checkout as in binding: `mise.toml` and `mise.lock` pin
   Node.js 26.12.0, npm 12.2.0, Go 1.27.3, Python 3.14.8, Composer 2.10.3 and the wasm-bindgen CLI 0.2.130 with the
   digests of binding, `config/toolchain.json` pins mise 2026.10.10, `.php-version` names PHP 8.4, and

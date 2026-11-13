@@ -1,7 +1,13 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 547da6d883d3aa3695b4a48c0e6a676d4208e6358c4db7690349118ddeedc940 -->
+<!-- source-sha256: 622f6625989e04def43e2725515c7cca10cd2ff26d39e8e01b6aa6b61f7cc8ac -->
 
 ## Unreleased
+
+- `make bindings`, `make bindings-check`와 `node_modules` 설치가 `var/tools`의 Node.js와 npm(Makefile의 `$(NODE)`와
+  `$(NPM)`)을 실행한다. make는 shell 문법이 없는 recipe 줄을 Makefile이 export하는 `PATH`가 아니라 자기 환경의
+  `PATH`로 실행하므로, `npm ci`는 기계의 npm을 실행해 `devEngines`의 npm 12.2.0을 거부하고(`EBADDEVENGINES`)
+  `node_modules`가 없는 checkout에서 `make check-declarations`를 실패시켰으며, `scripts/binding.mts`는 Node.js
+  26.12.0 대신 기계의 Node.js로 실행되었다.
 
 - 도구가 binding처럼 고정되고 checkout의 `var/tools`에 설치된다. `mise.toml`과 `mise.lock`은 Node.js 26.12.0, npm
   12.2.0, Go 1.27.3, Python 3.14.8, Composer 2.10.3, wasm-bindgen CLI 0.2.130을 binding의 digest로 고정하고,
