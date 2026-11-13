@@ -1,7 +1,13 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 936ca5d11b9ea3b40577db75f7afb2f349dcbadd4696ecfec2041dddcf252fc3 -->
+<!-- source-sha256: 5bd7c651cf76827be1614dc03117dd020c750a5ee504ac1e91cabfc3af70cfbd -->
 
 ## Unreleased
+
+- core의 시험이 feature `fault-test`를 켠 core 자신에 의존한다(`packages/rust/Cargo.toml`의 `[dev-dependencies]`). 그래서
+  `cargo test -p polyspec-http-negotiation`은 flag 없이 case `a_broken_index_is_internal`의 결함 주입점을 걸고, `make
+  test`는 feature를 넘기지 않는다. 전에는 binding 49a4e97의 주입점이 그것을 쓰는 crate의 feature로만 살아 있으므로(binding
+  GN-5), binding의 end-to-end 검사가 실행하는 core의 `cargo test`가 그 case를 "the faults of http_negotiation.internal did
+  not fire"로 실패시켰다.
 
 - `make bindings`가 계약의 각 target을 자기 target `make bindings-<target>`(`binding generate --target <target>`)에서
   생성하고, 각 바인딩 target은 그것에 의존한다. `make test-python`은 `bindings-python`에, `make node-package`와 `make

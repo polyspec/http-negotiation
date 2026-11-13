@@ -1103,6 +1103,7 @@ version = "0.0.1"
 dependencies = [
  "polyspec-binding-core",
  "polyspec-http-media-type",
+ "polyspec-http-negotiation",
  "proptest",
  "serde_json",
 ]

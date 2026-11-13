@@ -104,10 +104,8 @@ check: lint-rust fmt-check test bindings-check
 
 lint: lint-rust fmt-check
 
-# The contract test arms the fault injection point of the core, which is live only with the feature fault-test of the
-# core itself (binding GN-5).
 test:
-	$(CARGO) test $(CARGOFLAGS) -p $(CORE) --locked --features fault-test
+	$(CARGO) test $(CARGOFLAGS) -p $(CORE) --locked
 
 lint-rust:
 	$(CARGO) clippy $(CARGOFLAGS) -p $(CORE) --locked --all-targets -- -D warnings

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- The tests of the core depend on the core itself with its feature `fault-test` (`[dev-dependencies]` of
+  `packages/rust/Cargo.toml`), so `cargo test -p polyspec-http-negotiation` arms the fault injection point of the case
+  `a_broken_index_is_internal` without a flag, and `make test` passes no feature. Before, the point of binding 49a4e97
+  is live only with the feature of the crate that writes it (binding GN-5), and `cargo test` of the core, which the
+  end-to-end check of binding runs, failed the case with "the faults of http_negotiation.internal did not fire".
+
 - `make bindings` generates each target of the contract in its own target `make bindings-<target>` (`binding generate
   --target <target>`), on which each binding target depends: `make test-python` on `bindings-python`, `make
   node-package` and `make check-declarations` on `bindings-node` and `bindings-wasm`, `make test-php` on
