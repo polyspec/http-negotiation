@@ -470,6 +470,11 @@
       "member": "accept.weigh",
       "file": "contracts/negotiate.json",
       "group": "invalidCandidates"
+    },
+    {
+      "member": "accept.weigh",
+      "file": "contracts/negotiate.json",
+      "group": "internal"
     }
   ]
 }

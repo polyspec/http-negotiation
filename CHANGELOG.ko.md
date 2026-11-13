@@ -1,5 +1,10 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 7857a0bc6d876ae637816153a38613659afb0608319c0e7aaa282f6b0ab7bf8b -->
+<!-- source-sha256: f83afba7dfee26083112a1bf6df77adcbbd59e683a2f81542738d08563f91936 -->
+
+- case `a_broken_index_is_internal`은 member `accept.weigh`만 읽는 자기 group `internal`에 있다
+  (`packages/rust/interface.json`의 `cases` 행). group `weigh`에서는 member `accept.parse`도 그 case를 읽었다. 그
+  생성된 시험은 그 점에 닿지 않는 `parse`를 위해 점을 arm하고 `parse`가 내지 않는 kind `internal`을 기대했으므로,
+  binding의 end-to-end 검사에서 `Accept.parse`의 Node 시험이 실패했다.
 
 - kind `internal`이 자기 case를 갖는다(binding CK-22, X-1). 어떤 입력도 그 kind에 닿지 않으므로, 코어는
   `Accept::weigh`에서 후보를 정하는 range의 index를 인터페이스의 정수로 바꾸는 자리에 결함 주입점

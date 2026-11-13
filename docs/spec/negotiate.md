@@ -123,9 +123,9 @@ statements it checks.
   3. NG-11.4 No input reaches the kind `internal`, so a fault injection point gives it (binding design G-5, X-1): the
      point `http_negotiation.internal`, with the injection `broken`, makes `Accept::weigh` treat the index of the range
      that decides a candidate as an index that does not fit the integer of the interface. The case
-     `a_broken_index_is_internal` arms it and checks the kind, the category and the status; a generated binding test
-     checks the error class of each target with it. The point does nothing unless the feature `fault-test` of the core
-     is on, which only tests turn on.
+     `a_broken_index_is_internal` of the group `internal`, which only `Accept::weigh` reads, arms it and checks the
+     kind, the category and the status; a generated binding test checks the error class of each target with it. The
+     point does nothing unless the feature `fault-test` of the core is on, which only tests turn on.
 
      | id | Place (function) | inject | fills | Rule id of the imitated condition | Does the arming carry over |
      |---|---|---|---|---|---|

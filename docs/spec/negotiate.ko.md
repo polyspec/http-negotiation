@@ -1,5 +1,5 @@
 <!-- doc-id: spec-negotiate -->
-<!-- source-sha256: 1237bc0e34eba14e805b5ab127cc2c579d7be43a6b61ce62e9d1b1be9e80cac4 -->
+<!-- source-sha256: 798c9772568bde256955a24535270184b3715116e344d822e12903b54f124736 -->
 # http-negotiation 명세
 
 이 라이브러리는 HTTP의 `Accept` field 값을 읽고, 후보 media type 목록의 각 후보에 `Accept` 값이 그 후보에 주는
@@ -123,9 +123,10 @@ parameter 값의 비교를 정의한다. 이 명세는 그 규칙을 가리키�
   2. NG-11.2 오류의 message는 그 kind의 고정된 문장이며 입력을 적지 않는다.
   3. NG-11.4 어떤 입력도 kind `internal`에 닿지 않으므로, 결함 주입점이 그 kind를 낸다(binding 설계 G-5, X-1).
      point `http_negotiation.internal`은 주입 `broken`으로 `Accept::weigh`가 후보를 정하는 range의 index를
-     인터페이스의 정수에 들어가지 않는 index로 다루게 한다. case `a_broken_index_is_internal`이 그 point를 arm하고
-     kind, category, status를 확인하며, 생성된 binding 시험은 그 case로 target마다 오류 class를 확인한다. 이 point는
-     코어의 feature `fault-test`가 켜지지 않으면 아무것도 하지 않으며, 그 feature는 시험만 켠다.
+     인터페이스의 정수에 들어가지 않는 index로 다루게 한다. `Accept::weigh`만 읽는 group `internal`의 case
+     `a_broken_index_is_internal`이 그 point를 arm하고 kind, category, status를 확인하며, 생성된 binding 시험은 그
+     case로 target마다 오류 class를 확인한다. 이 point는 코어의 feature `fault-test`가 켜지지 않으면 아무것도 하지
+     않으며, 그 feature는 시험만 켠다.
 
      | id | 자리(함수) | inject | fills | 흉내 내는 조건의 규칙 id | arming이 이어지는가 |
      |---|---|---|---|---|---|

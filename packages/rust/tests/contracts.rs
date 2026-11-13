@@ -174,7 +174,8 @@ fn accept_cases() -> Result<(), String> {
 fn weigh_cases() -> Result<(), String> {
     let cases = cases()?;
     let mut failures = Vec::new();
-    for case in group(&cases, "weigh")? {
+    // NG-11.4: the group internal holds the case that arms the fault injection point of weigh; no other member reads it.
+    for case in group(&cases, "weigh")?.iter().chain(group(&cases, "internal")?) {
         let candidates = array(case, "candidates")?.iter().map(candidate).collect::<Result<Vec<_>, _>>()?;
         let outcome = match Accept::parse(&lines(case)?) {
             Ok(accept) => armed(case, "accept.weigh", || accept.weigh(&candidates))?,
@@ -259,7 +260,7 @@ fn cases_cite_the_rules_of_the_spec() -> Result<(), String> {
     let cases = cases()?;
     let mut failures = Vec::new();
     let mut ids = BTreeSet::new();
-    for name in ["accept", "weigh", "invalidCandidates"] {
+    for name in ["accept", "weigh", "invalidCandidates", "internal"] {
         for case in group(&cases, name)? {
             let id = string(case, "id")?;
             if !ids.insert(format!("{name}/{id}")) {

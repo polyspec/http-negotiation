@@ -1,5 +1,10 @@
 <!-- doc-id: changelog -->
 
+- The case `a_broken_index_is_internal` is in its own group `internal`, which only the member `accept.weigh` reads
+  (a row of `cases` of `packages/rust/interface.json`). In the group `weigh` the member `accept.parse` read it too: its
+  generated test armed the point for `parse`, which never reaches it, and expected the kind `internal` that `parse`
+  does not raise, so the Node test of `Accept.parse` failed in the end-to-end check of binding.
+
 - The kind `internal` has its case (binding CK-22, X-1). No input reaches it, so the core marks the fault injection
   point `http_negotiation.internal` (`fault::INTERNAL`) in `Accept::weigh`, where the index of the deciding range is
   converted to the integer of the interface, and the contract names it in `faults` (inject `broken`, fills
