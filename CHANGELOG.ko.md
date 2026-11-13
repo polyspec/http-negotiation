@@ -1,7 +1,14 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: c045e566035357fd60354cd47351925f3d2efcf5c498a2a02ca65d6214e26e2a -->
+<!-- source-sha256: c371e1d27fd52af6ddd24dea1d398a4042d9b716f97376a92275e4e518e66938 -->
 
 ## Unreleased
+
+- 문서는 pin된 binding에서의 Go 바인딩을 있는 그대로 적는다. binding은 계약의 Go를 생성하고, Go 바인딩은
+  http-media-type의 Go module을 import한다. `packages/go/go.mod`는 그 module을 개발 형태로 require하고 추적되는 파일
+  가운데 그것을 해소하는 것이 없어서, 추적되는 파일만 있는 tree의 `go vet`은 그 module의 `go.sum` 항목이 없다고
+  실패한다. 행 T1.7은 우회 상태가 아니라 다시 열린 상태다. 그 원인은 binding이 Go를 거부한다는 것이었고, 남은 일은
+  그 module도 그 정적 라이브러리도 주지 않는 `make test-go`의 recipe다. 행 T1.10은 끝났다. commit된 tree에서 `make
+  fmt-check`가 통과한다. `AGENTS.md`는 생성된 Go 파일 `zz_generated_*.go`를 추적하지 않는다는 것과 그 이유를 적는다.
 
 - `Cargo.lock`은 `polyspec-binding-core`와 `polyspec-http-media-type`을 각 저장소의 branch `v1/rust-core`의 head에
   pin하고, 바인딩 package는 그 binding의 scaffold가 쓰는 것과 같다. 그래서 `make bindings-check`는 finding을 보고하지

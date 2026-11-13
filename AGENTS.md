@@ -63,9 +63,12 @@ rules of this repository.
   http-media-type give (binding T-3). `make test-python` installs the wheel `HTTP_MEDIA_TYPE_WHEEL` beside the wheel of
   this repository and `make test-php` loads the extension `HTTP_MEDIA_TYPE_EXTENSION` before this one; both are files
   that a build of the checkout of http-media-type writes, and each recipe fails while its file is missing. The pinned
-  binding generates php, python, node and wasm and refuses go (G-4), because it does not generate the entry points of
-  the feature fault-test, a class unit or a record of another repository for Go yet, so `make bindings-go`, `make
-  lint-bindings` and `make test-go` fail with that cause.
+  binding generates the five targets. The Go binding imports the Go module of http-media-type, which
+  `packages/go/go.mod` requires in the development form `v0.0.0` without a `replace` line (binding GN-15f), and no
+  tracked file resolves that module: in a tree of the tracked files `go vet` fails with a missing `go.sum` entry for
+  it, and `make test-go` fails there. A development link, an untracked `go.work` that names the checkout of
+  http-media-type, resolves the module, and the Go program then also links the static library of the Go binding of
+  http-media-type; the recipe that gives both is the open work of T1.7.
 - `make bindings` generates the five targets, each in its own target `make bindings-<target>` (`binding generate
   --target <target>`), and every make target that builds or tests a binding runs the generation of the targets it uses
   first, so that a target that binding refuses fails with its name and does not stop the others (binding GN-1c). `make test-bindings` runs
@@ -76,8 +79,10 @@ rules of this repository.
   PHPUnit and go test. The contract cases are `packages/python/tests`, `packages/ts/tests/cases.test.mjs`,
   `packages/ts/tests/cases.wasm.test.mjs`, `packages/php-ext/tests` and `packages/go/tests`. A target that the
   generator cannot take stays a failing target with its cause; no target is left out or skipped (binding BD-27).
-- In the Go module binding owns the files `zz_generated_*.go` (binding GN-3); they are tracked, because a Go module is
-  fetched as source, and `make bindings` writes them again. `packages/ts/wasm/generated` and
+- In the Go module binding owns the files `zz_generated_*.go` (binding GN-3), which `make bindings` writes. They are
+  not tracked, and neither is a static library of `packages/go/internal/ffi/lib/<platform>`: a release adds both in the
+  commit of its Go tag, because Go fetches a module as the source of a tag (binding GN-15g, CK-19), and a tracked copy
+  would differ from what the pinned binding writes after every change of the pin. `packages/ts/wasm/generated` and
   `packages/go/internal/ffi/generated` are not tracked; wasm-bindgen writes the module and its glue into the first.
   The variables `PYTHON` (3.14 or later), `PHP`, `PHP_CONFIG`, `PHPUNIT`, `GO`, `GOFMT` and `WASM_BINDGEN` name the
   runtimes. `make test-go` fails a Go of another release than the go directive of `packages/go/go.mod` and runs it with
@@ -146,8 +151,7 @@ rules of this repository.
 - Open before the first release, which is not complete without them: `origin` has no `main`, so the release pushes
   `v1/rust-core` as `main` and makes `main` the default branch; and the packages of the bindings (the abi3 wheel, the
   PHP extension, the npm package with its platform packages) are rows of `config/release.json` only when kit 0.0.111
-  and a release of binding exist, because kit 0.0.109 refuses their kinds. The first release also follows a release of http-media-type and the Go binding (T1.9), and `make fmt-check` fails
-  until `Cargo.lock` pins a binding whose scaffold writes each allow attribute on one line (T1.10).
+  and a release of binding exist, because kit 0.0.109 refuses their kinds. The first release also follows a release of http-media-type and the Go binding (T1.9).
 
 ## Commits and changes
 

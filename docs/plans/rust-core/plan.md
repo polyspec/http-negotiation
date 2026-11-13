@@ -18,8 +18,8 @@ The checklist follows the order in which each step needs the one before it:
    binding (T1.4).
 4. The bindings that binding generates, each tested by the tests that binding generates and by the contract cases on
    the standard runner of its language (T1.5), and the end-to-end check of binding on this repository (T1.6).
-5. The Go binding (T1.7), which waits for binding: binding refuses to generate Go for this contract, because it does not
-   generate the entry points of the feature `fault-test`, a class unit or a record of another repository for Go yet.
+5. The Go binding (T1.7): binding generates Go for this contract, and the Go binding imports the Go module of
+   http-media-type, so its test needs that module and its static library, which the recipe does not give yet.
 6. The checks on GitHub and the release: the workflows `ci` and `release`, the release configuration and their make
    targets (T1.8), then the first release (T1.9), which waits for a release of http-media-type that holds its wheel and
    its PHP extension, and for the Go binding (T1.7).

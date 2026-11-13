@@ -1,5 +1,5 @@
 <!-- doc-id: checklist-rust-core -->
-<!-- source-sha256: 79830cc352462bc4701c2e3d6ce7cad933ed15e5a0a10c1c4a1e69c9a7ede3e3 -->
+<!-- source-sha256: d8aff653e305336e7e77fe705bcaf6ecfbdaaf473f9b972ed2dabdbb6b356322 -->
 # Rust 코어 체크리스트
 
 | ID | Task | Deliverables | Verification | State |
@@ -10,8 +10,8 @@
 | T1.4 | 코어와 binding scaffold가 쓰는 바인딩 crate를 binding의 한 commit에 고정된 하나의 workspace에 둔다 | `Cargo.toml`, `Cargo.lock`, `packages/php-ext`, `packages/python`, `packages/ts`, `packages/ts/wasm`, `packages/go`, `scripts/binding.mts` | `make bindings-check` | [o] |
 | T1.5 | PHP, Python, Node, WASM 바인딩을 binding이 생성하는 시험과 contract case로 각 언어의 표준 runner에서 시험한다. 각 target은 자기 `make bindings-<target>`이 생성한다 | `packages/php-ext/tests`, `packages/python/tests`, `packages/ts/tests`, `Makefile` | `make test-php`, `make test-python`, `make test-node`, `make test-wasm` | [o] |
 | T1.6 | 이 저장소에 대한 고정된 binding의 end-to-end 검사를 php, python, node, wasm에서 통과한다 | binding의 추적되지 않는 `var/report/e2e/http-negotiation.json` | binding의 `make e2e` | [o] |
-| T1.7 | Go 바인딩을 binding이 생성하는 시험과 `packages/go/tests`의 contract case로 시험한다 | `packages/go` | `make test-go` | [!] 원인: binding이 계약의 Go 생성을 거부한다(G-4). Go의 feature fault-test 진입점, class unit, 다른 저장소의 record를 아직 생성하지 않는다; 재시도: binding이 packages/rust/interface.json의 Go를 생성한다 |
+| T1.7 | Go 바인딩을 binding이 생성하는 시험과 `packages/go/tests`의 contract case로 시험한다. recipe는 `packages/go/go.mod`가 개발 형태로 require하는 http-media-type의 Go module과 그 Go 바인딩의 정적 라이브러리를 주고, crate를 manifest의 시험 feature로 빌드해서 group internal의 case가 자기 fault를 arm하게 한다 | `packages/go`, `Makefile` | `make test-go` | [ ] |
 | T1.8 | GitHub에서 검사를 실행하고 tag를 release한다: workflow `ci`와 `release`, release 구성, 그 make target | `.github/`, `config/release.json`, `Makefile` | `make release-coverage` | [o] |
 | T1.9 | `main`에서 `ci.yml`의 모든 job을 통과하고, Go module의 tag `packages/go/vX.Y.Z`와 바인딩의 package를 갖춘 첫 version을 release한다. 선행 조건: tag `vX.Y.Z`, Go module의 tag, wheel, PHP 확장을 가진 http-media-type의 release(job `bindings`의 `make test-python`과 `make test-php`가 그 wheel과 확장을 읽는다); 코어의 http-media-type 의존 줄을 `tag = "vX.Y.Z"`로 두는 것(Go 바인딩에 필요하다, binding GN-15f); T1.7의 Go 바인딩; T1.10; `config/release.json`의 package 행을 위한 kit 0.0.111과 binding의 release. release는 `main`이 없는 `origin`에 `v1/rust-core`를 `main`으로 push하고 `main`을 기본 브랜치로 만든다 | `main`의 CI 실행, release의 tag | `make ci-passed` | [ ] |
-| T1.10 | `make fmt-check`를 통과한다. 고정된 binding은 binding crate의 `src/lib.rs`의 allow 속성을 여러 줄로 쓰고, 이 저장소의 `rustfmt.toml`을 쓰는 rustfmt는 그것을 거부한다. scaffold가 속성을 한 줄로 쓰는 binding을 고정하고 binding crate를 다시 쓴다 | `Cargo.lock`, `packages/*/src/lib.rs` | `make fmt-check` | [ ] |
+| T1.10 | `make fmt-check`를 통과한다. 고정된 binding은 binding crate의 `src/lib.rs`의 allow 속성을 여러 줄로 쓰고, 이 저장소의 `rustfmt.toml`을 쓰는 rustfmt는 그것을 거부한다. scaffold가 속성을 한 줄로 쓰는 binding을 고정하고 binding crate를 다시 쓴다 | `Cargo.lock`, `packages/*/src/lib.rs` | `make fmt-check` | [o] |
 | T1.11 | 추적 파일에 Git commit을 적지 않는다: changelog와 checklist에는 사실을 적고, 규칙을 `AGENTS.md`에 두고 검사한다 | `CHANGELOG.md`, `docs/plans/rust-core/checklist.md`, `AGENTS.md`, `tests/scripts/commits.test.mts` | `make test-scripts` | [o] |

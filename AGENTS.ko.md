@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 343b024c6a1bc8258ce647b3930a09bf3547bf7acc7adb0fb67e2b7ff3e86c11 -->
+<!-- source-sha256: d80e2fd2dcd76a0529594729f88e17fb5fb654f50639f6852d441458ae184be9 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -62,9 +62,12 @@
 - range는 http-media-type의 record `Parameter`를 담고, 그 클래스는 http-media-type의 Python 패키지와 PHP 확장이
   준다(binding T-3). `make test-python`은 이 저장소의 wheel 곁에 wheel `HTTP_MEDIA_TYPE_WHEEL`을 설치하고, `make
   test-php`는 이 확장보다 먼저 확장 `HTTP_MEDIA_TYPE_EXTENSION`을 로드한다. 둘 다 http-media-type checkout의 빌드가
-  쓰는 파일이고, 각 recipe는 그 파일이 없으면 실패한다. 고정된 binding은 php, python, node, wasm을 생성하고 go를
-  거부한다(G-4). Go의 feature fault-test 진입점, class unit, 다른 저장소의 record를 아직 생성하지 않기 때문이다. 그래서
-  `make bindings-go`, `make lint-bindings`, `make test-go`가 그 원인으로 실패한다.
+  쓰는 파일이고, 각 recipe는 그 파일이 없으면 실패한다. 고정된 binding은 다섯 target을 생성한다.
+  Go 바인딩은 http-media-type의 Go module을 import하고, `packages/go/go.mod`는 그 module을 `replace` 줄 없이 개발 형태
+  `v0.0.0`으로 require한다(binding GN-15f). 추적되는 파일 가운데 그 module을 해소하는 것은 없다. 추적되는 파일만 있는
+  tree에서 `go vet`은 그 module의 `go.sum` 항목이 없다고 실패하고, `make test-go`는 거기서 실패한다. 개발 link인
+  추적하지 않는 `go.work`가 http-media-type의 checkout을 가리키면 그 module이 해소되고, 그때 Go 프로그램은
+  http-media-type의 Go 바인딩의 정적 라이브러리도 link한다. 둘을 주는 recipe가 T1.7의 열린 일이다.
 - `make bindings`는 다섯 target을 각각 자기 target `make bindings-<target>`(`binding generate --target <target>`)에서
   생성하고, 바인딩을 빌드하거나 시험하는 모든 make target은 자기가 쓰는 target의 생성을 먼저 실행한다. 그래서 binding이
   거부하는 target은 자기 이름으로 실패하고 다른 target을 멈추지 않는다(binding GN-1c). `make test-bindings`는
@@ -75,8 +78,10 @@
   `packages/python/tests`, `packages/ts/tests/cases.test.mjs`, `packages/ts/tests/cases.wasm.test.mjs`,
   `packages/php-ext/tests`, `packages/go/tests`다. 생성기가 받지 못하는 target은 원인과 함께 실패하는 target으로
   남는다. 어떤 target도 빠지거나 건너뛰지 않는다(binding BD-27).
-- Go 모듈에서 binding은 파일 `zz_generated_*.go`를 소유한다(binding GN-3). Go 모듈은 소스로 받아지므로 이 파일들은
-  추적되고, `make bindings`가 다시 쓴다. `packages/ts/wasm/generated`와 `packages/go/internal/ffi/generated`는 추적하지
+- Go 모듈에서 binding은 파일 `zz_generated_*.go`를 소유하고(binding GN-3), `make bindings`가 그 파일들을 쓴다. 이
+  파일들과 `packages/go/internal/ffi/lib/<platform>`의 정적 라이브러리는 추적하지 않는다. Go는 모듈을 tag의 소스로
+  받으므로 release가 둘을 Go tag의 commit에 더하고(binding GN-15g, CK-19), 추적한 사본은 pin이 바뀔 때마다 pin된
+  binding이 쓰는 것과 달라지기 때문이다. `packages/ts/wasm/generated`와 `packages/go/internal/ffi/generated`는 추적하지
   않는다. wasm-bindgen은 모듈과 그 glue를 앞의 디렉터리에 쓴다.
   변수 `PYTHON`(3.14 이상), `PHP`, `PHP_CONFIG`, `PHPUNIT`, `GO`, `GOFMT`, `WASM_BINDGEN`이 런타임을 가리킨다.
   `make test-go`는 `packages/go/go.mod`의 go 지시문과 다른 판의 Go를 실패시키고, toolchain을 받지 않도록
@@ -138,8 +143,7 @@
 - 첫 release 전에 열려 있는 일이며, 이것 없이는 release가 끝난 것이 아니다. `origin`에 `main`이 없으므로 release는
   `v1/rust-core`를 `main`으로 push하고 `main`을 기본 브랜치로 만든다. 바인딩의 package(abi3 wheel, PHP 확장, npm package와
   그 플랫폼 package)는 kit 0.0.111과 binding의 release가 있어야 `config/release.json`의 행이 된다. kit 0.0.109가 그 kind를
-  거부하기 때문이다. 첫 release는 http-media-type의 release와 Go 바인딩도 기다리고(T1.9), `make fmt-check`는 scaffold가 allow 속성을 한 줄로
-  쓰는 binding을 `Cargo.lock`이 고정할 때까지 실패한다(T1.10).
+  거부하기 때문이다. 첫 release는 http-media-type의 release와 Go 바인딩도 기다린다(T1.9).
 
 ## Commit과 변경
 
