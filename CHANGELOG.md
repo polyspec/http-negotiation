@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- The repository has the plan `docs/plans/rust-core/plan.md` and its checklist `docs/plans/rust-core/checklist.md`, each
+  with its Korean twin, in the form of the other polyspec repositories. The checklist records the steps of the core,
+  the interface contract, the workspace of the binding crates, the bindings and the end-to-end check as done with the
+  commits that did them, and the Go binding as bypassed until binding generates Go for the contract. `make docs-check`
+  reads the documents of `config/documents.json` and the checklist with the rows of `config/checklist.json`, and `make
+  check` runs it. Before, no check read the documents, so a Korean twin could fall behind its English source unseen.
+
 - The tests of the core depend on the core itself with its feature `fault-test` (`[dev-dependencies]` of
   `packages/rust/Cargo.toml`), so `cargo test -p polyspec-http-negotiation` arms the fault injection point of the case
   `a_broken_index_is_internal` without a flag, and `make test` passes no feature. Before, the point of binding 49a4e97

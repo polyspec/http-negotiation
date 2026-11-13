@@ -104,8 +104,13 @@ rules of this repository.
 ## Checks
 
 - `make test` runs the contract cases, the citation checks, the random tests and the runtime properties of the core.
-- `make lint` runs `cargo fmt --check` and clippy of the core with every warning denied; `make check` runs both and
-  `make bindings-check`.
+- `make lint` runs `cargo fmt --check` and clippy of the core with every warning denied; `make check` runs both,
+  `make bindings-check` and `make docs-check`.
+- `make docs-check` reads each document that `config/documents.json` selects, with its links, anchors and fences and
+  the `doc-id` and `source-sha256` of each Korean twin, and the checklist `docs/plans/rust-core/checklist.md`, whose
+  rows `config/checklist.json` declares. The plan of the repository is `docs/plans/rust-core/plan.md`; a task is a row
+  of that checklist, marked `[o]` only after its verification command passed on the committed tree. Run it before a
+  commit.
 
 ## Commits and changes
 

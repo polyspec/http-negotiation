@@ -63,7 +63,7 @@ export PHP PHP_CONFIG
 # "Platforms").
 CDYLIB := $(if $(filter Darwin,$(shell uname -s)),dylib,so)
 
-.PHONY: bootstrap install install-tools install-packages toolchain-lock check test lint lint-rust fmt-check bindings-check bindings $(BINDING_PHONY) test-bindings lint-bindings test-python test-node test-php \
+.PHONY: bootstrap install install-tools install-packages toolchain-lock check test lint lint-rust fmt-check bindings-check docs-check bindings $(BINDING_PHONY) test-bindings lint-bindings test-python test-node test-php \
 	test-wasm test-go node-package check-declarations
 
 # The npm that devEngines of package.json names installs the lock, @polyspec/kit included, before the tools of the checkout
@@ -100,7 +100,7 @@ toolchain-lock:
 	$(ONLINE) $(KIT_TOOLS)/bin/mise lock --global --platform $(TOOLCHAIN_LOCK_PLATFORMS)
 
 # The core and the contract; none of them needs the generator (binding design L-2).
-check: lint-rust fmt-check test bindings-check
+check: lint-rust fmt-check test bindings-check docs-check
 
 lint: lint-rust fmt-check
 
@@ -113,6 +113,11 @@ lint-rust:
 
 fmt-check:
 	$(CARGO) fmt --all --check
+
+# The documents of config/documents.json, each on its own (links, anchors, fences and the doc-id and source-sha256 of each
+# Korean twin), and the checklists of docs/plans, whose rows config/checklist.json declares.
+docs-check:
+	$(NODE) $(KIT)/check-documents.mjs --checklist-place --private-path /Users/ --private-path /home/ --kit-rows
 
 # The contract check and the comparison of the tracked binding packages with what binding writes (L-2 (c)).
 bindings-check:

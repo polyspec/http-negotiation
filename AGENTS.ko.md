@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 583e893c08aa81303e2dc56ed24ed0c3fb6041daf5b7bb0878c7d8d3c6b80c0c -->
+<!-- source-sha256: 0eff6b231afccd3129c577f45c90df2b41ed7fa8685f623cefbfa4373627bc20 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -101,7 +101,11 @@
 
 - `make test`는 코어의 contract case, 인용 검사, random test, runtime 속성을 실행한다.
 - `make lint`는 `cargo fmt --check`와, 모든 warning을 금지한 코어의 clippy를 실행한다. `make check`는 그 둘과
-  `make bindings-check`를 실행한다.
+  `make bindings-check`, `make docs-check`를 실행한다.
+- `make docs-check`는 `config/documents.json`이 고르는 각 문서를 그 link, anchor, fence와 각 한국어 쌍의 `doc-id`,
+  `source-sha256`과 함께 읽고, `config/checklist.json`이 행을 선언하는 checklist `docs/plans/rust-core/checklist.md`를
+  읽는다. 저장소의 계획은 `docs/plans/rust-core/plan.md`이고, 할 일은 그 checklist의 행이며, 검증 명령이 commit된
+  tree에서 통과한 뒤에만 `[o]`로 적는다. commit 전에 실행한다.
 
 ## Commit과 변경
 

@@ -1,7 +1,14 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 5bd7c651cf76827be1614dc03117dd020c750a5ee504ac1e91cabfc3af70cfbd -->
+<!-- source-sha256: 85fc8d5fae4ffd65c6b2695ebea8478300e66572e51902dbf84fcdac211df2ed -->
 
 ## Unreleased
+
+- 저장소가 다른 polyspec 저장소의 꼴로 계획 `docs/plans/rust-core/plan.md`와 그 checklist
+  `docs/plans/rust-core/checklist.md`를 각각 한국어 쌍과 함께 가진다. checklist는 코어, 인터페이스 계약, 바인딩 crate의
+  workspace, 바인딩, end-to-end 검사의 단계를 그것을 한 commit과 함께 끝난 것으로 적고, Go 바인딩은 binding이 계약의 Go를
+  생성할 때까지 우회된 것으로 적는다. `make docs-check`는 `config/documents.json`의 문서와 `config/checklist.json`의 행을
+  가진 checklist를 읽고, `make check`가 그것을 실행한다. 전에는 어떤 검사도 문서를 읽지 않았으므로 한국어 쌍이 영어
+  원문보다 뒤처져도 보이지 않았다.
 
 - core의 시험이 feature `fault-test`를 켠 core 자신에 의존한다(`packages/rust/Cargo.toml`의 `[dev-dependencies]`). 그래서
   `cargo test -p polyspec-http-negotiation`은 flag 없이 case `a_broken_index_is_internal`의 결함 주입점을 걸고, `make
