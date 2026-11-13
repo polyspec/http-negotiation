@@ -1,5 +1,18 @@
 <!-- doc-id: changelog -->
 
+## Unreleased
+
+- The end-to-end check of binding (GN-14) at the commit 8faad21 builds and tests the bindings of this contract on each
+  target, with http-media-type as the repository whose record `parameter` the contract names. PHP passes 94 generated
+  tests on PHPUnit, Python 94 on unittest and Node 95 on `node --test`, none failed or skipped. Go and WASM fail at
+  generation, refused by name (G-4): for both, the entry points of the feature `fault-test` (G-5) and the record
+  `http-media-type.parameter` of another repository; for Go also the class unit `accept`. The generated tests run the
+  cases that raise (B-4) and compare no result of a case (binding GN-13a), and binding holds no case runners of this
+  library (V-1), so the 71 cases that do not raise are checked by the core tests alone. The binding packages lack
+  `build.rs` of `packages/php-ext` (BD-9), which binding scaffold of that commit writes; `Cargo.lock` pins the binding
+  f63a655, the head of its branch, and takes that file with the pin of a later commit. `AGENTS.md` and `README.md`
+  state that the end-to-end check of binding builds and tests the bindings.
+
 - The case `a_broken_index_is_internal` is in its own group `internal`, which only the member `accept.weigh` reads
   (a row of `cases` of `packages/rust/interface.json`). In the group `weigh` the member `accept.parse` read it too: its
   generated test armed the point for `parse`, which never reaches it, and expected the kind `internal` that `parse`

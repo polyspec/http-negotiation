@@ -1,5 +1,5 @@
 <!-- doc-id: readme -->
-<!-- source-sha256: f706e7504d29deaa486e8e225cde42d3d006fefca6209a5227b41faddfce746e -->
+<!-- source-sha256: c2fc707353723d2442d972bf72b6f99fd51a783bea09934ea816806d69d6d633 -->
 # http-negotiation
 
 [English](README.md)
@@ -18,7 +18,8 @@ HTTP의 media range와 `Accept` field(RFC 9110 12.4.2, 12.5.1절)를 읽고, `Ac
 규칙은 [docs/spec/negotiate.md](docs/spec/negotiate.md), case는 [contracts/negotiate.json](contracts/negotiate.json),
 바인딩의 공개 API는 crate 패키지에 들어가는 [packages/rust/interface.json](packages/rust/interface.json)에 있다. 코어는
 `packages/rust`의 Rust crate이며, 모든 계약이 적는 다섯 target(binding BD-27)인 PHP, Python, Node,
-브라우저(WASM), Go 바인딩은 인터페이스 계약에서 생성하고 아직 없다.
+브라우저(WASM), Go 바인딩은 인터페이스 계약에서 생성한다. binding의 end-to-end 검사가 PHP, Python, Node 바인딩을
+빌드하고 시험한다. 생성기는 아직 Go와 WASM에 대해 이 계약을 받지 않는다.
 
 ```sh
 make test

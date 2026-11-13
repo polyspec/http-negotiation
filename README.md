@@ -18,7 +18,8 @@ The rules are in [docs/spec/negotiate.md](docs/spec/negotiate.md), the cases in
 [contracts/negotiate.json](contracts/negotiate.json) and the public API of the bindings in
 [packages/rust/interface.json](packages/rust/interface.json), which the crate package holds. The core is the Rust crate in
 `packages/rust`; the PHP, Python, Node, browser (WASM) and Go bindings, the five targets that every contract names
-(binding BD-27), are generated from the interface contract and do not exist yet.
+(binding BD-27), are generated from the interface contract. The end-to-end check of binding builds and tests the PHP,
+Python and Node bindings; the generator does not take the contract for Go and WASM yet.
 
 ```sh
 make test

@@ -53,8 +53,12 @@ rules of this repository.
 - `scripts/binding.mts` runs binding from a clone, in `var/binding/<commit>`, of the checkout that Cargo made of the
   commit that `Cargo.lock` pins, so that the generator and `binding_core` are one version, until binding is released.
   The clone is a Git checkout of binding at that commit: binding check reads its own commit from it and compares it with
-  the commit of `Cargo.lock` (CK-20), which a copy of the files alone fails. `make bindings` generates; binding does not
-  generate this contract yet, so the bindings are not built or tested yet.
+  the commit of `Cargo.lock` (CK-20), which a copy of the files alone fails. `make bindings` generates every target at
+  once; the pinned binding refuses the contract for Go and WASM by name (G-4), so it writes nothing.
+- The bindings are built and tested by the end-to-end check of binding (`make e2e` of binding, GN-14), which generates,
+  builds and tests each of the five targets on its own on the standard runner of its language and names each target
+  that fails with its causes. No make target of this repository builds or tests a binding, and a target that the
+  generator refuses stays a failure of that check, never left out of `targets`.
 
 ## Checks
 

@@ -1,5 +1,17 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: f83afba7dfee26083112a1bf6df77adcbbd59e683a2f81542738d08563f91936 -->
+<!-- source-sha256: 9948e1d8f5c8a77932b4a05cffbc5e4e9e39e6b04878314a17c53757df5f7dc3 -->
+
+## Unreleased
+
+- binding의 커밋 8faad21의 end-to-end 검사(GN-14)가 이 계약의 바인딩을 target마다 빌드하고 시험한다. 계약이 record
+  `parameter`를 적는 레포로 http-media-type을 함께 쓴다. PHP는 PHPUnit에서 생성된 시험 94개, Python은 unittest에서
+  94개, Node는 `node --test`에서 95개를 통과하며, 실패하거나 건너뛴 시험은 없다. Go와 WASM은 생성에서 이름이 붙은
+  거절로 실패한다(G-4). 둘 다 feature `fault-test`의 진입점(G-5)과 다른 레포의 record `http-media-type.parameter`가
+  거절되고, Go는 class unit `accept`도 거절된다. 생성된 시험은 실패하는 case(B-4)를 실행하고 case의 결과는 비교하지
+  않으며(binding GN-13a), binding에는 이 라이브러리의 case runner가 없으므로(V-1), 실패하지 않는 case 71개는 코어
+  시험만 확인한다. 바인딩 패키지에는 그 커밋의 binding scaffold가 쓰는 `packages/php-ext`의 `build.rs`(BD-9)가 없다.
+  `Cargo.lock`은 브랜치의 head인 binding f63a655를 고정하며, 그 파일은 더 뒤의 커밋을 고정할 때 들어온다.
+  `AGENTS.md`와 `README.md`는 binding의 end-to-end 검사가 바인딩을 빌드하고 시험한다고 적는다.
 
 - case `a_broken_index_is_internal`은 member `accept.weigh`만 읽는 자기 group `internal`에 있다
   (`packages/rust/interface.json`의 `cases` 행). group `weigh`에서는 member `accept.parse`도 그 case를 읽었다. 그

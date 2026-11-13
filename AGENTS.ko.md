@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: e5d23e72c74270cf5cbe76ccc08d532774c457beb295ee6fbc7902a44804cb71 -->
+<!-- source-sha256: cdd84553ae80d765b1e9373a829f49eb184b4cc0ef467b6a357eee93ef2a8c90 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -53,8 +53,11 @@
 - `scripts/binding.mts`는 binding이 release될 때까지, `Cargo.lock`이 고정하는 커밋으로 Cargo가 만든 checkout을
   `var/binding/<commit>`에 clone하고 그 clone에서 binding을 실행한다. 그래서 생성기와 `binding_core`가 한 버전이다.
   그 clone은 그 커밋에 있는 binding의 Git checkout이다. binding check는 그 clone에서 자기 커밋을 읽어
-  `Cargo.lock`의 커밋과 비교하며(CK-20), 파일만 복사한 사본에서는 이 비교가 실패한다. `make bindings`가 생성한다. binding은 아직
-  이 계약을 생성하지 못하므로, 바인딩은 아직 빌드하지도 시험하지도 않는다.
+  `Cargo.lock`의 커밋과 비교하며(CK-20), 파일만 복사한 사본에서는 이 비교가 실패한다. `make bindings`는 모든 target을
+  한 번에 생성한다. 고정한 binding은 Go와 WASM에 대해 이 계약을 이름을 대어 거절하므로(G-4) 아무것도 쓰지 않는다.
+- 바인딩은 binding의 end-to-end 검사(binding의 `make e2e`, GN-14)가 빌드하고 시험한다. 이 검사는 다섯 target을 하나씩
+  따로 생성하고 빌드하고 그 언어의 표준 runner로 시험하며, 실패한 target을 그 원인과 함께 이름 댄다. 이 레포의 make
+  대상은 바인딩을 빌드하거나 시험하지 않는다. 생성기가 거절하는 target은 그 검사의 실패로 남고, `targets`에서 빼지 않는다.
 
 ## 검사
 
