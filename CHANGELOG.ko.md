@@ -1,7 +1,15 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 7b687ed6f20f4a6b752156103a2e47993f1ca9b97e973f4a5d66a792d6000087 -->
+<!-- source-sha256: ed8d74e6126e08df637f10bbc82d99bcb873bd333e1c4f81667cb2fe37e9b8c1 -->
 
 ## Unreleased
+
+- `[profile.release]`는 `lto = false`를 정한다. 이전에는 `lto = true`였고, 그러면 Go 정적 라이브러리를
+  Go module이 require하는 http-media-type의 정적 라이브러리와 함께 링크하는 Go program이 `rust_eh_personality` 같은 중복 symbol로
+  실패한다(binding GN-15i, CK-91). Cargo는 `lto`를 profile 전체에 정하므로 release의 PHP 확장, Node addon, wheel도
+  LTO 없이 빌드된다. `Cargo.lock`은 `polyspec-binding-core`를 binding의 branch `v1/rust-core`의 head로 고정하며, 그
+  scaffold는 바인딩 package를 지금 그대로 쓴다. 새 시험 `tests/scripts/profile.test.mts`는 `Cargo.toml`과
+  `.cargo/config.toml`의 profile을 읽는다. 변경 전에는 `make test-scripts`의 시험 하나가 실패했고 변경 후에는 모두
+  통과한다. `Cargo.lock`은 `polyspec-http-media-type`도 그 branch의 head로 고정하며, 그 release profile도 같다. 검증: `make -k bindings-check test-scripts docs-check lint-bindings check-declarations test-python test-node test-wasm test-php test-go`가 통과했다. `make test-go`는 이전에 pin된 binding에서 실패했던 `packages/go/accept`의 생성된 시험 37개를 통과한다.
 
 - 바인딩 target은 자기가 읽는 것을 빌드하고 아무것도 내려받지 않는다. `make install-binding`은 `Cargo.lock`의 커밋으로
   binding을 설치하고, `Cargo.lock`의 crate를 받고, http-media-type의 checkout을 그 커밋으로 `var/deps/http-media-type`에
