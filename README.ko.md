@@ -1,5 +1,5 @@
 <!-- doc-id: readme -->
-<!-- source-sha256: cad6ee68601caa236dc86580dde95c391ceb272e17df00a69de6b94dc20ec458 -->
+<!-- source-sha256: 41587caf05946e6aafee2777587e1fe35c09e11e312153537072593b39b4ea54 -->
 # http-negotiation
 
 [English](README.md)
@@ -19,8 +19,8 @@ HTTP의 media range와 `Accept` field(RFC 9110 12.4.2, 12.5.1절)를 읽고, `Ac
 바인딩의 공개 API는 crate 패키지에 들어가는 [packages/rust/interface.json](packages/rust/interface.json)에 있다. 코어는
 `packages/rust`의 Rust crate이며, 모든 계약이 적는 다섯 target(binding BD-27)인 PHP, Python, Node,
 브라우저(WASM), Go 바인딩은 인터페이스 계약에서 생성한다. 생성기는 다섯 바인딩을 쓴다. Go 바인딩은
-http-media-type의 Go module을 import하는데 추적되는 파일 가운데 그 module을 해소하는 것이 없다. 그래서 `make
-test-go`는 그 recipe가 그 module과 그 정적 라이브러리를 줄 때까지 실패한다(체크리스트의 T1.7).
+http-media-type의 Go module을 import하고, `make test-go`는 `make install-binding`이 clone한 http-media-type의
+checkout에서 그 module을 해소한다.
 
 ```sh
 make bootstrap       # devEngines의 npm으로 @polyspec/kit을 포함한 package-lock.json 설치

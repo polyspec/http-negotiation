@@ -52,6 +52,11 @@ jobs:
       - id: tools
         if: ${{ !cancelled() }}
         run: make install-tools
+      # binding at the commit of Cargo.lock, the crates of Cargo.lock and the checkout of http-media-type at its commit,
+      # which bindings-check and the binding targets read offline.
+      - id: binding
+        if: ${{ !cancelled() }}
+        run: make install-binding
       - id: php-tools
         if: ${{ !cancelled() && matrix.php }}
         run: make install-php-tools

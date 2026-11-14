@@ -19,8 +19,8 @@ The rules are in [docs/spec/negotiate.md](docs/spec/negotiate.md), the cases in
 [packages/rust/interface.json](packages/rust/interface.json), which the crate package holds. The core is the Rust crate in
 `packages/rust`; the PHP, Python, Node, browser (WASM) and Go bindings, the five targets that every contract names
 (binding BD-27), are generated from the interface contract. The generator writes the five bindings. The Go binding
-imports the Go module of http-media-type, which no tracked file resolves, so `make test-go` fails until its recipe
-gives that module and its static library (T1.7 of the checklist).
+imports the Go module of http-media-type, which `make test-go` resolves from the checkout of http-media-type that
+`make install-binding` clones.
 
 ```sh
 make bootstrap       # package-lock.json, @polyspec/kit included, with the npm of devEngines

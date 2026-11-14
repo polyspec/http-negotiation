@@ -31,7 +31,7 @@ test('the binding recipes run the tools of var/tools and download nothing', () =
 
 test('test-python and test-php build the wheel and the extension of http-media-type (T1.9)', () => {
   const python = dryRun('test-python');
-  assert.ok(python.some((line) => /deps\/http-media-type\/packages\/python && .*maturin build /.test(line)), `no wheel of http-media-type:\n${python.join('\n')}`);
+  assert.ok(python.some((line) => /maturin build .*--manifest-path \S*deps\/http-media-type\/packages\/python\/Cargo\.toml /.test(line)), `no wheel of http-media-type:\n${python.join('\n')}`);
   const php = dryRun('test-php');
   assert.ok(php.some((line) => /--manifest-path \S*deps\/http-media-type\/Cargo\.toml -p polyspec-http-media-type-php-ext /.test(line)), `no extension of http-media-type:\n${php.join('\n')}`);
 });

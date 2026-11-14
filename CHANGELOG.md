@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+- The binding targets build what they read and download nothing. `make install-binding` installs binding at the
+  commit of `Cargo.lock`, fetches the crates of `Cargo.lock` and clones the checkout of http-media-type at its commit
+  into `var/deps/http-media-type`, and CI runs it in every job; `scripts/binding.mts` reads them offline. `make
+  media-type-python`, `make media-type-php` and `make media-type-go` generate and build the wheel, the PHP extension
+  and the static library of http-media-type there, which `make test-python`, `make test-php` and `make test-go` read;
+  before, the first two failed for a missing file in CI and `go vet` of `make test-go` failed with a missing `go.sum`
+  entry for the Go module of http-media-type, which `var/go.work` now resolves (T1.7, T1.9). `make test-go` builds the
+  Go crate with every feature of its manifest and runs go test with their build tags, and the Go case runner arms the
+  faults of the case of the group internal through the entry point of the binding instead of failing it. `make
+  lint-bindings` lints with the feature `codec-test` of the Go crate. `mise.toml` and `mise.lock` pin maturin 1.16.0
+  at the digests of binding in place of a maturin that pip installed from PyPI; the recipes run the node and the npm of
+  `var/tools/bin`, `make check-declarations` no longer runs `npm ci`, and the wheels and tarballs are installed
+  offline. `tests/scripts/recipes.test.mts` checks each of these on a dry run of the recipes: before the change 4 of its
+  tests failed, with it 5 passed. maturin builds the wheel of http-media-type from this checkout with the manifest of
+  the clone, because the shim of mise refuses a folder whose `mise.toml` mise does not trust. Verified: `make
+  test-python`, `make test-php`, `make test-node`, `make test-wasm`, `make check-declarations`, `make lint-bindings`,
+  `make test-scripts` and `make docs-check` pass; `make test-go` passes the contract cases and fails 37 generated tests
+  of `packages/go/accept`, whose cause row T1.7 names.
+
 - The documents state the Go binding as it is with the pinned binding: binding generates Go for the contract, the Go
   binding imports the Go module of http-media-type, which `packages/go/go.mod` requires in the development form and no
   tracked file resolves, and `go vet` of a tree of the tracked files fails with a missing `go.sum` entry for it. Row

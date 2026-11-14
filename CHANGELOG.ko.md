@@ -1,7 +1,25 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 18e4eebdee14dd0e321411d2c20dd8dea754940dff5568c7178567a4dc1d20db -->
+<!-- source-sha256: 7b687ed6f20f4a6b752156103a2e47993f1ca9b97e973f4a5d66a792d6000087 -->
 
 ## Unreleased
+
+- 바인딩 target은 자기가 읽는 것을 빌드하고 아무것도 내려받지 않는다. `make install-binding`은 `Cargo.lock`의 커밋으로
+  binding을 설치하고, `Cargo.lock`의 crate를 받고, http-media-type의 checkout을 그 커밋으로 `var/deps/http-media-type`에
+  clone하며, CI는 모든 job에서 그것을 실행한다. `scripts/binding.mts`는 그것을 offline으로 읽는다. `make
+  media-type-python`, `make media-type-php`, `make media-type-go`는 거기서 http-media-type의 wheel, PHP 확장, 정적
+  라이브러리를 생성하고 빌드하며, `make test-python`, `make test-php`, `make test-go`가 그것을 읽는다. 이전에는 앞의 둘이
+  CI에서 없는 파일 때문에 실패했고, `make test-go`의 `go vet`은 http-media-type의 Go module의 `go.sum` 항목이 없다고
+  실패했다. 이제 `var/go.work`가 그 module을 해소한다(T1.7, T1.9). `make test-go`는 Go crate를 그 manifest의 모든
+  feature로 빌드하고 그 build tag로 go test를 실행하며, Go case runner는 group internal의 case를 실패시키는 대신 binding의
+  진입점으로 그 fault를 arm한다. `make lint-bindings`는 Go crate의 feature `codec-test`로 lint한다. `mise.toml`과
+  `mise.lock`은 pip이 PyPI에서 설치한 maturin 대신 maturin 1.16.0을 binding의 digest로 고정한다. recipe는
+  `var/tools/bin`의 node와 npm을 실행하고, `make check-declarations`는 더 이상 `npm ci`를 실행하지 않으며, wheel과
+  tarball은 offline으로 설치된다. `tests/scripts/recipes.test.mts`가 recipe의 dry run에서 이것들을 각각 검사한다.
+  변경 전에는 그 시험 중 4개가 실패했고 변경 후에는 5개가 통과한다. maturin은 http-media-type의 wheel을 이 checkout에서
+  clone의 manifest로 빌드한다. mise의 shim은 mise가 신뢰하지 않는 `mise.toml`이 있는 폴더를 거부하기 때문이다. 검증:
+  `make test-python`, `make test-php`, `make test-node`, `make test-wasm`, `make check-declarations`, `make
+  lint-bindings`, `make test-scripts`, `make docs-check`가 통과한다. `make test-go`는 contract case를 통과하고
+  `packages/go/accept`의 생성된 시험 37개에 실패하며, 그 원인은 행 T1.7이 적는다.
 
 - 문서는 pin된 binding에서의 Go 바인딩을 있는 그대로 적는다. binding은 계약의 Go를 생성하고, Go 바인딩은
   http-media-type의 Go module을 import한다. `packages/go/go.mod`는 그 module을 개발 형태로 require하고 추적되는 파일

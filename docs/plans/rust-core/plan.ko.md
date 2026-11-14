@@ -1,5 +1,5 @@
 <!-- doc-id: plan-rust-core -->
-<!-- source-sha256: 1a182d9e65c38c69464f42a6702c97cb34e1b42d1c978f8cca8f8ca380622842 -->
+<!-- source-sha256: 1a405fcafd034b096f87fb5d9f26beb2ed97cbd808361944ebd6869f8ba4c14d -->
 # Rust 코어
 
 [English](plan.md)
@@ -18,6 +18,6 @@ checklist는 각 단계가 앞 단계를 필요로 하는 순서를 따른다.
 4. binding이 생성하는 바인딩. 각각 binding이 생성하는 시험과 contract case로 그 언어의 표준 runner에서 시험되며(T1.5),
    이 저장소에 대한 binding의 end-to-end 검사(T1.6).
 5. Go 바인딩(T1.7). binding은 이 계약의 Go를 생성하고, Go 바인딩은 http-media-type의 Go module을 import한다. 그래서
-   그 시험에는 그 module과 그 정적 라이브러리가 필요한데, recipe가 아직 그것을 주지 않는다.
+   그 시험은 http-media-type의 checkout에서 그 module과 그 정적 라이브러리를 빌드한다.
 6. GitHub의 검사와 release. workflow `ci`와 `release`, release 구성, 그 make target(T1.8), 그다음 첫 release(T1.9). 첫
    release는 wheel과 PHP 확장을 가진 http-media-type의 release와 Go 바인딩(T1.7)을 기다린다.

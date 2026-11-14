@@ -1,8 +1,9 @@
 // The contract cases of http-negotiation run against the Go package (NG-1 to NG-12). HTTP_NEGOTIATION_CASES is the
 // path of contracts/negotiate.json; make test-go sets it. A latin1 text of the cases is a Go string of its runes U+0000
 // to U+00FF (NG-1.4, binding B-8); a name, a type and a subtype are a text, a Go string of UTF-8 bytes. A case of the
-// group internal arms its faults for the member, as a generated test does (binding G-5, NG-11.4); the Go binding has
-// no entry point that arms faults, so such a case fails.
+// group internal arms its faults for the member through the entry point of the feature fault-test of the binding, as a
+// generated test does, from the thread of its call (binding G-5, GN-5, NG-11.4); go test runs with the build tag
+// polyspec_fault_test, which make test-go gives.
 package tests
 
 import (
@@ -10,10 +11,12 @@ import (
 	"errors"
 	"os"
 	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/polyspec/http-negotiation/packages/go/accept"
 	liberrors "github.com/polyspec/http-negotiation/packages/go/errors"
+	"github.com/polyspec/http-negotiation/packages/go/internal/binding"
 )
 
 type raises struct {
@@ -136,8 +139,12 @@ func check(t *testing.T, id string, err error, want *raises) {
 	}
 }
 
-func ranges(a *accept.Accept) []rangeValue {
-	got := a.Ranges()
+func ranges(t *testing.T, id string, a *accept.Accept) []rangeValue {
+	t.Helper()
+	got, err := a.Ranges()
+	if err != nil {
+		t.Errorf("%s: ranges: %v", id, err)
+	}
 	out := make([]rangeValue, len(got))
 	for i, r := range got {
 		parameters := make([]parameter, len(r.Parameters))
@@ -191,7 +198,7 @@ func TestAccept(t *testing.T) {
 		t.Fatal("no cases")
 	}
 	for _, c := range group {
-		got, err := accept.Parse(c.Lines)
+		got, err := accept.AcceptParse(c.Lines)
 		if c.Raises != nil {
 			check(t, c.ID, err, c.Raises)
 			continue
@@ -200,8 +207,8 @@ func TestAccept(t *testing.T) {
 			t.Errorf("%s: got %v", c.ID, err)
 			continue
 		}
-		if !reflect.DeepEqual(ranges(got), c.Ranges) {
-			t.Errorf("%s: got %q, want %q", c.ID, ranges(got), c.Ranges)
+		if found := ranges(t, c.ID, got); !reflect.DeepEqual(found, c.Ranges) {
+			t.Errorf("%s: got %v, want %v", c.ID, found, c.Ranges)
 		}
 	}
 }
@@ -212,17 +219,38 @@ func TestWeigh(t *testing.T) {
 		t.Fatal("no cases")
 	}
 	for _, c := range append(all.Weigh, all.Internal...) {
-		if c.Faults != nil {
-			t.Errorf("%s: the Go binding has no entry point that arms faults (binding G-5)", c.ID)
-			continue
-		}
-		a, err := accept.Parse(c.Lines)
+		weigh(t, c)
+	}
+}
+
+// weigh runs the weigh of a case and compares its outcome; a case that names faults arms them for the call and fails
+// when a fault did not fire (G-5).
+func weigh(t *testing.T, c weighCase) {
+	t.Helper()
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	a, err := accept.AcceptParse(c.Lines)
+	if err != nil {
+		compare(t, c, nil, err)
+		return
+	}
+	var armed uint64
+	if c.Faults != nil {
+		faults, err := json.Marshal(c.Faults)
 		if err != nil {
-			compare(t, c, nil, err)
-			continue
+			t.Fatalf("%s: %v", c.ID, err)
 		}
-		got, err := a.Weigh(candidates(c.Candidates))
-		compare(t, c, got, err)
+		if armed, err = binding.ArmFaults("accept.weigh", string(faults)); err != nil {
+			t.Fatalf("%s: arm the faults: %v", c.ID, err)
+		}
+	}
+	got, err := a.Weigh(candidates(c.Candidates))
+	compare(t, c, got, err)
+	if c.Faults != nil {
+		left, err := binding.FaultLeft(armed)
+		if err != nil || len(left) != 0 {
+			t.Errorf("%s: the faults %v did not fire (%v)", c.ID, left, err)
+		}
 	}
 }
 
@@ -233,7 +261,7 @@ func TestInvalidCandidates(t *testing.T) {
 		t.Fatal("no cases")
 	}
 	for _, c := range group {
-		a, err := accept.Parse(c.Lines)
+		a, err := accept.AcceptParse(c.Lines)
 		if err != nil {
 			t.Errorf("%s: got %v", c.ID, err)
 			continue

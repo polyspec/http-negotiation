@@ -51,24 +51,28 @@ rules of this repository.
   binding repository) until binding is released; `Cargo.lock` pins its commit. The core implements
   `binding_core::Kinds` for its error (NG-11).
 - binding itself is the TypeScript tool of the same repository, which no registry holds yet. `scripts/binding.mts` takes
-  it from the checkout that Cargo made of the commit that `Cargo.lock` pins, clones it into `var/binding/<commit>` and
-  installs its dependencies there by its `package-lock.json`, so that the generator and `binding_core` are one version.
+  it from the checkout that Cargo made of the commit that `Cargo.lock` pins, and `make install-binding` clones it into
+  `var/binding/<commit>` and installs its dependencies there by its `package-lock.json`, so that the generator and
+  `binding_core` are one version. Only `make install-binding` downloads (the crates of `Cargo.lock` and the packages of
+  binding); `make bindings-check` and `make bindings` read them offline and fail while they are missing, because a
+  check that downloads depends on the network.
   The clone is a Git checkout of binding at that commit: binding check reads its own commit from it and compares it with
   the commit of `Cargo.lock` (CK-20), which a copy of the files alone fails. This holds only until the first release of
   binding.
 - A case of `contracts/negotiate.json` follows the case convention of binding (G-5): its keys are the parameter names
   in snake_case (`lines`, `candidates`), and a record is the object of its fields (a candidate is
   `{"type", "subtype", "parameters", "matching", "wildcards"}`).
-- A range holds the record `Parameter` of http-media-type, whose class the Python package and the PHP extension of
-  http-media-type give (binding T-3). `make test-python` installs the wheel `HTTP_MEDIA_TYPE_WHEEL` beside the wheel of
-  this repository and `make test-php` loads the extension `HTTP_MEDIA_TYPE_EXTENSION` before this one; both are files
-  that a build of the checkout of http-media-type writes, and each recipe fails while its file is missing. The pinned
-  binding generates the five targets. The Go binding imports the Go module of http-media-type, which
-  `packages/go/go.mod` requires in the development form `v0.0.0` without a `replace` line (binding GN-15f), and no
-  tracked file resolves that module: in a tree of the tracked files `go vet` fails with a missing `go.sum` entry for
-  it, and `make test-go` fails there. A development link, an untracked `go.work` that names the checkout of
-  http-media-type, resolves the module, and the Go program then also links the static library of the Go binding of
-  http-media-type; the recipe that gives both is the open work of T1.7.
+- A range holds the record `Parameter` of http-media-type, whose class the Python package, the PHP extension and the
+  Go module of http-media-type give (binding T-3). The pinned binding generates the five targets. `make
+  install-binding` clones the checkout of http-media-type at the commit of `Cargo.lock` into `var/deps/http-media-type`,
+  and `make media-type-python`, `make media-type-php` and `make media-type-go` generate its bindings there with the
+  binding of `Cargo.lock` and build them with their test features. `make test-python` installs that wheel
+  (`HTTP_MEDIA_TYPE_WHEEL`) beside the wheel of this repository, `make test-php` loads that extension
+  (`HTTP_MEDIA_TYPE_EXTENSION`) before this one, and `make test-go` links the static library of its Go crate and
+  resolves its Go module by `var/go.work`, which `make media-type-go` writes and `GOWORK` names: `packages/go/go.mod`
+  requires the Go module of http-media-type in the development form `v0.0.0` without a `replace` line (binding GN-15f),
+  and no tracked file resolves it, so `go vet` of a tree of the tracked files fails with a missing `go.sum` entry. Each
+  recipe builds what it reads, so a job needs no other job and no release of http-media-type (T1.7, T1.9).
 - `make bindings` generates the five targets, each in its own target `make bindings-<target>` (`binding generate
   --target <target>`), and every make target that builds or tests a binding runs the generation of the targets it uses
   first, so that a target that binding refuses fails with its name and does not stop the others (binding GN-1c). `make test-bindings` runs
@@ -95,7 +99,7 @@ rules of this repository.
   `.cargo/config.toml`. The recipes name the library that Cargo builds by the extension of the platform (`dylib` on
   macOS, `so` on Linux).
 - The tools are pinned in tracked files and installed into `var/tools` of the checkout, as in binding: `mise.toml`
-  names Node.js, npm, Go, Python, Composer and the wasm-bindgen CLI at the releases of binding and `mise.lock` their
+  names Node.js, npm, Go, Python, Composer, the wasm-bindgen CLI and maturin at the releases of binding and `mise.lock` their
   digests, `config/toolchain.json` the release of mise and its digests, `rust-toolchain.toml` the Rust toolchain with
   the target `wasm32-unknown-unknown` and `.php-version` the PHP of the machine, which the wrappers of `var/tools/bin`
   run. A fresh checkout runs `make bootstrap`, which installs `package-lock.json` with the npm of `devEngines` of
@@ -127,10 +131,8 @@ rules of this repository.
   as one make target, so that the settings of the Makefile apply to it. `.github/actions/bootstrap` is the bootstrap of
   every job, and `make install-php-tools` installs PHPUnit of `composer.lock` into `vendor/` with the Composer of
   `mise.toml`.
-- `make test-python` and `make test-php` read the wheel and the PHP extension of http-media-type
-  (`HTTP_MEDIA_TYPE_WHEEL`, `HTTP_MEDIA_TYPE_EXTENSION`). No job builds another repository, and no release of
-  http-media-type holds a wheel or an extension yet, so both targets fail in the job `bindings` with the missing file
-  as their cause, and `ci-passed` fails with them, until a release of http-media-type holds both files.
+- Every job runs `make install-binding` after its tools, and the job `bindings` builds the wheel, the PHP extension
+  and the static library of http-media-type that its targets read from the checkout that it clones (see "Bindings").
 - `config/release.json` classifies every package file, which `make release-coverage` checks. A tag `vX.Y.Z` releases the
   core crate `packages/rust` as a Git tag, which a Cargo dependency names with `tag = "vX.Y.Z"`, and it is the version
   of the binding manifests, which binding scaffold writes from the version of the core. The release also tags the Go module

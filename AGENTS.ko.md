@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: d80e2fd2dcd76a0529594729f88e17fb5fb654f50639f6852d441458ae184be9 -->
+<!-- source-sha256: 2d54ea259ee5c5b79c4b86377b567dd24cc83317ae160a5731f87ead3b7cffcb -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -51,23 +51,27 @@
   `v1/rust-core` 브랜치). `Cargo.lock`이 그 커밋을 고정한다. 코어는 자기 오류에
   `binding_core::Kinds`를 구현한다(NG-11).
 - binding 자체는 같은 저장소의 TypeScript 도구이며, 아직 어떤 registry에도 없다. `scripts/binding.mts`는
-  `Cargo.lock`이 고정한 커밋으로 Cargo가 만든 checkout에서 binding을 가져와 `var/binding/<commit>`에 clone하고,
-  거기에 binding의 `package-lock.json`대로 의존성을 설치한다. 그래서 생성기와 `binding_core`가 한 판이 된다.
+  `Cargo.lock`이 고정한 커밋으로 Cargo가 만든 checkout에서 binding을 가져와 `make install-binding`이 그것을
+  `var/binding/<commit>`에 clone하고 거기에 binding의 `package-lock.json`대로 의존성을 설치한다. 그래서 생성기와
+  `binding_core`가 한 판이 된다. 내려받는 것은 `make install-binding`뿐이다(`Cargo.lock`의 crate와 binding의 package).
+  `make bindings-check`와 `make bindings`는 그것을 offline으로 읽고 없으면 실패한다. 내려받는 검사는 network에 기대기
+  때문이다.
   그 clone은 그 커밋의 binding Git checkout이다. binding check는 그 clone에서 자기 커밋을 읽어
   `Cargo.lock`의 커밋과 비교하며(CK-20), 파일만 복사한 것은 이 비교에서 실패한다. 이 방식은 binding의 첫 릴리스까지만
   유지된다.
 - `contracts/negotiate.json`의 case는 binding의 case 규약(G-5)을 따른다. case의 key는 snake_case로 쓴 parameter
   이름(`lines`, `candidates`)이고, record는 그 field들의 객체다(candidate는
   `{"type", "subtype", "parameters", "matching", "wildcards"}`다).
-- range는 http-media-type의 record `Parameter`를 담고, 그 클래스는 http-media-type의 Python 패키지와 PHP 확장이
-  준다(binding T-3). `make test-python`은 이 저장소의 wheel 곁에 wheel `HTTP_MEDIA_TYPE_WHEEL`을 설치하고, `make
-  test-php`는 이 확장보다 먼저 확장 `HTTP_MEDIA_TYPE_EXTENSION`을 로드한다. 둘 다 http-media-type checkout의 빌드가
-  쓰는 파일이고, 각 recipe는 그 파일이 없으면 실패한다. 고정된 binding은 다섯 target을 생성한다.
-  Go 바인딩은 http-media-type의 Go module을 import하고, `packages/go/go.mod`는 그 module을 `replace` 줄 없이 개발 형태
-  `v0.0.0`으로 require한다(binding GN-15f). 추적되는 파일 가운데 그 module을 해소하는 것은 없다. 추적되는 파일만 있는
-  tree에서 `go vet`은 그 module의 `go.sum` 항목이 없다고 실패하고, `make test-go`는 거기서 실패한다. 개발 link인
-  추적하지 않는 `go.work`가 http-media-type의 checkout을 가리키면 그 module이 해소되고, 그때 Go 프로그램은
-  http-media-type의 Go 바인딩의 정적 라이브러리도 link한다. 둘을 주는 recipe가 T1.7의 열린 일이다.
+- range는 http-media-type의 record `Parameter`를 담고, 그 클래스는 http-media-type의 Python 패키지, PHP 확장, Go
+  module이 준다(binding T-3). 고정된 binding은 다섯 target을 생성한다. `make install-binding`은 `Cargo.lock`의 커밋으로
+  http-media-type의 checkout을 `var/deps/http-media-type`에 clone하고, `make media-type-python`, `make media-type-php`,
+  `make media-type-go`는 거기에 `Cargo.lock`의 binding으로 그 바인딩을 생성하고 시험 feature로 빌드한다. `make
+  test-python`은 그 wheel(`HTTP_MEDIA_TYPE_WHEEL`)을 이 저장소의 wheel 곁에 설치하고, `make test-php`는 그
+  확장(`HTTP_MEDIA_TYPE_EXTENSION`)을 이 확장보다 먼저 로드하고, `make test-go`는 그 Go crate의 정적 라이브러리를 link하고
+  `make media-type-go`가 쓰고 `GOWORK`가 가리키는 `var/go.work`로 그 Go module을 해소한다. `packages/go/go.mod`는 그
+  module을 `replace` 줄 없이 개발 형태 `v0.0.0`으로 require하고(binding GN-15f) 추적되는 파일 가운데 그것을 해소하는
+  것이 없어서, 추적되는 파일만 있는 tree의 `go vet`은 `go.sum` 항목이 없다고 실패하기 때문이다. 각 recipe는 자기가 읽는
+  것을 빌드하므로 job은 다른 job도 http-media-type의 release도 필요로 하지 않는다(T1.7, T1.9).
 - `make bindings`는 다섯 target을 각각 자기 target `make bindings-<target>`(`binding generate --target <target>`)에서
   생성하고, 바인딩을 빌드하거나 시험하는 모든 make target은 자기가 쓰는 target의 생성을 먼저 실행한다. 그래서 binding이
   거부하는 target은 자기 이름으로 실패하고 다른 target을 멈추지 않는다(binding GN-1c). `make test-bindings`는
@@ -92,7 +96,7 @@
   라이브러리에만 그렇게 지시하고(binding GN-3d), 추적되는 어떤 파일도 `RUSTFLAGS`나 `.cargo/config.toml`로 링크 설정을
   주지 않는다. recipe는 Cargo가 만든 라이브러리를 플랫폼의 확장자(macOS `dylib`, Linux `so`)로 가리킨다.
 - 도구는 추적되는 파일에 고정되고, binding처럼 checkout의 `var/tools`에 설치된다. `mise.toml`은 Node.js, npm, Go,
-  Python, Composer, wasm-bindgen CLI를 binding의 판으로 적고 `mise.lock`은 그 digest를 적는다. `config/toolchain.json`은
+  Python, Composer, wasm-bindgen CLI, maturin을 binding의 판으로 적고 `mise.lock`은 그 digest를 적는다. `config/toolchain.json`은
   mise의 판과 digest를, `rust-toolchain.toml`은 target `wasm32-unknown-unknown`을 가진 Rust toolchain을, `.php-version`은
   `var/tools/bin`의 wrapper가 실행하는 기계의 PHP를 적는다. 새 checkout은 `make bootstrap`을 실행해 `package.json`의
   `devEngines`가 적는 npm으로 `package-lock.json`을 설치하고, 그다음 `@polyspec/kit`의 설치기를 실행하는 `make install`
@@ -121,10 +125,8 @@
   `ubuntu-26.04-arm`에서 돌고, 모든 action을 commit으로 고정하며, `timeout-minutes`를 두지 않고, step의 모든 명령을 make
   target 하나로 실행한다. 그래야 Makefile의 설정이 그 명령에 적용되기 때문이다. `.github/actions/bootstrap`은 모든 job의
   bootstrap이고, `make install-php-tools`는 `mise.toml`의 Composer로 `composer.lock`의 PHPUnit을 `vendor/`에 설치한다.
-- `make test-python`과 `make test-php`는 http-media-type의 wheel과 PHP 확장(`HTTP_MEDIA_TYPE_WHEEL`,
-  `HTTP_MEDIA_TYPE_EXTENSION`)을 읽는다. 어떤 job도 다른 저장소를 빌드하지 않고, http-media-type의 어떤 release에도 아직
-  wheel이나 확장이 없다. 그래서 두 대상은 job `bindings`에서 없는 파일을 원인으로 실패하고, `ci-passed`도 함께 실패한다.
-  http-media-type의 release가 두 파일을 가질 때까지 그렇다.
+- 모든 job은 도구 다음에 `make install-binding`을 실행하고, job `bindings`는 자기 target이 읽는 http-media-type의
+  wheel, PHP 확장, 정적 라이브러리를 자기가 clone한 checkout에서 빌드한다("바인딩" 절을 본다).
 - `config/release.json`은 모든 package 파일을 분류하고, `make release-coverage`가 그것을 검사한다. tag `vX.Y.Z`는 코어
   crate `packages/rust`를 Git tag로 release한다. Cargo 의존은 그것을 `tag = "vX.Y.Z"`로 가리킨다. 그 tag는 binding
   manifest의 version이기도 하며, binding scaffold가 코어의 version으로 그 manifest를 쓴다. release는 release commit에 Go module
