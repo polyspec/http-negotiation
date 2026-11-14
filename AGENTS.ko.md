@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 202c74216efa80ac68dd697055faf52960e92dc5a10c05c895a4e77dfb003e9f -->
+<!-- source-sha256: 70ed4c04a2695a949dfc30c380086597e5caab66fba4122558b12b5bfa6659b7 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -122,6 +122,8 @@
   `source-sha256`과 함께 읽고, `config/checklist.json`이 행을 선언하는 checklist `docs/plans/rust-core/checklist.md`를
   읽는다. 저장소의 계획은 `docs/plans/rust-core/plan.md`이고, 할 일은 그 checklist의 행이며, 검증 명령이 commit된
   tree에서 통과한 뒤에만 `[o]`로 적는다. commit 전에 실행한다.
+- `make documents-stamp PATHS=<twin>`은 번역을 검토한 뒤 이름 붙인 각 한국어 쌍의 `source-sha256`을 그 영어 파일에서
+  쓴다. 표시를 손으로 쓰지 않는다.
 
 ## CI와 release
 

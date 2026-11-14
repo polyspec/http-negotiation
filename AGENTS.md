@@ -127,6 +127,8 @@ rules of this repository.
   rows `config/checklist.json` declares. The plan of the repository is `docs/plans/rust-core/plan.md`; a task is a row
   of that checklist, marked `[o]` only after its verification command passed on the committed tree. Run it before a
   commit.
+- `make documents-stamp PATHS=<twin>` writes the `source-sha256` of each named Korean twin from its English file, after
+  the translation is reviewed; no marker is written by hand.
 
 ## CI and release
 

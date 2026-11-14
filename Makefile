@@ -73,7 +73,7 @@ export PHP PHP_CONFIG
 # "Platforms").
 CDYLIB := $(if $(filter Darwin,$(shell uname -s)),dylib,so)
 
-.PHONY: bootstrap install install-tools install-packages toolchain-lock check test lint lint-rust fmt-check bindings-check docs-check bindings $(BINDING_PHONY) test-bindings lint-bindings test-python test-node test-php \
+.PHONY: bootstrap install install-tools install-packages toolchain-lock check test lint lint-rust fmt-check bindings-check docs-check documents-stamp bindings $(BINDING_PHONY) test-bindings lint-bindings test-python test-node test-php \
 	test-wasm test-go node-package check-declarations test-scripts media-type-checkout media-type-python media-type-php media-type-go install-binding install-php-tools ci-targets ci-summary ci-passed release-tag release-checkout \
 	release-prepare release-tools release-tools-path release-assets release-publish release-undraft release-coverage
 
@@ -140,6 +140,10 @@ fmt-check:
 # Korean twin), and the checklists of docs/plans, whose rows config/checklist.json declares.
 docs-check:
 	$(NODE) $(KIT)/check-documents.mjs --checklist-place --private-path /Users/ --private-path /home/ --kit-rows
+
+# Writes the source-sha256 of each Korean twin of PATHS from its English file, after the translation is reviewed.
+documents-stamp:
+	$(NODE) $(KIT)/documents-stamp.mjs $(PATHS)
 
 # The contract check and the comparison of the tracked binding packages with what binding writes (L-2 (c)).
 bindings-check:

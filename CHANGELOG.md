@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `make documents-stamp PATHS=<twin>` writes the `source-sha256` of each named Korean twin from its English file with
+  the stamp of kit, after the translation is reviewed. Before, the marker was written by hand.
+
 - `[profile.release]` sets `lto = false`; before, it set `lto = true`, with which a Go program that links the Go
   static library beside the static library of http-media-type, which the Go module requires, fails with duplicate symbols such as
   `rust_eh_personality` (binding GN-15i, CK-91). Cargo sets `lto` for a whole profile, so the PHP extension, the Node

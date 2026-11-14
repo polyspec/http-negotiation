@@ -1,7 +1,10 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: ed8d74e6126e08df637f10bbc82d99bcb873bd333e1c4f81667cb2fe37e9b8c1 -->
+<!-- source-sha256: e81b2217dda8834d4be8b13319ecd831881036af05f873f0b5710a2bd16278a0 -->
 
 ## Unreleased
+
+- `make documents-stamp PATHS=<twin>`이 번역을 검토한 뒤 kit의 stamp로 이름 붙인 각 한국어 쌍의 `source-sha256`을 그
+  영어 파일에서 쓴다. 전에는 표시를 손으로 썼다.
 
 - `[profile.release]`는 `lto = false`를 정한다. 이전에는 `lto = true`였고, 그러면 Go 정적 라이브러리를
   Go module이 require하는 http-media-type의 정적 라이브러리와 함께 링크하는 Go program이 `rust_eh_personality` 같은 중복 symbol로
