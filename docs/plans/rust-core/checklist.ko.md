@@ -1,5 +1,5 @@
 <!-- doc-id: checklist-rust-core -->
-<!-- source-sha256: 535e5a049bd08806fc810763be910fe3ee1e176c4d3bc41372c0749aee4e86ee -->
+<!-- source-sha256: 61e5350ebb5934db0a3a5c67a09478c9250adb1daf5d5dbdb069b36e53e32db4 -->
 # Rust 코어 체크리스트
 
 | ID | Task | Deliverables | Verification | State |
@@ -18,4 +18,4 @@
 | T1.12 | Go 정적 라이브러리를 LTO 없이 빌드해서 Go program이 그것을 http-media-type의 정적 라이브러리와 함께 링크하게 하고(binding GN-15i, CK-91), 그 profile을 보고하는 check를 가진 binding을 받는다. Cargo는 `lto`를 profile 전체에 정하고 Go 정적 라이브러리는 release profile로 빌드되므로 `[profile.release]`는 `lto`를 켜지 않는다. binding의 end-to-end 검사가 다섯 target과 Go의 배포 형태를 통과한다 | `Cargo.toml`, `Cargo.lock`, `tests/scripts/profile.test.mts`, `AGENTS.md` | `make test-scripts`, `DEPS=http-media-type`로 binding의 `make e2e` | [o] |
 | T1.13 | binding의 release에 의존한다. 코어와 바인딩 crate의 `polyspec-binding-core`가 `branch = "v1/rust-core"` 대신 binding 저장소의 `tag = "v0.0.2"`를 적고, binding scaffold가 바인딩 crate를 다시 쓰고, `Cargo.lock`이 그 tag의 commit을 고정하고, `AGENTS.md`가 그 tag를 적는다. binding 0.0.2의 release를 기다린다 | `packages/rust/Cargo.toml`, `packages/*/Cargo.toml`, `Cargo.lock`, `AGENTS.md` | `make install-binding bindings-check` | [ ] |
 | T1.14 | 바인딩 패키지를 플랫폼별로 release한다. abi3 wheel, PHP 확장, platform package를 가진 npm package, Go 정적 라이브러리가 `config/release.json`의 행이고, `package.json`이 고정하는 kit 0.0.111 이후가 그것을 묶는다. binding이 이 패키지의 release recipe를 생성하므로(binding B2.262) 이 저장소는 자기 recipe를 쓰지 않는다. 그 binding 행과 T1.13을 기다린다 | `config/release.json`, `package.json`, `package-lock.json`, `Makefile` | `make release-coverage` | [ ] |
-| T1.15 | 검토된 한국어 쌍의 `source-sha256`을 손으로 쓴 hash 대신 kit의 stamp인 `make documents-stamp PATHS=<twin>`으로 쓴다 | `Makefile`, `AGENTS.md` | `make docs-check` | [~] |
+| T1.15 | 검토된 한국어 쌍의 `source-sha256`을 손으로 쓴 hash 대신 kit의 stamp인 `make documents-stamp PATHS=<twin>`으로 쓴다 | `Makefile`, `AGENTS.md` | `make docs-check` | [o] |
