@@ -1,5 +1,5 @@
 <!-- doc-id: plan-rust-core -->
-<!-- source-sha256: 68caf55dfe6d59db516d899dfc4e868685562d7bb81fb378d390c430411e58aa -->
+<!-- source-sha256: b4cc020d5990da0e62efada578dfda562a6af1dab9f74d9546b9e93f46093abe -->
 # Rust 코어
 
 [English](plan.md)

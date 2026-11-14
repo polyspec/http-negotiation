@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 19cc27b1587584b45c7328278d0c3be77f3d8eafafc293a62d9dd7da1bf0be42 -->
+<!-- source-sha256: bf9e525325f5cd20447a967426eff816e82b8a2d4fec7ccd4b3745d3931b3982 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
