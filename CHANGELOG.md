@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- binding is a released dependency. `polyspec-binding-core` of the core and of the binding crates names the tag
+  `v0.0.2` of the binding repository in place of the branch `v1/rust-core`, and `Cargo.lock` pins the commit of the tag
+  and http-media-type at the head of its branch, whose binding crates name the same tag; the dependency on
+  http-media-type stays on its branch until http-media-type releases a tag (T1.9). The tool is the npm package
+  `@polyspec/binding` of the same release, which `package.json` names by the URL of its release asset and
+  `package-lock.json` pins by its integrity; the recipes run its `dist/cli.js`. `make install-binding` runs `cargo
+  fetch --locked`, because binding reads the crates with `cargo metadata --locked --offline`, and `scripts/deps.mts`
+  clones the checkout of http-media-type; `scripts/binding.mts`, which also cloned binding into `var/binding`, is
+  removed. The new test `tests/scripts/binding.test.mts` failed its four tests on the branch dependency and passes with
+  the release. The binding crates and the checks of binding run on the build queue, because binding reads the contract
+  of http-media-type through Cargo.
+
 - `make documents-stamp PATHS=<twin>` writes the `source-sha256` of each named Korean twin from its English file with
   the stamp of kit, after the translation is reviewed. Before, the marker was written by hand.
 

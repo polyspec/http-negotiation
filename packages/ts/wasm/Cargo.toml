@@ -18,7 +18,7 @@ fault-test = ["polyspec-http-negotiation/fault-test"]
 
 [dependencies]
 polyspec-http-negotiation = { path = "../../rust" }
-polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", branch = "v1/rust-core", features = ["construct", "lock"] }
+polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.2", features = ["construct", "lock"] }
 polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", branch = "v1/rust-core" }
 wasm-bindgen = "=0.2.130"
 js-sys = "=0.3.107"

@@ -28,7 +28,9 @@ CARGOFLAGS ?=
 CORE := polyspec-http-negotiation
 # make runs a recipe line without shell syntax through the PATH of its own environment, not the PATH that this file
 # exports, so the recipes name the node and the npm of var/tools by their paths.
-BINDING := $(NODE) scripts/binding.mts
+# The tool of the release of binding that Cargo.lock pins, which package.json names and npm installs (make
+# install-packages); the generator and binding_core are one version (G-6).
+BINDING := $(NODE) $(CURDIR)/node_modules/@polyspec/binding/dist/cli.js
 CASES := $(CURDIR)/contracts/negotiate.json
 VAR := $(CURDIR)/var
 export CARGO_TARGET_DIR ?= $(CURDIR)/target
@@ -106,11 +108,12 @@ endif
 install-packages:
 	$(ONLINE) $(NPM) ci
 
-# install-binding fetches the crates of Cargo.lock, installs binding at the commit that Cargo.lock pins into var/binding
-# and clones the checkout of http-media-type at its commit into MEDIA_TYPE (scripts/binding.mts); the binding targets
-# read them offline and fail while they are missing.
+# install-binding fetches the crates of Cargo.lock, which binding reads with cargo metadata --locked --offline, and
+# clones the checkout of http-media-type at its commit into MEDIA_TYPE (scripts/deps.mts); the binding targets read them
+# offline and fail while they are missing.
 install-binding:
-	$(ONLINE) $(NODE) scripts/binding.mts install
+	$(ONLINE) $(CARGO) fetch --locked
+	$(ONLINE) $(NODE) scripts/deps.mts
 
 # toolchain-lock writes mise.lock with the mise of var/tools for the platforms of the deployment targets.
 TOOLCHAIN_LOCK_PLATFORMS := linux-x64,linux-arm64,macos-arm64

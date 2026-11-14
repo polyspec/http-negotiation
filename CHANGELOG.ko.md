@@ -1,7 +1,17 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: e81b2217dda8834d4be8b13319ecd831881036af05f873f0b5710a2bd16278a0 -->
+<!-- source-sha256: df154fa5c27be05c281afc726ccf896204bbe3ae599ecb22ea4a22b0e75292b7 -->
 
 ## Unreleased
+
+- binding은 release된 의존이다. 코어와 바인딩 crate의 `polyspec-binding-core`가 브랜치 `v1/rust-core` 대신 binding
+  저장소의 tag `v0.0.2`를 적고, `Cargo.lock`이 그 tag의 커밋과, 바인딩 crate가 같은 tag를 적는 브랜치 head의
+  http-media-type을 고정한다. http-media-type 의존은 http-media-type이 tag를 낼 때까지 그 브랜치에 남는다(T1.9). 도구는
+  같은 release의 npm package `@polyspec/binding`이고, `package.json`이 그것을 release asset의 URL로 적고
+  `package-lock.json`이 그 integrity로 고정한다. recipe는 그 `dist/cli.js`를 실행한다. binding이 crate를 `cargo metadata
+  --locked --offline`으로 읽으므로 `make install-binding`이 `cargo fetch --locked`를 실행하고, `scripts/deps.mts`가
+  http-media-type의 checkout을 clone한다. binding도 `var/binding`에 clone하던 `scripts/binding.mts`는 지웠다. 새 시험
+  `tests/scripts/binding.test.mts`는 브랜치 의존에서 네 시험 모두 실패했고 release로 통과한다. binding이 http-media-type의
+  계약을 Cargo로 읽으므로, 바인딩 crate와 binding의 검사는 빌드 큐에서 실행한다.
 
 - `make documents-stamp PATHS=<twin>`이 번역을 검토한 뒤 kit의 stamp로 이름 붙인 각 한국어 쌍의 `source-sha256`을 그
   영어 파일에서 쓴다. 전에는 표시를 손으로 썼다.

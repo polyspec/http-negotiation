@@ -52,8 +52,8 @@ jobs:
       - id: tools
         if: ${{ !cancelled() }}
         run: make install-tools
-      # binding at the commit of Cargo.lock, the crates of Cargo.lock and the checkout of http-media-type at its commit,
-      # which bindings-check and the binding targets read offline.
+      # The crates of Cargo.lock and the checkout of http-media-type at its commit, which binding (installed by the
+      # bootstrap from package-lock.json), bindings-check and the binding targets read offline.
       - id: binding
         if: ${{ !cancelled() }}
         run: make install-binding
