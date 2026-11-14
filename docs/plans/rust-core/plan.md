@@ -21,9 +21,9 @@ The checklist follows the order in which each step needs the one before it:
 5. The Go binding (T1.7): binding generates Go for this contract, and the Go binding imports the Go module of
    http-media-type, so its test builds that module and its static library from the checkout of http-media-type.
 6. The checks on GitHub and the release: the workflows `ci` and `release`, the release configuration and their make
-   targets (T1.8), then the first release 0.0.1 (T1.9), which depends on the release 0.0.1 of http-media-type by its
+   targets (T1.8), then the first release 0.0.1 (T1.9), which depends on the release 0.0.2 of http-media-type by its
    tag and waits for the Go binding (T1.7).
 7. The dependency on binding by its released tag in place of its branch (T1.13), which waits for the release of binding
-   0.0.2, and the packages of the bindings per platform (T1.14): binding generates their release recipes, so this
-   repository writes none of its own. T1.13 comes before the first release (T1.9), and T1.14 comes in the version after
-   it.
+   0.0.2, and the packages of the bindings per platform (T1.14): binding 0.0.3 generates their release recipes, so this
+   repository writes none of its own, and the workflow `assets.yml` builds them on the runner of each platform. Both
+   come before the first release (T1.9).

@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+- The release holds the packages of the bindings per platform as assets of its GitHub Release. binding 0.0.3 writes
+  the release recipes of the contract (binding GN-19h): `make release-recipes` runs `binding release-recipes --root .`,
+  which writes the ignored file `packages/release.mk`, and the Makefile includes it after it defines `BINDING_RUN`,
+  `NODE`, `NPM`, `UV` and `BINDING_DEP`, so the repository keeps no recipe of its own. The new workflow
+  `.github/workflows/assets.yml` builds on `ubuntu-26.04`, `ubuntu-26.04-arm` and `macos-15` the static library of
+  the Go module, the abi3 wheel, the PHP extension for PHP 8.4 and 8.5 and the npm platform package of each platform,
+  and on `ubuntu-26.04-arm` the npm package with its WASM module (binding GN-19a, GN-19i). `ci.yml` calls it for every
+  run, and `release.yml` calls it for the tag, creates the draft release with the Composer package of the PHP extension,
+  carries the Go module with `make release-go-module`, uploads the assets with `make release-platform-assets` and makes
+  the release public. `config/release.json` releases the Composer package of `packages/php-ext` and no longer names
+  `packages/go` in `goModules`, because `make release-go-module` tags the commit that adds the generated files and the
+  static libraries (binding GN-19f). The dependency on binding is the release 0.0.3 (`package.json`,
+  `package-lock.json`, the tag `v0.0.3` of `polyspec-binding-core` of every Cargo manifest, and `Cargo.lock`);
+  `@napi-rs/cli` 3.10.12 is a devDependency, `config/toolchain.json` pins LLVM 21, `rust-toolchain.toml` names
+  `llvm-tools` and the musl targets of the Linux arches, and `mise.toml` with `mise.lock` names uv 0.12.24. The target
+  `release-checkout` is removed, since each job of the release checks out the tag. The new test
+  `tests/scripts/workflows.test.mts` checks the runners, the pins, the run steps and the order of the release steps.
+  `Cargo.lock` still pins the binding 0.0.2 of http-media-type 0.0.1 beside 0.0.3, so `binding check --release` reports
+  CK-20 and the test of `Cargo.lock` in `tests/scripts/binding.test.mts` fails until http-media-type 0.0.2 is pinned
+  (T1.14-5). Red: `binding check --release` reported CK-94 for the Makefile without the include, and `make
+  test-scripts` failed the three tests of `workflows.test.mts` and the two tests of the binding release in
+  `binding.test.mts`. Green: `binding check --release` reports CK-20 alone, `make test-scripts` passes 13 of 14 tests,
+  and `make docs-check` and `make release-coverage` pass (T1.14).
 ## 0.0.1
 
 - http-media-type is a released dependency. The core and the binding crates name the tag `v0.0.1` of http-media-type

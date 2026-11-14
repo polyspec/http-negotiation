@@ -1,5 +1,5 @@
 <!-- doc-id: plan-rust-core -->
-<!-- source-sha256: b4cc020d5990da0e62efada578dfda562a6af1dab9f74d9546b9e93f46093abe -->
+<!-- source-sha256: f2d084f81f825f0c2d7178d61b93d3caae8ab29229a464ab93fdf84acc36a0e5 -->
 # Rust 코어
 
 [English](plan.md)
@@ -20,7 +20,7 @@ checklist는 각 단계가 앞 단계를 필요로 하는 순서를 따른다.
 5. Go 바인딩(T1.7). binding은 이 계약의 Go를 생성하고, Go 바인딩은 http-media-type의 Go module을 import한다. 그래서
    그 시험은 http-media-type의 checkout에서 그 module과 그 정적 라이브러리를 빌드한다.
 6. GitHub의 검사와 release. workflow `ci`와 `release`, release 구성, 그 make target(T1.8), 그다음 첫 release(T1.9). 첫
-   release 0.0.1은 http-media-type의 release 0.0.1에 그 tag로 의존하고 Go 바인딩(T1.7)을 기다린다.
+   release 0.0.1은 http-media-type의 release 0.0.2에 그 tag로 의존하고 Go 바인딩(T1.7)을 기다린다.
 7. binding의 branch 대신 release된 tag로 binding에 의존하는 것(T1.13). binding 0.0.2의 release를 기다린다. 그리고
-   플랫폼별 바인딩 패키지(T1.14). binding이 그 release recipe를 생성하므로 이 저장소는 자기 recipe를 쓰지 않는다. T1.13은 첫
-   release(T1.9) 전에 오고 T1.14는 그다음 version에 온다.
+   플랫폼별 바인딩 패키지(T1.14). binding 0.0.3이 그 release recipe를 생성하므로 이 저장소는 자기 recipe를 쓰지 않고,
+   workflow `assets.yml`이 각 플랫폼의 runner에서 그것을 빌드한다. 둘 다 첫 release(T1.9) 전에 온다.
