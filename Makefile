@@ -50,7 +50,8 @@ MATURIN ?= $(KIT_TOOLS)/mise/shims/maturin
 # HTTP_MEDIA_TYPE_WHEEL, which test-python installs beside the wheel of this repository, the extension
 # HTTP_MEDIA_TYPE_EXTENSION, which test-php loads before this one, and the static library of its Go crate, which test-go
 # links, with GO_WORK, which names the Go modules of both checkouts, because packages/go/go.mod requires the Go module
-# of http-media-type in the development form v0.0.0 (binding GN-15f) and no tracked file resolves it (T1.7, T1.9).
+# of http-media-type at its release v0.0.1 (binding GN-15f), and the test builds that module from the checkout (T1.7,
+# T1.9).
 MEDIA_TYPE := $(VAR)/deps/http-media-type
 MEDIA_TYPE_FEATURES := panic-test
 MEDIA_TYPE_GO_FEATURES := panic-test,codec-test

@@ -35,7 +35,7 @@
 ## Rust
 
 - `rust-toolchain.toml`이 toolchain을, `Cargo.lock`이 의존성을 고정한다. `polyspec-http-media-type`은 그 레포의
-  브랜치 `v1/rust-core`에 대한 Git 의존성이며 `Cargo.lock`이 그 커밋을 고정한다. `polyspec-binding-core`도
+  release인 tag `v0.0.1`에 대한 Git 의존성이며 `Cargo.lock`이 그 커밋을 고정한다. `polyspec-binding-core`도
   같다. 빌드는 다른 checkout을 읽지 않는다.
 - `Cargo.toml`의 `[profile.release]`는 `lto = false`와 `codegen-units = 1`을 정한다(binding GN-15i, CK-91). Go 정적
   라이브러리는 release profile로 빌드되고, LTO는 표준 라이브러리와 `binding_core`를 그 하나의 object에 넣으므로,
@@ -56,8 +56,8 @@
   바인딩 crate의 `generated/`는 추적하지 않는다. 루트의 `Cargo.lock`이 모든 의존성을 고정한다.
 - `polyspec-binding-core`는 코어와 바인딩 crate가 binding 저장소의 tag `v0.0.2`, 곧 그 release에 두는 Git 의존성이다.
   `Cargo.lock`이 그 tag의 커밋을 고정한다. 코어는 자기 오류에 `binding_core::Kinds`를 구현한다(NG-11).
-  `polyspec-http-media-type`은 http-media-type이 tag를 내기 전까지(T1.9) 바인딩 crate가 같은 tag를 적는 commit에서
-  http-media-type의 브랜치 `v1/rust-core`에 두는 Git 의존성으로 남는다.
+  `polyspec-http-media-type`은 코어와 바인딩 crate가 http-media-type의 release인 tag `v0.0.1`에 두는 Git 의존성이며,
+  그 바인딩 crate는 binding의 같은 tag를 적는다(T1.9).
 - binding 자체는 같은 release의 npm package `@polyspec/binding`이다. `package.json`이 그것을 release asset의 URL로 적고
   `package-lock.json`이 그 integrity로 고정한다. 그래서 생성기와 `binding_core`가 한 판이 된다(G-6). binding check는
   `Cargo.lock`의 tag를 자기 것으로 받는다(CK-20). recipe는 `node_modules/@polyspec/binding/dist/cli.js`를
@@ -151,10 +151,10 @@
   `## Unreleased`를 둔다. 그 push의 CI 실행이 성공하면 `.github/workflows/release.yml`이 스스로 시작하고, `gh workflow run
   release.yml -f run=<id>`가 그것을 다시 시작한다. `make release-tag`가 그 commit에 annotated tag `vX.Y.Z`를 만들어
   push하고, `make release-publish`와 `make release-undraft`가 GitHub Release를 만든다. tag를 손으로 만들지 않는다.
-- 첫 release 전에 열려 있는 일이며, 이것 없이는 release가 끝난 것이 아니다. `origin`에 `main`이 없으므로 release는
-  `v1/rust-core`를 `main`으로 push하고 `main`을 기본 브랜치로 만든다. 바인딩의 package(abi3 wheel, PHP 확장, npm package와
-  그 플랫폼 package)는 kit 0.0.111과 binding의 release가 있어야 `config/release.json`의 행이 된다. kit 0.0.109가 그 kind를
-  거부하기 때문이다. 첫 release는 http-media-type의 release와 Go 바인딩도 기다린다(T1.9).
+- 첫 release 0.0.1은 코어의 tag와 `config/release.json`의 tag를 갖고 바인딩 package는 갖지 않는다(T1.9). release의
+  브랜치는 `main`이다. GitHub이 `v1/rust-core`를 `main`으로 이름을 바꾼다(T1.16). 바인딩의 package(abi3 wheel, PHP 확장,
+  npm package와 그 플랫폼 package)는 0.0.1 다음 version에 온다. kit 0.0.111 이후가 묶는 `config/release.json`의 행이고,
+  release recipe는 binding 0.0.3 이후가 생성한다(T1.14).
 
 ## Commit과 변경
 

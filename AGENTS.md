@@ -34,8 +34,8 @@ rules of this repository.
 ## Rust
 
 - `rust-toolchain.toml` pins the toolchain and `Cargo.lock` the dependencies. `polyspec-http-media-type` is a Git
-  dependency on the branch `v1/rust-core` of its repository, whose commit `Cargo.lock` pins, as `polyspec-binding-core`
-  is; the build reads no other checkout.
+  dependency on the tag `v0.0.1` of its repository, its release, whose commit `Cargo.lock` pins, as
+  `polyspec-binding-core` is; the build reads no other checkout.
 - `[profile.release]` of `Cargo.toml` sets `lto = false` and `codegen-units = 1` (binding GN-15i, CK-91). The Go
   static library is built with the release profile, and LTO would put the standard library and `binding_core` into
   its one object, so a Go program that links it beside the static library of http-media-type, which the Go module requires, would fail with
@@ -56,8 +56,8 @@ rules of this repository.
   compares; their `generated/` is not tracked. `Cargo.lock` at the root pins every dependency.
 - `polyspec-binding-core` is a Git dependency of the core and of the binding crates on the tag `v0.0.2` of the binding
   repository, its release; `Cargo.lock` pins the commit of that tag. The core implements `binding_core::Kinds` for its
-  error (NG-11). `polyspec-http-media-type` stays a Git dependency on the branch `v1/rust-core` of http-media-type, at
-  a commit whose binding crates name the same tag, until http-media-type releases a tag (T1.9).
+  error (NG-11). `polyspec-http-media-type` is a Git dependency of the core and of the binding crates on the tag
+  `v0.0.1` of http-media-type, its release, whose binding crates name the same tag of binding (T1.9).
 - binding itself is the npm package `@polyspec/binding` of the same release, which `package.json` names by the URL of
   its release asset and `package-lock.json` pins by its integrity, so that the generator and `binding_core` are one
   version (G-6); binding check takes the tag of `Cargo.lock` as its own (CK-20). The recipes run
@@ -160,10 +160,11 @@ rules of this repository.
   `.github/workflows/release.yml` starts by itself, and `gh workflow run release.yml -f run=<id>` starts it again: `make
   release-tag` creates and pushes the annotated tag `vX.Y.Z` at that commit, and `make release-publish` and `make
   release-undraft` create the GitHub Release. No tag is created by hand.
-- Open before the first release, which is not complete without them: `origin` has no `main`, so the release pushes
-  `v1/rust-core` as `main` and makes `main` the default branch; and the packages of the bindings (the abi3 wheel, the
-  PHP extension, the npm package with its platform packages) are rows of `config/release.json` only when kit 0.0.111
-  and a release of binding exist, because kit 0.0.109 refuses their kinds. The first release also follows a release of http-media-type and the Go binding (T1.9).
+- The first release 0.0.1 holds the tag of the core and the tags of `config/release.json` and no package of a binding
+  (T1.9). `main` is the branch of the release: GitHub renames `v1/rust-core` to `main` (T1.16). The packages of the
+  bindings (the abi3 wheel, the PHP extension, the npm package with its platform packages) come in the version after
+  0.0.1, as rows of `config/release.json` packed by kit 0.0.111 or later, with the release recipes that binding 0.0.3
+  or later generates (T1.14).
 
 ## Commits and changes
 

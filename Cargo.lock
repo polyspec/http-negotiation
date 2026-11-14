@@ -1092,7 +1092,7 @@ dependencies = [
 [[package]]
 name = "polyspec-http-media-type"
 version = "0.0.1"
-source = "git+https://github.com/polyspec/http-media-type.git?branch=v1%2Frust-core#504f5485d0fa0b3739a38ec859dca192ad33dde8"
+source = "git+https://github.com/polyspec/http-media-type.git?tag=v0.0.1#410b9f2b27f2f28e2594a77ca7bbe868c13aee40"
 dependencies = [
  "polyspec-binding-core",
 ]

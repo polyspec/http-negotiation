@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- http-media-type is a released dependency. The core and the binding crates name the tag `v0.0.1` of http-media-type
+  in place of its branch `v1/rust-core`, and `Cargo.lock` pins the commit of that tag. binding scaffold wrote the
+  binding manifests again: `packages/go/go.mod` requires the Go module of http-media-type at `v0.0.1`, and the PHP
+  package and the Python package require its release 0.0.1. `binding check --release` reports nothing (T1.9).
 - binding is a released dependency. `polyspec-binding-core` of the core and of the binding crates names the tag
   `v0.0.2` of the binding repository in place of the branch `v1/rust-core`, and `Cargo.lock` pins the commit of the tag
   and http-media-type at the head of its branch, whose binding crates name the same tag; the dependency on

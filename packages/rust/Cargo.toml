@@ -25,10 +25,9 @@ fault-test = ["polyspec-binding-core/fault-test"]
 # source is the tag of a release of binding; Cargo.lock pins its commit, the same binding_core as the generated binding
 # crates and the tool of package.json.
 polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.2" }
-# The media type grammar and its parameter values (NG-2, MT-3, MT-5). A Git dependency on the branch that every
-# repository uses until http-media-type is released (T1.9); Cargo.lock pins its commit, so the build never reads
-# another checkout's working tree (S15).
-polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", branch = "v1/rust-core" }
+# The media type grammar and its parameter values (NG-2, MT-3, MT-5). A Git dependency on the tag of the release 0.0.1
+# of http-media-type; Cargo.lock pins its commit, so the build never reads another checkout's working tree (S15).
+polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", tag = "v0.0.1" }
 
 [dev-dependencies]
 serde_json = "1"
