@@ -1,5 +1,5 @@
 <!-- doc-id: checklist-rust-core -->
-<!-- source-sha256: ff59c2364fa40660df85a56bb1199d3202197ed33a92a90be618d3f93c29afa5 -->
+<!-- source-sha256: 1e6c8f7b247805c672f534a7c76075b8e0db772b4a6c2c86a2e0c6376b79397a -->
 # Rust 코어 체크리스트
 
 | ID | Task | Deliverables | Verification | State |
@@ -15,3 +15,4 @@
 | T1.9 | `main`에서 `ci.yml`의 모든 job을 통과하고, Go module의 tag `packages/go/vX.Y.Z`와 바인딩의 package를 갖춘 첫 version을 release한다. 선행 조건: tag `vX.Y.Z`, Go module의 tag, wheel, PHP 확장을 가진 http-media-type의 release(job `bindings`의 `make test-python`과 `make test-php`가 그 wheel과 확장을 읽는다); 코어의 http-media-type 의존 줄을 `tag = "vX.Y.Z"`로 두는 것(Go 바인딩에 필요하다, binding GN-15f); T1.7의 Go 바인딩; T1.10; `config/release.json`의 package 행을 위한 kit 0.0.111과 binding의 release. release는 `main`이 없는 `origin`에 `v1/rust-core`를 `main`으로 push하고 `main`을 기본 브랜치로 만든다 | `main`의 CI 실행, release의 tag | `make ci-passed` | [ ] |
 | T1.10 | `make fmt-check`를 통과한다. 고정된 binding은 binding crate의 `src/lib.rs`의 allow 속성을 여러 줄로 쓰고, 이 저장소의 `rustfmt.toml`을 쓰는 rustfmt는 그것을 거부한다. scaffold가 속성을 한 줄로 쓰는 binding을 고정하고 binding crate를 다시 쓴다 | `Cargo.lock`, `packages/*/src/lib.rs` | `make fmt-check` | [o] |
 | T1.11 | 추적 파일에 Git commit을 적지 않는다: changelog와 checklist에는 사실을 적고, 규칙을 `AGENTS.md`에 두고 검사한다 | `CHANGELOG.md`, `docs/plans/rust-core/checklist.md`, `AGENTS.md`, `tests/scripts/commits.test.mts` | `make test-scripts` | [o] |
+| T1.12 | Go 정적 라이브러리를 LTO 없이 빌드해서 Go program이 그것을 http-media-type의 정적 라이브러리와 함께 링크하게 하고(binding GN-15i, CK-91), 그 profile을 보고하는 check를 가진 binding을 받는다. Cargo는 `lto`를 profile 전체에 정하고 Go 정적 라이브러리는 release profile로 빌드되므로 `[profile.release]`는 `lto`를 켜지 않는다. binding의 end-to-end 검사가 다섯 target과 Go의 배포 형태를 통과한다 | `Cargo.toml`, `Cargo.lock`, `tests/scripts/profile.test.mts`, `AGENTS.md` | `make test-scripts`, `DEPS=http-media-type`로 binding의 `make e2e` | [ ] |
