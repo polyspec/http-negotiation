@@ -1,5 +1,5 @@
 <!-- doc-id: plan-rust-core -->
-<!-- source-sha256: 1a405fcafd034b096f87fb5d9f26beb2ed97cbd808361944ebd6869f8ba4c14d -->
+<!-- source-sha256: 68caf55dfe6d59db516d899dfc4e868685562d7bb81fb378d390c430411e58aa -->
 # Rust 코어
 
 [English](plan.md)
@@ -21,3 +21,6 @@ checklist는 각 단계가 앞 단계를 필요로 하는 순서를 따른다.
    그 시험은 http-media-type의 checkout에서 그 module과 그 정적 라이브러리를 빌드한다.
 6. GitHub의 검사와 release. workflow `ci`와 `release`, release 구성, 그 make target(T1.8), 그다음 첫 release(T1.9). 첫
    release는 wheel과 PHP 확장을 가진 http-media-type의 release와 Go 바인딩(T1.7)을 기다린다.
+7. binding의 branch 대신 release된 tag로 binding에 의존하는 것(T1.13). binding 0.0.2의 release를 기다린다. 그리고
+   플랫폼별 바인딩 패키지(T1.14). binding이 그 release recipe를 생성하므로 이 저장소는 자기 recipe를 쓰지 않는다. 둘 다 첫
+   release(T1.9) 전에 온다.

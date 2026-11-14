@@ -23,3 +23,6 @@ The checklist follows the order in which each step needs the one before it:
 6. The checks on GitHub and the release: the workflows `ci` and `release`, the release configuration and their make
    targets (T1.8), then the first release (T1.9), which waits for a release of http-media-type that holds its wheel and
    its PHP extension, and for the Go binding (T1.7).
+7. The dependency on binding by its released tag in place of its branch (T1.13), which waits for the release of binding
+   0.0.2, and the packages of the bindings per platform (T1.14): binding generates their release recipes, so this
+   repository writes none of its own. Both come before the first release (T1.9).
