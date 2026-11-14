@@ -3,6 +3,8 @@
 
 ## Unreleased
 
+## 0.0.1
+
 - http-media-type은 release된 의존이다. 코어와 바인딩 crate가 http-media-type의 브랜치 `v1/rust-core` 대신 tag
   `v0.0.1`을 적고, `Cargo.lock`이 그 tag의 커밋을 고정한다. binding scaffold가 바인딩 manifest를 다시 썼다.
   `packages/go/go.mod`가 http-media-type의 Go module을 `v0.0.1`로 요구하고, PHP package와 Python package가 그 release

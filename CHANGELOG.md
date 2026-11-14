@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.0.1
+
 - http-media-type is a released dependency. The core and the binding crates name the tag `v0.0.1` of http-media-type
   in place of its branch `v1/rust-core`, and `Cargo.lock` pins the commit of that tag. binding scaffold wrote the
   binding manifests again: `packages/go/go.mod` requires the Go module of http-media-type at `v0.0.1`, and the PHP
