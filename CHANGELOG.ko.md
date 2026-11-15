@@ -1,7 +1,9 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: b0024ece822dcb0a8bc12b1fdabecfe95ce4f02695a4c64c9d76939bed51078d -->
+<!-- source-sha256: e5b316e1fc3366feb90b90f0f181d5661ef61511aec9dc32447fb9b03a7dc3f0 -->
 
 ## Unreleased
+
+## 0.0.1
 
 - 코어와 바인딩 crate는 http-media-type 0.0.3과, http-media-type 0.0.3이 의존하는 binding 0.0.5에 의존한다
   (T1.14-5). 모든 Cargo manifest가 tag `v0.0.3`과 `v0.0.5`를 적고, `package.json`이 binding 0.0.5와 kit 0.0.113의
@@ -50,8 +52,6 @@
   --release`가 CK-94를 보고했고, `make test-scripts`는 `workflows.test.mts`의 시험 3개와 `binding.test.mts`의 binding
   release 시험 2개에서 실패했다. Green: `binding check --release`는 CK-20만 보고하고, `make test-scripts`는 시험 14개 중
   13개를 통과하며, `make docs-check`와 `make release-coverage`는 통과한다(T1.14).
-## 0.0.1
-
 - http-media-type은 release된 의존이다. 코어와 바인딩 crate가 http-media-type의 브랜치 `v1/rust-core` 대신 tag
   `v0.0.1`을 적고, `Cargo.lock`이 그 tag의 커밋을 고정한다. binding scaffold가 바인딩 manifest를 다시 썼다.
   `packages/go/go.mod`가 http-media-type의 Go module을 `v0.0.1`로 요구하고, PHP package와 Python package가 그 release

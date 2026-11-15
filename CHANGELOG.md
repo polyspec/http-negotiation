@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.0.1
+
 - The core and the binding crates depend on http-media-type 0.0.3 and on binding 0.0.5, the release that
   http-media-type 0.0.3 depends on (T1.14-5): every Cargo manifest names the tags `v0.0.3` and `v0.0.5`, `package.json`
   names the release asset of binding 0.0.5 and of kit 0.0.113, binding scaffold of 0.0.5 writes `packages/go/go.mod`,
@@ -54,8 +56,6 @@
   test-scripts` failed the three tests of `workflows.test.mts` and the two tests of the binding release in
   `binding.test.mts`. Green: `binding check --release` reports CK-20 alone, `make test-scripts` passes 13 of 14 tests,
   and `make docs-check` and `make release-coverage` pass (T1.14).
-## 0.0.1
-
 - http-media-type is a released dependency. The core and the binding crates name the tag `v0.0.1` of http-media-type
   in place of its branch `v1/rust-core`, and `Cargo.lock` pins the commit of that tag. binding scaffold wrote the
   binding manifests again: `packages/go/go.mod` requires the Go module of http-media-type at `v0.0.1`, and the PHP
