@@ -34,7 +34,7 @@ rules of this repository.
 ## Rust
 
 - `rust-toolchain.toml` pins the toolchain and `Cargo.lock` the dependencies. `polyspec-http-media-type` is a Git
-  dependency on the tag `v0.0.1` of its repository, its release, whose commit `Cargo.lock` pins, as
+  dependency on the tag `v0.0.4` of its repository, its release, whose commit `Cargo.lock` pins, as
   `polyspec-binding-core` is; the build reads no other checkout.
 - `[profile.release]` of `Cargo.toml` sets `lto = false` and `codegen-units = 1` (binding GN-15i, CK-91). The Go
   static library is built with the release profile, and LTO would put the standard library and `binding_core` into
@@ -54,10 +54,10 @@ rules of this repository.
   (binding BD-27) `packages/python`, `packages/ts`, `packages/ts/wasm`, `packages/php-ext` and
   `packages/go/internal/ffi` (with `packages/go/go.mod`), which `binding scaffold` writes and `make bindings-check`
   compares; their `generated/` is not tracked. `Cargo.lock` at the root pins every dependency.
-- `polyspec-binding-core` is a Git dependency of the core and of the binding crates on the tag `v0.0.3` of the binding
+- `polyspec-binding-core` is a Git dependency of the core and of the binding crates on the tag `v0.0.8` of the binding
   repository, its release; `Cargo.lock` pins the commit of that tag. The core implements `binding_core::Kinds` for its
   error (NG-11). `polyspec-http-media-type` is a Git dependency of the core and of the binding crates on the tag
-  `v0.0.1` of http-media-type, its release, whose binding crates name the same tag of binding (T1.9).
+  `v0.0.4` of http-media-type, its release.
 - binding itself is the npm package `@polyspec/binding` of the same release, which `package.json` names by the URL of
   its release asset and `package-lock.json` pins by its integrity, so that the generator and `binding_core` are one
   version (G-6); binding check takes the tag of `Cargo.lock` as its own (CK-20). The recipes run
@@ -173,7 +173,7 @@ rules of this repository.
   `BINDING_RUN`, `NODE`, `NPM`, `UV` and `BINDING_DEP`. The file is generated and not tracked, so it cannot drift from the
   pinned binding, and the repository writes no release recipe of its own: `binding check` reports a Makefile without the
   include or with a recipe of its own for a target of the file (CK-94). The recipes need the napi CLI `@napi-rs/cli` of
-  `package.json`, the major release of LLVM of `config/toolchain.json` (`make install-llvm` installs it), the component
+  `package.json`, the major release of LLVM of `config/toolchain.json` (the job provisions it: the ubuntu-26.04 images hold it, and on macOS install-llvm-action installs it, binding GN-19i), the component
   `llvm-tools` and the musl targets of `rust-toolchain.toml`, and the uv of `mise.toml`.
 - Every job runs `make install-binding` after its tools, and the job `bindings` builds the wheel, the PHP extension
   and the static library of http-media-type that its targets read from the checkout that it clones (see "Bindings").
@@ -199,8 +199,9 @@ rules of this repository.
   release-undraft` makes the release public. No tag is created by hand.
 - The first release 0.0.1 holds the packages of the bindings per platform with the tag of the core (T1.9, T1.14).
   `main` is the branch of the release: GitHub renamed `v1/rust-core` to `main` (T1.16).
-  The core and the binding crates depend on http-media-type 0.0.3 and binding 0.0.5, the release that http-media-type
-  0.0.3 depends on, so `Cargo.lock` pins one `polyspec-binding-core` (T1.14-5).
+  The core and the binding crates depend on http-media-type 0.0.4 and binding 0.0.8. http-media-type 0.0.4 depends on
+  binding 0.0.5, so `Cargo.lock` pins two `polyspec-binding-core` until a release of http-media-type depends on binding
+  0.0.8 and the crates name its tag; until then `tests/scripts/binding.test.mts` fails the lock (T1.14).
 
 ## Commits and changes
 

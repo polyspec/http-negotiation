@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- binding 0.0.8 (T1.14): `polyspec-binding-core` of every Cargo manifest names `tag = "v0.0.8"`, `polyspec-http-media-type` names `tag = "v0.0.4"`, and `package.json`
+  names the release asset of `@polyspec/binding` 0.0.8, whose integrity `package-lock.json` pins. binding 0.0.8 writes no
+  recipe `install-llvm`, so `make ci-php` installs no LLVM: the ubuntu-26.04 images hold the LLVM of
+  `config/toolchain.json` at `/usr/lib/llvm-<major>`, and on macOS the job `php` of `assets.yml` installs it with
+  install-llvm-action, whose `LLVM_PATH` the Makefile takes as `LLVM_ROOT` (binding GN-19i).
+
 ## 0.0.1
 
 - The core and the binding crates depend on http-media-type 0.0.3 and on binding 0.0.5, the release that

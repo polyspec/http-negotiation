@@ -19,8 +19,8 @@ codec-test = []
 
 [dependencies]
 polyspec-http-negotiation = { path = "../../../rust" }
-polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.5", features = ["construct", "lock"] }
-polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", tag = "v0.0.3" }
+polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.8", features = ["construct", "lock"] }
+polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", tag = "v0.0.4" }
 
 [lints]
 workspace = true
