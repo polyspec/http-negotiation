@@ -1079,18 +1079,8 @@ checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 
 [[package]]
 name = "polyspec-binding-core"
-version = "0.0.2"
-source = "git+https://github.com/polyspec/binding.git?tag=v0.0.2#6b988ea741eb8ec6174ea392cff65f598ae12f05"
-dependencies = [
- "indexmap",
- "libc",
- "tokio-util",
-]
-
-[[package]]
-name = "polyspec-binding-core"
-version = "0.0.3"
-source = "git+https://github.com/polyspec/binding.git?tag=v0.0.3#6dfbfa7c9516dbc406c5b824c2e8c7ee8fd23831"
+version = "0.0.5"
+source = "git+https://github.com/polyspec/binding.git?tag=v0.0.5#7864e521cc63e4fd561cb456ac42a06787229f0d"
 dependencies = [
  "indexmap",
  "libc",
@@ -1101,17 +1091,17 @@ dependencies = [
 
 [[package]]
 name = "polyspec-http-media-type"
-version = "0.0.1"
-source = "git+https://github.com/polyspec/http-media-type.git?tag=v0.0.1#410b9f2b27f2f28e2594a77ca7bbe868c13aee40"
+version = "0.0.3"
+source = "git+https://github.com/polyspec/http-media-type.git?tag=v0.0.3#0a2aad6abea7dedcd87a771566670fb0dad9a50f"
 dependencies = [
- "polyspec-binding-core 0.0.2",
+ "polyspec-binding-core",
 ]
 
 [[package]]
 name = "polyspec-http-negotiation"
 version = "0.0.1"
 dependencies = [
- "polyspec-binding-core 0.0.3",
+ "polyspec-binding-core",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
  "proptest",
@@ -1122,7 +1112,7 @@ dependencies = [
 name = "polyspec-http-negotiation-go"
 version = "0.0.1"
 dependencies = [
- "polyspec-binding-core 0.0.3",
+ "polyspec-binding-core",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
 ]
@@ -1134,7 +1124,7 @@ dependencies = [
  "napi",
  "napi-build",
  "napi-derive",
- "polyspec-binding-core 0.0.3",
+ "polyspec-binding-core",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
 ]
@@ -1144,7 +1134,7 @@ name = "polyspec-http-negotiation-php-ext"
 version = "0.0.1"
 dependencies = [
  "ext-php-rs",
- "polyspec-binding-core 0.0.3",
+ "polyspec-binding-core",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
 ]
@@ -1153,7 +1143,7 @@ dependencies = [
 name = "polyspec-http-negotiation-python"
 version = "0.0.1"
 dependencies = [
- "polyspec-binding-core 0.0.3",
+ "polyspec-binding-core",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
  "pyo3",
@@ -1164,7 +1154,7 @@ name = "polyspec-http-negotiation-wasm"
 version = "0.0.1"
 dependencies = [
  "js-sys",
- "polyspec-binding-core 0.0.3",
+ "polyspec-binding-core",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
  "wasm-bindgen",

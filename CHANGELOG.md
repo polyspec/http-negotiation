@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- The core and the binding crates depend on http-media-type 0.0.3 and on binding 0.0.5, the release that
+  http-media-type 0.0.3 depends on (T1.14-5): every Cargo manifest names the tags `v0.0.3` and `v0.0.5`, `package.json`
+  names the release asset of binding 0.0.5 and of kit 0.0.113, binding scaffold of 0.0.5 writes `packages/go/go.mod`,
+  `packages/php-ext/composer.json` and `packages/python/pyproject.toml` with http-media-type 0.0.3, and `Cargo.lock`
+  pins one `polyspec-binding-core`. Before, `Cargo.lock` pinned binding 0.0.2 beside 0.0.3, `binding check` reported
+  CK-20 and the test of `Cargo.lock` failed. `make test-scripts` passes 21 of 21 tests and `make bindings-check`
+  passes.
+
 - The jobs of `release.yml` are one recipe each too (T1.17): `make ci-tag` and `make ci-release`, which read the
   token, the id of the CI run, the actor and the tag from the `env:` of the job. `ci-tag` gives release-tag a file of its
   own for `GITHUB_ENV` and reads TAG and VERSION from it in the same step. The job `release` downloads the assets of

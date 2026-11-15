@@ -1,7 +1,14 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 78686f7e771cd75b38b182b4a0d5af0cc2be99074e5b29e3a947453bbd11eb0e -->
+<!-- source-sha256: b0024ece822dcb0a8bc12b1fdabecfe95ce4f02695a4c64c9d76939bed51078d -->
 
 ## Unreleased
+
+- 코어와 바인딩 crate는 http-media-type 0.0.3과, http-media-type 0.0.3이 의존하는 binding 0.0.5에 의존한다
+  (T1.14-5). 모든 Cargo manifest가 tag `v0.0.3`과 `v0.0.5`를 적고, `package.json`이 binding 0.0.5와 kit 0.0.113의
+  release asset을 적고, binding 0.0.5의 scaffold가 `packages/go/go.mod`, `packages/php-ext/composer.json`,
+  `packages/python/pyproject.toml`을 http-media-type 0.0.3으로 쓰고, `Cargo.lock`은 `polyspec-binding-core` 하나를
+  고정한다. 전에는 `Cargo.lock`이 binding 0.0.3 옆에 0.0.2를 고정해 `binding check`가 CK-20을 보고했고
+  `Cargo.lock`의 test가 실패했다. `make test-scripts`는 21개 test를 모두 통과하고 `make bindings-check`도 통과한다.
 
 - `release.yml`의 job도 각각 recipe 하나다(T1.17). `make ci-tag`와 `make ci-release`는 token, CI 실행의 id, actor,
   tag를 job의 `env:`에서 읽는다. `ci-tag`는 release-tag에 `GITHUB_ENV`용 자기 파일을 주고 같은 step에서 그 파일의 TAG와

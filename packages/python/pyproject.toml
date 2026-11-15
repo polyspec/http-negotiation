@@ -8,7 +8,7 @@ name = "polyspec-http-negotiation"
 version = "0.0.1"
 requires-python = ">=3.14"
 license = "MIT"
-dependencies = ["polyspec-http-media-type==0.0.1"]
+dependencies = ["polyspec-http-media-type==0.0.3"]
 
 [tool.maturin]
 module-name = "polyspec.http_negotiation._native"

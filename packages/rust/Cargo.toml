@@ -24,17 +24,17 @@ fault-test = ["polyspec-binding-core/fault-test"]
 # The kind interface that the generated bindings read from the core error (binding design E-1, E-3, I-2 (3)). The Git
 # source is the tag of a release of binding; Cargo.lock pins its commit, the same binding_core as the generated binding
 # crates and the tool of package.json.
-polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.3" }
+polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.5" }
 # The media type grammar and its parameter values (NG-2, MT-3, MT-5). A Git dependency on the tag of the release 0.0.1
 # of http-media-type; Cargo.lock pins its commit, so the build never reads another checkout's working tree (S15).
-polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", tag = "v0.0.1" }
+polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", tag = "v0.0.3" }
 
 [dev-dependencies]
 serde_json = "1"
 # tests/contracts.rs arms the fault injection points of the cases that name them, as a generated binding test does. A
 # point is live only with the feature fault-test of this crate (binding GN-5), so the tests depend on the crate itself
 # with that feature, and `cargo test` turns it on for them alone.
-polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.3", features = ["fault-test"] }
+polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.5", features = ["fault-test"] }
 polyspec-http-negotiation = { path = ".", features = ["fault-test"] }
 proptest = "1"
 
