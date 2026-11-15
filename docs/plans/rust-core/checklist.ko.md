@@ -1,5 +1,5 @@
 <!-- doc-id: checklist-rust-core -->
-<!-- source-sha256: 790079c91adb5cd51884b55c6ad0dd2105b67559b63dd15521cdd86f6755452c -->
+<!-- source-sha256: 063ae8180aa89f301f7b2287f77b7202a83907f0bd8ae0cae3516a848a50c335 -->
 # Rust 코어 체크리스트
 
 | ID | Task | Deliverables | Verification | State |
@@ -26,3 +26,4 @@
 | T1.14-6 | Non-PHP asset build와 정확한 native platform 및 지원 PHP minor matrix를 분리한다. 지원 minor, expected-minor build 한 번에 앞선 scoped runtime setup 하나, 고유 artifact와 엄격한 workflow owner assertion을 선언한다. Source 적용만 포함하며 native/전체 CI 증명은 provider gate 공개와 recipe 재생성을 기다린다. | `.github/workflows/assets.yml`, `config/toolchain.json`, `tests/scripts/workflows.test.mts`, `AGENTS.md`, `docs/spec/native-assets.md`, `CHANGELOG.md` | `make test-scripts` | [~] |
 | T1.15 | 검토된 한국어 쌍의 `source-sha256`을 손으로 쓴 hash 대신 kit의 stamp인 `make documents-stamp PATHS=<twin>`으로 쓴다 | `Makefile`, `AGENTS.md` | `make docs-check` | [o] |
 | T1.16 | release의 브랜치를 `main`으로 만든다. `origin`에 `main`이 없고 `v1/rust-core`가 기본 브랜치이므로, release는 GitHub에서 `v1/rust-core`의 이름을 `main`으로 바꾸고(`gh api -X POST repos/polyspec/http-negotiation/branches/v1%2Frust-core/rename -f new_name=main`) 그러면 `main`이 기본 브랜치가 된다. 로컬 브랜치와 그 upstream도 `main`으로 바꾼다(`git branch -m v1/rust-core main`, `git branch -u origin/main main`). 그다음 T1.9의 version commit push가 `ci.yml`이 도는 `main`의 push다 | `origin`의 기본 브랜치, 로컬 브랜치 `main` | `gh api repos/polyspec/http-negotiation --jq .default_branch`가 `main`을 준다 | [ ] |
+| T1.17 | CI job 하나를 Makefile의 recipe 하나로 만든다. `ci.yml`과 `assets.yml`의 job마다 run step은 `make ci-<job>` 하나이고 인자는 make 변수뿐이며, matrix 값이나 호출된 workflow의 input은 `NAME=${{ ... }}`로 넘긴다. 나머지 step은 모두 runner를 준비하거나 결과를 옮기는 `uses:` step이다. recipe `ci-<job>`가 설치, 끝까지 도는 검사, 보고서를 가지므로 local `make ci-<job> NAME=value`는 CI가 하는 호출과 같다. 이전에는 YAML의 step 목록, step 조건, expression이 그 내용을 가졌고 local 실행은 GitHub runner 없이 job을 반복할 수 없었다. Red: `tests/scripts/workflows.test.mts`가 run step이 여럿인 workflow에서 실패한다 | `.github/workflows/ci.yml`, `.github/workflows/assets.yml`, `Makefile`, `tests/scripts/workflows.test.mts`, `docs/spec/native-assets.md`(.ko), `AGENTS.md`(.ko), `CHANGELOG.md`(.ko) | `var/tools/bin/node --test tests/scripts/workflows.test.mts`, `make docs-check` | [~] |
