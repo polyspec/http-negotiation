@@ -1,7 +1,17 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: fbfe0d9cdcdcfc42985db72863cf84d2be392533a5b1266d61d90d60305db87a -->
+<!-- source-sha256: 26c27209417b035609110fe6b43d5d2afde7efe8aded08aad8567d43595d3bc5 -->
 
 ## Unreleased
+
+- `ci.yml`과 `assets.yml`의 job은 각각 Makefile의 recipe 하나다(T1.17). job의 run step 하나는 `make ci-check
+  NAME=<name>`, `make ci-platform`, `make ci-php EXPECTED_PHP_MINOR=<minor>`, `make ci-npm` 중 하나이고, 호출된 workflow의
+  input인 `RELEASE`를 받는다. job `ci-passed`는 `make ci-passed RESULTS='<needs의 JSON>'`을 실행한다. 이전에는 job이 설치,
+  step 조건, 대상을 YAML의 step과 expression에 가졌으므로 local 실행은 GitHub runner 없이 job을 반복할 수 없었다. 이제
+  recipe가 먼저 설치를 실행하고 그것이 실패하면 멈추며, 다음에 검사를 끝까지 실행하고, 마지막에 요약을 항상 쓴다. job
+  `check`의 각 항목의 대상은 Makefile의 `CI_CHECK_TARGETS_<name>`이고, `ci-passed`는 `FAIL_SKIPPED`를 스스로 정한다.
+  `tests/scripts/workflows.test.mts`는 run step이 둘 이상인 job, run step의 조건이나 환경 변수, matrix 값이나 input이 아닌
+  expression, `ci-<job>`이 아닌 대상을 실패시킨다. 이 test는 변경 전의 workflow에서 실패했고 변경 뒤에 통과한다.
+  `docs/spec/native-assets.md`의 ASSET-5가 PHP job을 그 recipe로 정하고, 실패한 step 뒤에도 step을 실행하던 ASSET-2를 대체한다.
 
 - Asset workflow는 non-PHP platform build 세 개와 native PHP platform/minor build 여섯 개를 분리한다(T1.14-6, ASSET-1부터 ASSET-4). 지원 build minor를 8.4와 8.5로 선언한다. PHP job마다 runtime 하나를 선택한 뒤 expected-minor build 한 번을 실행하고 고유 artifact를 업로드한다. Owner assertion은 잘못된 matrix 문법, 범위, runner, runtime setup, 중복 producer를 거부한다. Native/전체 CI 증명은 생성 expected-minor gate 공개와 recipe 재생성을 기다린다.
 

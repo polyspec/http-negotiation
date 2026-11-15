@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Every job of `ci.yml` and `assets.yml` is one recipe of the Makefile (T1.17): its one run step is `make ci-check
+  NAME=<name>`, `make ci-platform`, `make ci-php EXPECTED_PHP_MINOR=<minor>` or `make ci-npm`, with `RELEASE`, the input
+  of the called workflow, and the job `ci-passed` runs `make ci-passed RESULTS='<json of needs>'`. Before, a job held
+  its installs, its step conditions and its targets in YAML steps and expressions, so a local run could not repeat it
+  without the runner of GitHub. The recipe now runs the installs first and stops at their failure, then the checks to
+  their end, then the summary always; the targets of each entry of the job `check` are `CI_CHECK_TARGETS_<name>` of
+  the Makefile, and `ci-passed` sets `FAIL_SKIPPED` itself. `tests/scripts/workflows.test.mts` fails a job with more
+  than one run step, a condition or an environment on a run step, an expression other than a matrix value or an input,
+  and a target other than `ci-<job>`; it failed on the workflows before the change and passes after it. ASSET-5 of
+  `docs/spec/native-assets.md` states the PHP job as its recipe and retires ASSET-2, whose steps ran after a failed step.
+
 - The asset workflow separates three non-PHP platform builds from six native PHP platform/minor builds (T1.14-6, ASSET-1 to ASSET-4). Supported build minors are declared as 8.4 and 8.5. Each PHP job selects one runtime before one expected-minor build and uploads a unique artifact. Owner assertions reject incorrect matrix syntax, coverage, runners, runtime setup and duplicate producers. Native/full CI proof still waits for a published generated expected-minor gate and regenerated recipes.
 
   Workflow owner tests pass 8/8. The declared `make test-scripts` check has 18 passed and one failure: the existing lock includes binding-core 0.0.2 while the direct manifest/test pin requires 0.0.3. T1.14-6 remains active until the matching published dependency graph is pinned and that check passes; this change updates no dependency pin.
