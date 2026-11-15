@@ -1,7 +1,15 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: e5b316e1fc3366feb90b90f0f181d5661ef61511aec9dc32447fb9b03a7dc3f0 -->
+<!-- source-sha256: 25390d66f61623048aa890c2f5a23fc1f8e08ad987a6021da722826223076cbf -->
 
 ## Unreleased
+
+- binding 0.0.9, http-media-type 0.0.5와 kit 0.0.114(T1.18). 모든 Cargo manifest의 `polyspec-binding-core`가
+  `tag = "v0.0.9"`를, `polyspec-http-media-type`이 binding 0.0.9에 의존하는 `tag = "v0.0.5"`를 적으므로 `Cargo.lock`은
+  `polyspec-binding-core` 하나를 고정한다(CK-20). `package.json`은 `@polyspec/binding` 0.0.9와 `@polyspec/kit` 0.0.114의
+  release asset을 적고 `package-lock.json`이 그 integrity를 고정한다. `make ci-php`는 `DYLD_LIBRARY_PATH`와
+  `LD_LIBRARY_PATH`를 비우고 실행한다. macOS에서 install-llvm-action이 둘 다에 `/usr/lib`를 앞에 넣고, 그러면 Homebrew의
+  PHP가 시스템의 libsqlite3를 읽어 중단하기 때문이다. workflow 시험은 `ci-php`의 target 전용 변수 줄을 건너뛰고 recipe를
+  읽는다.
 
 - binding 0.0.8(T1.14). 모든 Cargo manifest의 `polyspec-binding-core`가 `tag = "v0.0.8"`을, `polyspec-http-media-type`이 `tag = "v0.0.4"`를 적고, `package.json`은
   `@polyspec/binding` 0.0.8의 release asset을 적으며 `package-lock.json`이 그 integrity를 고정한다. binding 0.0.8은

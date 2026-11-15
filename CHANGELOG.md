@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- binding 0.0.9, http-media-type 0.0.5 and kit 0.0.114 (T1.18): `polyspec-binding-core` of every Cargo manifest names
+  `tag = "v0.0.9"`, `polyspec-http-media-type` names `tag = "v0.0.5"`, which depends on binding 0.0.9, so `Cargo.lock`
+  pins one `polyspec-binding-core` (CK-20), and `package.json` names the release assets of `@polyspec/binding` 0.0.9
+  and `@polyspec/kit` 0.0.114, whose integrity `package-lock.json` pins. `make ci-php` runs with `DYLD_LIBRARY_PATH`
+  and `LD_LIBRARY_PATH` empty, because install-llvm-action puts `/usr/lib` first in both on macOS and the PHP of
+  Homebrew then loads the libsqlite3 of the system and aborts; the workflow test reads the recipe of `ci-php` past its
+  lines of target-specific variables.
+
 - binding 0.0.8 (T1.14): `polyspec-binding-core` of every Cargo manifest names `tag = "v0.0.8"`, `polyspec-http-media-type` names `tag = "v0.0.4"`, and `package.json`
   names the release asset of `@polyspec/binding` 0.0.8, whose integrity `package-lock.json` pins. binding 0.0.8 writes no
   recipe `install-llvm`, so `make ci-php` installs no LLVM: the ubuntu-26.04 images hold the LLVM of
