@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 87a0604d08831e988f33ed3259a7bc7d9a44d3d2713f9e9887987df79eb5ac8c -->
+<!-- source-sha256: afe24bfba5f2e065588ffc83516b65ba16c851c72a078fdf1b5c27eaa80036d2 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -139,7 +139,9 @@
   step 조건, expression에 있는 job은 GitHub runner에서만 돌므로 local 실행이 CI의 실행과 같을 수 없었다. 내용이 recipe에
   있으면 `make ci-<job> NAME=value`가 local과 CI에서 같은 호출이다. 판정 job `ci-passed`는 다른 job의 결과를 읽으므로 CI에만
   있다. 그 run step 하나는 `make ci-passed RESULTS='${{ toJSON(needs) }}'`이고, 이것이 허용되는 유일한 다른 expression이다.
-  `release.yml`은 이 규칙의 대상이 아니다. `make test-scripts`가 이 규칙을 검사한다(`tests/scripts/workflows.test.mts`).
+  `release.yml`의 job `tag`와 `release`도 이 규칙을 따르며 `make ci-tag`와
+  `make ci-release`다. token, CI 실행의 id, actor, `needs`의 output 같은 실행의 값은 job의 `env:`로 받아 run 줄이
+  `make ci-<job>`으로 남고, job `release`는 run step 앞에서 각 플랫폼의 asset을 내려받는다. `make test-scripts`가 이 규칙을 검사한다(`tests/scripts/workflows.test.mts`).
 - `.github/workflows/ci.yml`은 `main`의 push와 수동 실행에서 돈다. matrix 항목마다 job 하나다. `core`는 `lint-rust`,
   `fmt-check`, `test`, `bindings-check`, `docs-check`, `test-scripts`, `release-coverage`를 실행하고, `bindings`는 `make test-bindings`의
   대상을 실행한다. 각 job은 `make ci-check NAME=<name>`을 실행한다. 그 recipe는 항목의 도구를 설치하고(`CI_CHECK_INSTALLS_<name>`), 항목의
