@@ -1,7 +1,13 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 17ef4b1759f7bc7c9b086f12cd28acb55fd648fbcaeb82df6fdffcf0fd171703 -->
+<!-- source-sha256: 424b73c72b613d2ae960e6b0c8dbdc483e943685f53e1ef2ff25bf949d8d4c9e -->
 
 ## Unreleased
+
+## 0.0.3
+
+- binding 0.0.10와 http-media-type 0.0.6(T1.19). 모든 Cargo manifest의 `polyspec-binding-core`가 `tag = "v0.0.10"`을 적고, `polyspec-http-media-type`이 binding 0.0.10에 의존하는 `tag = "v0.0.6"`을 적으며,
+  `Cargo.lock`은 `polyspec-binding-core` 하나를 고정하고(CK-20), `package.json`은 `@polyspec/binding` 0.0.10의 release
+  asset을 적고 `package-lock.json`이 그 integrity를 고정한다.
 
 ## 0.0.2
 

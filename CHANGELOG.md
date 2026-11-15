@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.0.3
+
+- binding 0.0.10 and http-media-type 0.0.6 (T1.19): `polyspec-binding-core` of every Cargo manifest names `tag = "v0.0.10"`, `polyspec-http-media-type` names `tag = "v0.0.6"`, which depends on binding 0.0.10, `Cargo.lock`
+  pins one `polyspec-binding-core` (CK-20), and `package.json` names the release asset of `@polyspec/binding` 0.0.10,
+  whose integrity `package-lock.json` pins.
+
 ## 0.0.2
 
 - binding 0.0.9, http-media-type 0.0.5 and kit 0.0.114 (T1.18): `polyspec-binding-core` of every Cargo manifest names

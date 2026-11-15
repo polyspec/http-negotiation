@@ -3,4 +3,4 @@ module github.com/polyspec/http-negotiation/packages/go
 
 go 1.27.3
 
-require github.com/polyspec/http-media-type/packages/go v0.0.5
+require github.com/polyspec/http-media-type/packages/go v0.0.6
