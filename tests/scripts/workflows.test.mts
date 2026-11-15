@@ -1,7 +1,7 @@
 // The rules of the GitHub workflows (AGENTS.md, "CI and release"), checked on the tracked files of .github and on the
 // Makefile:
 //
-//   - every job runs on ubuntu-26.04-arm, except the job platform of assets.yml, which runs on the runner of each platform
+//   - every job runs on ubuntu-26.04-arm, except the jobs platform and php of assets.yml, which runs on the runner of each platform
 //     of the release, ubuntu-26.04, ubuntu-26.04-arm or macos-15, because the asset of a platform is built and loaded only
 //     on that platform: no tool of the release compiles for another platform (binding GN-19a);
 //   - every action is a local action of .github/actions or a workflow of .github/workflows, or is pinned by its full
@@ -104,4 +104,162 @@ test('release.yml uploads the assets of each platform to the draft release befor
   const at = order.map((step) => steps.indexOf(step));
   assert.ok(at.every((index) => index >= 0), `missing: ${order.filter((_, index) => at[index] < 0).join(', ')}`);
   assert.deepEqual([...at].sort((a, b) => a - b), at, steps.join(', '));
+});
+
+/** The member `key` of the JSON object `value`, or undefined. */
+function member(value: unknown, key: string): unknown {
+  return typeof value === 'object' && value !== null ? Object.entries(value).find(([name]) => name === key)?.[1] : undefined;
+}
+
+/** The JSON value of the file `file` of the repository. */
+function readJson(file: string): unknown {
+  const value: unknown = JSON.parse(readFileSync(join(root, file), 'utf8'));
+  return value;
+}
+
+/** The PHP minors whose extension a release builds: phpExtension.minors of config/toolchain.json. */
+function phpExtensionMinors(): string[] {
+  const minors = member(member(readJson('config/toolchain.json'), 'phpExtension'), 'minors');
+  assert.ok(Array.isArray(minors) && minors.length > 0 && minors.every(minor => typeof minor === 'string'), 'config/toolchain.json names the PHP minors of the extension in phpExtension.minors');
+  return minors.map(String);
+}
+
+// ASSET-1/2: native platform coverage belongs to this repository's workflow, while binding owns the build recipes.
+const NATIVE_PLATFORMS = Object.entries(PLATFORM_RUNNERS).map(([platform, runner]) => ({ platform, runner }));
+
+function assetJob(source: string, name: string): string {
+  const block = new RegExp(`^ {2}${name}:\\n([\\s\\S]*?)(?=^ {2}\\S|$(?![\\s\\S]))`, 'm').exec(source)?.[1];
+  assert.ok(block, `assets.yml defines the job ${name}`);
+  return block;
+}
+
+/** Read the literal include records that these owned asset jobs declare; refuse any unexamined matrix syntax. */
+function assetMatrix(job: string): { platform: string; runner: string; php?: string }[] {
+  assert.match(job, /^ {4}runs-on: \$\{\{ matrix\.runner \}\}$/m, 'the matrix job runs on its native runner selector');
+  const matrix = /^ {6}matrix:\n([\s\S]*?)(?=^ {4}\S)/m.exec(job)?.[1];
+  assert.ok(matrix, 'the asset job declares a literal matrix');
+  const rows: { platform: string; runner: string; php?: string }[] = [];
+  const rest = matrix.replace(/^ {8}include:\s*$/m, '').replace(/^ {10}- platform: ([\w-]+)\n {12}runner: ([\w.-]+)(?:\n {12}php: '(\d+\.\d+)')?/gm, (_entry, platform: string, runner: string, php: string | undefined) => {
+    rows.push({ platform, runner, ...(php === undefined ? {} : { php }) });
+    return '';
+  }).trim();
+  assert.equal(rest, '', `the asset matrix has no unchecked entries: ${rest}`);
+  assert.ok(rows.length > 0, 'the asset matrix is nonempty');
+  return rows;
+}
+
+function assetSteps(job: string): string[] {
+  return job.split(/^(?= {6}- )/m).filter(step => /^ {6}- /m.test(step));
+}
+
+function assetArtifact(job: string): string {
+  const uploads = assetSteps(job).filter(step => /uses: actions\/upload-artifact@/.test(step));
+  assert.equal(uploads.length, 1, 'each job uploads one artifact');
+  const name = /^ {10}name: (.+)$/m.exec(uploads[0] ?? '')?.[1];
+  assert.ok(name, 'the upload declares its artifact name');
+  return name;
+}
+
+/** Every build target belongs to one job; another job cannot silently repeat an asset producer. */
+function assertAssetOwnership(source: string): void {
+  for (const target of ['release-go-static', 'release-wheel', 'release-npm-platform', 'release-php-ext', 'release-npm']) {
+    assert.equal([...source.matchAll(new RegExp(`^ {8}run: make ${target}(?: |$)`, 'gm'))].length, 1, `${target} has exactly one owning job`);
+  }
+  assert.equal([...source.matchAll(/^ {6}- uses: shivammathur\/setup-php@/gm)].length, 1, 'only the PHP job selects PHP');
+}
+
+test('T1.14-6 ASSET-1: non-PHP assets build exactly once on every native platform', () => {
+  const source = readFileSync(join(root, '.github/workflows/assets.yml'), 'utf8');
+  const job = assetJob(source, 'platform');
+  assert.deepEqual(assetMatrix(job), NATIVE_PLATFORMS);
+  assertAssetOwnership(source);
+  assert.doesNotMatch(job, /uses: shivammathur\/setup-php@|run: make release-php-ext\b/, 'the non-PHP job selects and builds no PHP runtime');
+  for (const target of ['release-go-static', 'release-wheel', 'release-npm-platform']) {
+    assert.equal(assetSteps(job).filter(step => new RegExp(`run: make ${target}\\s*$`, 'm').test(step)).length, 1, `${target} runs once per platform`);
+  }
+  assert.equal(assetArtifact(job), 'assets-${{ matrix.platform }}');
+});
+
+function assertPhpCoverage(job: string): void {
+  const minors = phpExtensionMinors();
+  const range = String(member(member(readJson('packages/php-ext/composer.json'), 'require'), 'php'));
+  const lower = /^>=\s*(\d+\.\d+)/.exec(range)?.[1];
+  assert.ok(lower, `packages/php-ext/composer.json requires a PHP range with a lower bound, not ${range}`);
+  assert.equal(minors[0], lower, 'the first minor of phpExtension.minors is the lower bound of the PHP range of packages/php-ext/composer.json');
+  const rows = assetMatrix(job);
+  const expected = NATIVE_PLATFORMS.flatMap(platform => minors.map(php => ({ ...platform, php })));
+  const keys = (values: typeof rows) => values.map(row => `${row.platform}:${row.runner}:${row.php ?? ''}`).sort();
+  assert.deepEqual(keys(rows), keys(expected), 'the matrix has no missing, repeated or foreign platform/minor pair');
+}
+
+test('T1.14-6 ASSET-1: PHP jobs cover every native platform and supported minor exactly once', () => {
+  assertPhpCoverage(assetJob(read(ASSETS), 'php'));
+});
+
+function assertPhpBuild(job: string): void {
+  const steps = assetSteps(job);
+  const setup = steps.filter(step => /uses: shivammathur\/setup-php@/.test(step));
+  const builds = steps.filter(step => /run: make release-php-ext\b/.test(step));
+  assert.equal(setup.length, 1);
+  assert.equal(builds.length, 1);
+  assert.match(setup[0] ?? '', /^ {10}php-version: '\$\{\{ matrix\.php \}\}'$/m);
+  assert.ok(steps.indexOf(setup[0] ?? '') < steps.indexOf(builds[0] ?? ''), 'runtime setup precedes the build');
+  assert.match(builds[0] ?? '', /^ {8}run: make release-php-ext PHP=php EXPECTED_PHP_MINOR=\$\{\{ matrix\.php \}\}\s*$/m);
+  assert.match(builds[0] ?? '', /if: \$\{\{ !cancelled\(\) \}\}/);
+  assert.match(setup[0] ?? '', /if: \$\{\{ !cancelled\(\) \}\}/);
+  for (const target of ['install-binding', 'release-recipes', 'install-llvm']) {
+    const owned = steps.filter(step => new RegExp(`run: make ${target}\\s*$`, 'm').test(step));
+    assert.equal(owned.length, 1, `${target} prepares this PHP job's inputs`);
+    if (target === 'install-llvm') assert.match(owned[0] ?? '', /if: \$\{\{ !cancelled\(\) \}\}/);
+  }
+  assert.equal(steps.filter(step => /run: make install-tools TOOLS=rust\s*$/m.test(step)).length, 1);
+
+}
+
+test('T1.14-6 ASSET-2: each PHP job selects one minor and invokes one generated guarded build', () => {
+  assertPhpBuild(assetJob(readFileSync(join(root, '.github/workflows/assets.yml'), 'utf8'), 'php'));
+});
+
+test('T1.14-6 ASSET-1/2: reject unexamined matrices and misplaced runtime selection', () => {
+  const job = assetJob(readFileSync(join(root, '.github/workflows/assets.yml'), 'utf8'), 'php');
+  for (const addition of ['        extra: [one, two]\n', '        exclude: []\n', '        include: []\n']) {
+    assert.throws(() => assetMatrix(job.replace('        include:\n', `${addition}        include:\n`)), /unchecked entries/);
+  }
+  const source = readFileSync(join(root, '.github/workflows/assets.yml'), 'utf8');
+  for (const target of ['release-php-ext', 'release-wheel']) {
+    assert.throws(() => assertAssetOwnership(`${source}\n  extra:\n    steps:\n      - name: Repeat build\n        run: make ${target}\n`), /owning job/);
+  }
+  for (const name of ['platform', 'php']) {
+    assert.throws(() => assetMatrix(assetJob(source, name).replace('runs-on: ${{ matrix.runner }}', 'runs-on: ubuntu-26.04')), /native runner selector/);
+  }
+  for (const addition of ['        extra: [one]\n', '        exclude: []\n']) {
+    assert.throws(() => assetMatrix(assetJob(source, 'platform').replace('        include:\n', `${addition}        include:\n`)), /unchecked entries/);
+  }
+  const row = / {10}- platform: [\w-]+\n {12}runner: [\w.-]+\n {12}php: '\d+\.\d+'\n/.exec(job)?.[0];
+  assert.ok(row);
+  assert.throws(() => assertPhpCoverage(job.replace(row, '')), /missing, repeated/);
+  assert.throws(() => assertPhpCoverage(job.replace(row, row + row)), /missing, repeated/);
+  const steps = assetSteps(job);
+  const setup = steps.find(step => /uses: shivammathur\/setup-php@/.test(step));
+  const build = steps.find(step => /run: make release-php-ext\b/.test(step));
+  assert.ok(setup && build);
+  assert.throws(() => assertPhpBuild(job.replace(setup, '').replace(build, build + setup)), /setup precedes/);
+  const version = "          php-version: '${{ matrix.php }}'\n";
+  assert.throws(() => assertPhpBuild(job.replace(version, '').replace(build, build + version)));
+});
+
+test('T1.14-6 ASSET-2: every asset job has a distinct artifact for each matrix result', () => {
+  const source = readFileSync(join(root, '.github/workflows/assets.yml'), 'utf8');
+  const names: string[] = [];
+  for (const name of ['platform', 'php', 'npm']) {
+    const job = assetJob(source, name);
+    const artifact = assetArtifact(job);
+    if (name === 'php') assert.equal(artifact, 'assets-php-${{ matrix.platform }}-${{ matrix.php }}');
+    const rows = name === 'npm' ? [{}] : assetMatrix(job);
+    for (const row of rows) names.push(artifact.replace('${{ matrix.platform }}', 'platform' in row ? String(row.platform) : '').replace('${{ matrix.php }}', 'php' in row ? String(row.php) : ''));
+  }
+  assert.equal(new Set(names).size, names.length, 'no job or matrix result overwrites another artifact');
+  const release = readFileSync(join(root, '.github/workflows/release.yml'), 'utf8');
+  assert.match(release, /pattern: assets-\*/);
+  assert.match(release, /merge-multiple: true/);
 });

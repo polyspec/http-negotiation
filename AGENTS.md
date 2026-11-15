@@ -139,12 +139,17 @@ rules of this repository.
   writes the report `var/ci/<name>/`. The job `assets` calls `.github/workflows/assets.yml`, which builds the assets of
   each platform as a release does, so that an asset that does not build stops the release before a tag exists. The last
   job `ci-passed` passes only when every other job passed. The jobs run on `ubuntu-26.04-arm`, but for the job
-  `platform` of `assets.yml`, which runs on `ubuntu-26.04`, `ubuntu-26.04-arm` and `macos-15`, because the asset of a
+  `platform` and `php` of `assets.yml`, which run on `ubuntu-26.04`, `ubuntu-26.04-arm` and `macos-15`, because the asset of a
   platform is built and loaded only on that platform and no tool of the release compiles for another (binding GN-19a).
   The jobs pin every action by its commit, set no `timeout-minutes` and run every command of a step as one make target,
   so that the settings of the Makefile apply to it; `make test-scripts` checks these rules
   (`tests/scripts/workflows.test.mts`). `.github/actions/bootstrap` is the bootstrap of every job, and `make
   install-php-tools` installs PHPUnit of `composer.lock` into `vendor/` with the Composer of `mise.toml`.
+- Native asset jobs follow [ASSET-1 to ASSET-4](docs/spec/native-assets.md). Non-PHP assets build once per native
+  platform; PHP uses an independent platform/minor matrix with one selected runtime, one expected-minor build and
+  one unique artifact per result. `config/toolchain.json` declares PHP 8.4 and 8.5 in `phpExtension.minors` because
+  the package range starts at 8.4. Workflow source checks do not prove native execution: the published generated
+  provider gate, regenerated recipes and native/full CI proof are still required.
 - binding writes the release recipes of the contract (binding GN-19h): `make release-recipes` runs `binding
   release-recipes --root .`, which writes `packages/release.mk`, and the Makefile includes that file after it defines
   `BINDING_RUN`, `NODE`, `NPM`, `UV` and `BINDING_DEP`. The file is generated and not tracked, so it cannot drift from the

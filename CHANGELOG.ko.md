@@ -1,7 +1,11 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: da15218b652cb3034265c211995458848c44dff4cb5ed42995969943cc7273bf -->
+<!-- source-sha256: fbfe0d9cdcdcfc42985db72863cf84d2be392533a5b1266d61d90d60305db87a -->
 
 ## Unreleased
+
+- Asset workflow는 non-PHP platform build 세 개와 native PHP platform/minor build 여섯 개를 분리한다(T1.14-6, ASSET-1부터 ASSET-4). 지원 build minor를 8.4와 8.5로 선언한다. PHP job마다 runtime 하나를 선택한 뒤 expected-minor build 한 번을 실행하고 고유 artifact를 업로드한다. Owner assertion은 잘못된 matrix 문법, 범위, runner, runtime setup, 중복 producer를 거부한다. Native/전체 CI 증명은 생성 expected-minor gate 공개와 recipe 재생성을 기다린다.
+
+  Workflow owner test는 8/8 통과했다. 선언한 `make test-scripts` 검사는 18개 통과와 실패 하나다. 기존 lock에 binding-core 0.0.2가 있고 direct manifest/test pin은 0.0.3을 요구한다. 일치하는 공개 의존성 graph를 고정하고 그 검사가 통과할 때까지 T1.14-6은 active다. 이 변경은 의존성 pin을 바꾸지 않는다.
 
 - release는 플랫폼별 바인딩 package를 GitHub Release의 asset으로 갖는다. binding 0.0.3이 contract의 release recipe를
   쓴다(binding GN-19h). `make release-recipes`가 `binding release-recipes --root .`을 실행해 무시되는 파일

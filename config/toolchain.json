@@ -11,5 +11,11 @@
       "linux-x64": "58063fdda315c29ff7504daf8f2414462d6a52e4de2243c3ce23f849975a4ab5",
       "linux-arm64": "b67f4ad5e35199b14362aa64d065977f8513a2046430179c2ab42262914a73b0"
     }
+  },
+  "phpExtension": {
+    "minors": [
+      "8.4",
+      "8.5"
+    ]
   }
 }

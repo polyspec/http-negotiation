@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- The asset workflow separates three non-PHP platform builds from six native PHP platform/minor builds (T1.14-6, ASSET-1 to ASSET-4). Supported build minors are declared as 8.4 and 8.5. Each PHP job selects one runtime before one expected-minor build and uploads a unique artifact. Owner assertions reject incorrect matrix syntax, coverage, runners, runtime setup and duplicate producers. Native/full CI proof still waits for a published generated expected-minor gate and regenerated recipes.
+
+  Workflow owner tests pass 8/8. The declared `make test-scripts` check has 18 passed and one failure: the existing lock includes binding-core 0.0.2 while the direct manifest/test pin requires 0.0.3. T1.14-6 remains active until the matching published dependency graph is pinned and that check passes; this change updates no dependency pin.
+
 - The release holds the packages of the bindings per platform as assets of its GitHub Release. binding 0.0.3 writes
   the release recipes of the contract (binding GN-19h): `make release-recipes` runs `binding release-recipes --root .`,
   which writes the ignored file `packages/release.mk`, and the Makefile includes it after it defines `BINDING_RUN`,

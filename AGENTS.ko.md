@@ -1,5 +1,5 @@
 <!-- doc-id: agents -->
-<!-- source-sha256: 5baa2b8b8a1dffd5de4a3c1edfcbf7fe4d4e8c6d2b9a7822bec60ff93f6b7209 -->
+<!-- source-sha256: 0db8ae396b7d2e997fb3a1a8052fa54d04e44fac7b04983f53c82a8220e73266 -->
 # 개발
 
 모든 polyspec 레포의 작업 원칙은 polyspec의 `PRINCIPLES.md`에 있다. 이 파일은 이 레포의 규칙만
@@ -133,12 +133,17 @@
   대상을 실행한다. 각 job은 그 대상을 `make ci-targets`로 실행한다. `make ci-targets`는 모든 대상을 끝까지 실행하고
   보고서 `var/ci/<name>/`을 쓴다. job `assets`는 `.github/workflows/assets.yml`을 호출하고, 그것은 release와 같이 각 플랫폼의
   asset을 빌드한다. 그래서 빌드되지 않는 asset이 tag가 생기기 전에 release를 멈춘다. 마지막 job `ci-passed`는 다른 모든
-  job이 통과했을 때만 통과한다. job은 `ubuntu-26.04-arm`에서 돈다. 다만 `assets.yml`의 job `platform`은 `ubuntu-26.04`,
+  job이 통과했을 때만 통과한다. job은 `ubuntu-26.04-arm`에서 돈다. 다만 `assets.yml`의 job `platform`과 `php`는 `ubuntu-26.04`,
   `ubuntu-26.04-arm`, `macos-15`에서 돈다. 플랫폼의 asset은 그 플랫폼에서만 빌드되고 로드되며, release의 어떤 도구도 다른
   플랫폼용으로 컴파일하지 않기 때문이다(binding GN-19a). job은 모든 action을 commit으로 고정하고, `timeout-minutes`를
   두지 않으며, step의 모든 명령을 make target 하나로 실행한다. 그래야 Makefile의 설정이 그 명령에 적용되기 때문이다.
   `make test-scripts`가 이 규칙을 검사한다(`tests/scripts/workflows.test.mts`). `.github/actions/bootstrap`은 모든 job의
   bootstrap이고, `make install-php-tools`는 `mise.toml`의 Composer로 `composer.lock`의 PHPUnit을 `vendor/`에 설치한다.
+- Native asset job은 [ASSET-1부터 ASSET-4](docs/spec/native-assets.ko.md)를 따른다. Non-PHP asset은 native
+  platform마다 한 번 빌드한다. PHP는 독립 platform/minor matrix로 결과마다 runtime 하나, expected-minor build 한 번,
+  고유 artifact 하나를 사용한다. Package 범위가 8.4에서 시작하므로 `config/toolchain.json`의 `phpExtension.minors`는
+  PHP 8.4와 8.5를 선언한다. Workflow source 검사는 native 실행을 증명하지 않는다. 생성 provider gate 공개,
+  recipe 재생성, native/전체 CI 증명이 여전히 필요하다.
 - binding이 contract의 release recipe를 쓴다(binding GN-19h). `make release-recipes`가 `binding release-recipes --root .`을
   실행해 `packages/release.mk`를 쓰고, Makefile은 `BINDING_RUN`, `NODE`, `NPM`, `UV`, `BINDING_DEP`를 정의한 뒤 그 파일을
   include한다. 그 파일은 생성되고 추적되지 않으므로 고정된 binding과 어긋날 수 없고, 이 저장소는 자기 release recipe를
