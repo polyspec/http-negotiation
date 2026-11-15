@@ -1,7 +1,9 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 25390d66f61623048aa890c2f5a23fc1f8e08ad987a6021da722826223076cbf -->
+<!-- source-sha256: 17ef4b1759f7bc7c9b086f12cd28acb55fd648fbcaeb82df6fdffcf0fd171703 -->
 
 ## Unreleased
+
+## 0.0.2
 
 - binding 0.0.9, http-media-type 0.0.5와 kit 0.0.114(T1.18). 모든 Cargo manifest의 `polyspec-binding-core`가
   `tag = "v0.0.9"`를, `polyspec-http-media-type`이 binding 0.0.9에 의존하는 `tag = "v0.0.5"`를 적으므로 `Cargo.lock`은
