@@ -151,7 +151,7 @@ documents-stamp:
 
 # The contract check and the comparison of the tracked binding packages with what binding writes (L-2 (c)).
 bindings-check:
-	$(BINDING) check packages/rust/interface.json
+	$(BINDING) check packages/rust/interface.json --cargo "$(CARGO)"
 
 # Writes the generated sources into packages/{php-ext,python,ts,ts/wasm,go/internal/ffi}/generated, which are not
 # tracked (G-6, L-1): each target in its own target bindings-<target>, so that a target that binding refuses fails with
@@ -160,7 +160,7 @@ BINDING_TARGETS := php python node wasm go
 BINDING_PHONY = $(foreach target,$(BINDING_TARGETS),bindings-$(target))
 bindings: $(BINDING_PHONY)
 $(BINDING_PHONY):
-	$(BINDING) generate --root . --target $(@:bindings-%=%)
+	$(BINDING) generate --root . --target $(@:bindings-%=%) --cargo "$(CARGO)"
 
 test-bindings: lint-bindings check-declarations test-python test-node test-wasm test-php test-go
 
@@ -181,16 +181,16 @@ media-type-checkout:
 	test -d "$(MEDIA_TYPE)/.git" || { echo 'the checkout of http-media-type is missing: run make install-binding'; exit 1; }
 
 media-type-python: media-type-checkout
-	$(BINDING) generate --root $(MEDIA_TYPE) --target python
+	$(BINDING) generate --root $(MEDIA_TYPE) --target python --cargo "$(CARGO)"
 	rm -rf $(VAR)/deps/wheels
 	$(MATURIN) build --locked --manifest-path $(MEDIA_TYPE)/packages/python/Cargo.toml --interpreter $(PYTHON) --features $(MEDIA_TYPE_FEATURES) --out $(VAR)/deps/wheels $(CARGOFLAGS)
 
 media-type-php: media-type-checkout
-	$(BINDING) generate --root $(MEDIA_TYPE) --target php
+	$(BINDING) generate --root $(MEDIA_TYPE) --target php --cargo "$(CARGO)"
 	$(CARGO) build $(CARGOFLAGS) --manifest-path $(MEDIA_TYPE)/Cargo.toml -p polyspec-http-media-type-php-ext --locked --features $(MEDIA_TYPE_FEATURES)
 
 media-type-go: media-type-checkout
-	$(BINDING) generate --root $(MEDIA_TYPE) --target go
+	$(BINDING) generate --root $(MEDIA_TYPE) --target go --cargo "$(CARGO)"
 	$(CARGO) build $(CARGOFLAGS) --manifest-path $(MEDIA_TYPE)/Cargo.toml -p polyspec-http-media-type-go --locked --features $(MEDIA_TYPE_GO_FEATURES)
 	printf 'go $(GO_RELEASE)\n\nuse (\n\t$(CURDIR)/packages/go\n\t$(MEDIA_TYPE)/packages/go\n)\n' > $(GO_WORK)
 
@@ -249,11 +249,12 @@ test-wasm: node-package
 
 # The static libraries of this repository and of http-media-type with their test features (binding GN-13b), which Go
 # links through CGO_LDFLAGS, and the Go modules of both by GO_WORK; gofmt and go vet, then the generated tests and the
-# contract cases of packages/go/tests on go test, with the build tag polyspec_<feature> of each feature of the Go crate.
+# contract cases of packages/go/tests on go test, with the build tag polyspec_http_negotiation_<feature> of each feature
+# of the Go crate.
 # GOTOOLCHAIN=local: a go of another release than the go directive fails instead of fetching that release.
 GO_RELEASE := $(shell sed -n 's/^go \(.*\)$$/\1/p' packages/go/go.mod)
 comma := ,
-GO_TAGS := $(subst -,_,$(subst $(comma),$(comma)polyspec_,polyspec_$(GO_FEATURES)))
+GO_TAGS := $(subst -,_,$(subst $(comma),$(comma)polyspec_http_negotiation_,polyspec_http_negotiation_$(GO_FEATURES)))
 GO_ENV := GOTOOLCHAIN=local GOWORK=$(GO_WORK) CGO_LDFLAGS=-L$(CARGO_TARGET_DIR)/debug GOFLAGS=-tags=$(GO_TAGS)
 test-go: bindings-go media-type-go
 	test "$$($(GO_ENV) $(GO) env GOVERSION)" = "go$(GO_RELEASE)"

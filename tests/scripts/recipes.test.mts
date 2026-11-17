@@ -43,7 +43,7 @@ test('test-go builds the static library of http-media-type and resolves its Go m
   const goTest = lines.filter((line) => / test -count=1 /.test(line));
   assert.equal(goTest.length, 1, `go test runs ${goTest.length} times:\n${lines.join('\n')}`);
   assert.match(goTest[0] ?? '', /GOWORK=\S*go\.work/);
-  assert.match(goTest[0] ?? '', /polyspec_fault_test/);
+  assert.match(goTest[0] ?? '', /polyspec_http_negotiation_fault_test/);
 });
 
 test('lint-bindings lints the Go crate with its feature codec-test', () => {

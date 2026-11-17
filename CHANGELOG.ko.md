@@ -1,7 +1,18 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 424b73c72b613d2ae960e6b0c8dbdc483e943685f53e1ef2ff25bf949d8d4c9e -->
+<!-- source-sha256: 5ce27a1aeeffe41520f3bb023b133b80be8b77d3d8af77463969cbaaf1608019 -->
 
 ## Unreleased
+
+## 0.0.4
+
+- binding 0.0.17, kit 0.0.119, http-media-type 0.0.7(T1.20): 모든 Cargo manifest의 `polyspec-binding-core`가
+  `tag = "v0.0.17"`을 적고, `polyspec-http-media-type`은 binding 0.0.17에 의존하는 `tag = "v0.0.7"`을 적으며,
+  `Cargo.lock`은 `polyspec-binding-core` 하나를 고정하고(CK-20), `package.json`은 `@polyspec/binding` 0.0.17과
+  `@polyspec/kit` 0.0.119의 release asset을 적고 `package-lock.json`이 그 integrity를 고정한다. Python, PHP, Go
+  package는 http-media-type 0.0.7을 요구하고, `packages/go/go.sum`이 그 Go module을 고정한다. binding check와
+  generate는 `--cargo`를 받는다(GN-1d). `packages/rust/interface.json`의 각 case row는 결과 key와 코어 시험이 읽는 key를
+  적고, `contracts/negotiate.json`의 case는 설명을 `label` 대신 G-5의 key `note`에 둔다(CK-96). `make
+  test-go`는 binding 0.0.17이 생성 Go 시험에 붙이는 build tag `polyspec_http_negotiation_<feature>`를 준다.
 
 ## 0.0.3
 

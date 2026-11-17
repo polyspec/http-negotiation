@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+## 0.0.4
+
+- binding 0.0.17, kit 0.0.119 and http-media-type 0.0.7 (T1.20): `polyspec-binding-core` of every Cargo manifest names
+  `tag = "v0.0.17"`, `polyspec-http-media-type` names `tag = "v0.0.7"`, which depends on binding 0.0.17, `Cargo.lock`
+  pins one `polyspec-binding-core` (CK-20), and `package.json` names the release assets of `@polyspec/binding` 0.0.17
+  and `@polyspec/kit` 0.0.119, whose integrity `package-lock.json` pins. The Python, PHP and Go packages require
+  http-media-type 0.0.7, and `packages/go/go.sum` pins its Go module. binding check and generate take `--cargo` (GN-1d).
+  Each case row of `packages/rust/interface.json` names its result key and the keys that the core tests read, and the
+  cases of `contracts/negotiate.json` give their description under `note`, the key of G-5, instead of `label` (CK-96).
+  `make test-go` gives the build tags `polyspec_http_negotiation_<feature>` under which binding 0.0.17 writes the
+  generated Go tests.
+
 ## 0.0.3
 
 - binding 0.0.10 and http-media-type 0.0.6 (T1.19): `polyspec-binding-core` of every Cargo manifest names `tag = "v0.0.10"`, `polyspec-http-media-type` names `tag = "v0.0.6"`, which depends on binding 0.0.10, `Cargo.lock`

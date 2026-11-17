@@ -3,7 +3,7 @@
 // to U+00FF (NG-1.4, binding B-8); a name, a type and a subtype are a text, a Go string of UTF-8 bytes. A case of the
 // group internal arms its faults for the member through the entry point of the feature fault-test of the binding, as a
 // generated test does, from the thread of its call (binding G-5, GN-5, NG-11.4); go test runs with the build tag
-// polyspec_fault_test, which make test-go gives.
+// polyspec_http_negotiation_fault_test, which make test-go gives.
 package tests
 
 import (

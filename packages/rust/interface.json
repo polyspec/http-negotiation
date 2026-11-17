@@ -449,32 +449,40 @@
     {
       "member": "accept.parse",
       "file": "contracts/negotiate.json",
-      "group": "accept"
+      "group": "accept",
+      "reads": ["rules", "ranges"]
     },
     {
       "member": "accept.parse",
       "file": "contracts/negotiate.json",
-      "group": "weigh"
+      "group": "weigh",
+      "reads": ["rules", "candidates", "weights"]
     },
     {
       "member": "accept.ranges",
       "file": "contracts/negotiate.json",
-      "group": "accept"
+      "group": "accept",
+      "result": "ranges",
+      "reads": ["rules"]
     },
     {
       "member": "accept.weigh",
       "file": "contracts/negotiate.json",
-      "group": "weigh"
+      "group": "weigh",
+      "result": "weights",
+      "reads": ["rules"]
     },
     {
       "member": "accept.weigh",
       "file": "contracts/negotiate.json",
-      "group": "invalidCandidates"
+      "group": "invalidCandidates",
+      "reads": ["rules"]
     },
     {
       "member": "accept.weigh",
       "file": "contracts/negotiate.json",
-      "group": "internal"
+      "group": "internal",
+      "reads": ["rules"]
     }
   ]
 }

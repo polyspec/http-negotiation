@@ -6,7 +6,7 @@
   "require": {
     "php": ">=8.4",
     "ext-polyspec_http_media_type": "*",
-    "polyspec/http-media-type": "0.0.6"
+    "polyspec/http-media-type": "0.0.7"
   },
   "php-ext": {
     "extension-name": "polyspec_http_negotiation",
