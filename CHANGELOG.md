@@ -6,6 +6,8 @@
   come from the same list.
 - The jobs of `assets.yml` run `bindings-check` when they do not release (T1.23), so that CI runs on each runner of the
   release what the release runs.
+- kit is pinned at its release 0.0.120, and `make release-candidate-assets` builds the archives of the release from the
+  committed HEAD with no tag; the job check of CI runs it (T1.24).
 
 ## 0.0.5
 

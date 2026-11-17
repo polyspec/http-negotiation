@@ -1,11 +1,13 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 130de4dd8a39e363dada9882518cd2a887254a7686af4f6996068e45926c6b00 -->
+<!-- source-sha256: ab74f07ef9ff0d553ab455a0023efddf9c35ef8b6a24743f3d9812bb7cf23456 -->
 
 ## Unreleased
 
 - recipe는 각 binding crate의 test feature를 그 manifest에서 읽고(T1.22), `go test`의 build tag도 같은 목록에서 만든다.
 - `assets.yml`의 job은 release하지 않을 때 `bindings-check`를 돈다(T1.23). 그래서 release가 도는 것을 CI가
   release의 각 runner에서 돈다.
+- kit을 release 0.0.120에 고정하고, `make release-candidate-assets`는 tag 없이 커밋된 HEAD에서 release의 archive를
+  만든다. CI의 job check가 그것을 돈다(T1.24).
 
 ## 0.0.5
 
