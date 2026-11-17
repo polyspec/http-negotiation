@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.0.5
+
+- http-media-type 0.0.8 (T1.21): `polyspec-http-media-type` of every Cargo manifest names `tag = "v0.0.8"`, and the
+  Python, PHP and Go packages require http-media-type 0.0.8. The jobs of `assets.yml` install go before
+  `make release-binding-check`, which reads `packages/go/go.sum`. 0.0.4 was not published: its release run stopped in
+  those jobs, which had no go.
+
 ## 0.0.4
 
 - binding 0.0.17, kit 0.0.119 and http-media-type 0.0.7 (T1.20): `polyspec-binding-core` of every Cargo manifest names

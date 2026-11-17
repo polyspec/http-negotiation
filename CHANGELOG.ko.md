@@ -1,7 +1,13 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 5ce27a1aeeffe41520f3bb023b133b80be8b77d3d8af77463969cbaaf1608019 -->
+<!-- source-sha256: 514cad8a10a161fceba2ddae94ab7fd6d2cda139acabac5646a75ef9866975d6 -->
 
 ## Unreleased
+
+## 0.0.5
+
+- http-media-type 0.0.8(T1.21): 모든 Cargo manifest의 `polyspec-http-media-type`이 `tag = "v0.0.8"`을 적고, Python,
+  PHP, Go package는 http-media-type 0.0.8을 요구한다. `assets.yml`의 job은 `packages/go/go.sum`을 읽는
+  `make release-binding-check` 앞에서 go를 설치한다. 0.0.4는 출간되지 않았다. 그 release run은 go가 없는 그 job에서 멈췄다.
 
 ## 0.0.4
 

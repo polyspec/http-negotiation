@@ -1091,15 +1091,15 @@ dependencies = [
 
 [[package]]
 name = "polyspec-http-media-type"
-version = "0.0.7"
-source = "git+https://github.com/polyspec/http-media-type.git?tag=v0.0.7#29aa294f02c4f87e7b41b22f762dff42e8d9f8d5"
+version = "0.0.8"
+source = "git+https://github.com/polyspec/http-media-type.git?tag=v0.0.8#d311d2acccc81845dd9ba935ac3e768713cea86f"
 dependencies = [
  "polyspec-binding-core",
 ]
 
 [[package]]
 name = "polyspec-http-negotiation"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "polyspec-binding-core",
  "polyspec-http-media-type",
@@ -1110,7 +1110,7 @@ dependencies = [
 
 [[package]]
 name = "polyspec-http-negotiation-go"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "polyspec-binding-core",
  "polyspec-http-media-type",
@@ -1119,7 +1119,7 @@ dependencies = [
 
 [[package]]
 name = "polyspec-http-negotiation-node"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "napi",
  "napi-build",
@@ -1131,7 +1131,7 @@ dependencies = [
 
 [[package]]
 name = "polyspec-http-negotiation-php-ext"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "ext-php-rs",
  "polyspec-binding-core",
@@ -1141,7 +1141,7 @@ dependencies = [
 
 [[package]]
 name = "polyspec-http-negotiation-python"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "polyspec-binding-core",
  "polyspec-http-media-type",
@@ -1151,7 +1151,7 @@ dependencies = [
 
 [[package]]
 name = "polyspec-http-negotiation-wasm"
-version = "0.0.4"
+version = "0.0.5"
 dependencies = [
  "js-sys",
  "polyspec-binding-core",

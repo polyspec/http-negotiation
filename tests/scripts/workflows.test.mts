@@ -365,7 +365,7 @@ function assertPhpBuild(job: string, makefile = read('Makefile')): void {
   assert.deepEqual(runs.filter(run => run.startsWith('make release-php-ext')), ['make release-php-ext PHP=php EXPECTED_PHP_MINOR=$(EXPECTED_PHP_MINOR)'], 'the recipe builds the extension once for the expected minor');
   for (const target of ['install-binding', 'release-recipes'])
     assert.equal(runs.filter(run => run === `make ${target}`).length, 1, `${target} prepares this PHP job's inputs`);
-  assert.equal(runs.filter(run => run === 'make install-tools TOOLS=rust').length, 1);
+  assert.equal(runs.filter(run => run === 'make install-tools TOOLS="rust go"').length, 1);
 }
 
 test('T1.17 ASSET-5: each PHP job selects one minor and its recipe invokes one generated guarded build', () => {
@@ -425,4 +425,19 @@ test('T1.14-6 ASSET-3: every asset job has a distinct artifact for each matrix r
   const release = readFileSync(join(root, '.github/workflows/release.yml'), 'utf8');
   assert.match(release, /pattern: assets-\*/);
   assert.match(release, /merge-multiple: true/);
+});
+
+// binding check --release reads packages/go/go.sum, which binding scaffold writes with go mod download (CK-19), so a job
+// that runs the release check installs go before it; without go the check fails with spawnSync go ENOENT.
+test('each job of assets.yml that runs release-binding-check installs go before it', () => {
+  const text = read(ASSETS);
+  const makefile = read('Makefile');
+  const checked = jobNames(text).filter((name) => runsOf(jobOf(text, name), makefile).includes('make release-binding-check'));
+  assert.ok(checked.length > 0, 'no job of assets.yml runs release-binding-check');
+  for (const name of checked) {
+    const runs = runsOf(jobOf(text, name), makefile);
+    const check = runs.indexOf('make release-binding-check');
+    const go = runs.findIndex((run) => /^make install-tools TOOLS=(?:"[^"]*\bgo\b[^"]*"|go)$/.test(run));
+    assert.ok(go >= 0 && go < check, `the job ${name} runs release-binding-check without installing go before it: ${runs.join('; ')}`);
+  }
 });

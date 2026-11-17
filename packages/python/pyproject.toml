@@ -5,10 +5,10 @@ build-backend = "maturin"
 
 [project]
 name = "polyspec-http-negotiation"
-version = "0.0.4"
+version = "0.0.5"
 requires-python = ">=3.14"
 license = "MIT"
-dependencies = ["polyspec-http-media-type==0.0.7"]
+dependencies = ["polyspec-http-media-type==0.0.8"]
 
 [tool.maturin]
 module-name = "polyspec.http_negotiation._native"
