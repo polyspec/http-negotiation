@@ -3,6 +3,10 @@
 
 ## Unreleased
 
+## 0.0.6
+
+- binding 0.0.21과 http-media-type 0.0.9(T1.28): binding과 core는 binding 0.0.21을 핀한 http-media-type release를 쓰므로, `Cargo.lock`은 `polyspec-binding-core`를 0.0.21 하나만 핀한다.
+
 - 시험 `binding.test.mts`는 binding의 version을 `package.json`이 이름 붙인 release asset에서 읽고, 모든 Cargo manifest와 `Cargo.lock`이 그 release를 가리키는지 확인한다. 그래서 binding의 pin이 시험의 기대값을 바꾸지 않는다(T1.27).
 
 - recipe는 각 binding crate의 test feature를 그 manifest에서 읽고(T1.22), `go test`의 build tag도 같은 목록에서 만든다.

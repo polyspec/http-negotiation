@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.0.6
+
+- binding 0.0.21 and http-media-type 0.0.9 (T1.28): the bindings and the core use the release of http-media-type that pins
+  binding 0.0.21, so `Cargo.lock` pins one `polyspec-binding-core`, at 0.0.21.
+
 - The test of binding reads the version of binding from the release asset that `package.json` names, and checks that every
   Cargo manifest and `Cargo.lock` name that release, so a pin of binding changes no expected value of the test (T1.27).
 
