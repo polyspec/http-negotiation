@@ -3,6 +3,8 @@
 
 ## Unreleased
 
+- 시험 `binding.test.mts`는 binding의 version을 `package.json`이 이름 붙인 release asset에서 읽고, 모든 Cargo manifest와 `Cargo.lock`이 그 release를 가리키는지 확인한다. 그래서 binding의 pin이 시험의 기대값을 바꾸지 않는다(T1.27).
+
 - recipe는 각 binding crate의 test feature를 그 manifest에서 읽고(T1.22), `go test`의 build tag도 같은 목록에서 만든다.
 - `assets.yml`의 job은 release하지 않을 때 `bindings-check`를 돈다(T1.23). 그래서 release가 도는 것을 CI가
   release의 각 runner에서 돈다.

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The test of binding reads the version of binding from the release asset that `package.json` names, and checks that every
+  Cargo manifest and `Cargo.lock` name that release, so a pin of binding changes no expected value of the test (T1.27).
+
 - The recipes read the test features of each binding crate from its manifest (T1.22), and the build tags of `go test`
   come from the same list.
 - The jobs of `assets.yml` run `bindings-check` when they do not release (T1.23), so that CI runs on each runner of the
