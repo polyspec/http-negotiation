@@ -1084,6 +1084,16 @@ source = "git+https://github.com/polyspec/binding.git?tag=v0.0.17#8db1add67c5206
 dependencies = [
  "indexmap",
  "libc",
+ "tokio-util",
+]
+
+[[package]]
+name = "polyspec-binding-core"
+version = "0.0.21"
+source = "git+https://github.com/polyspec/binding.git?tag=v0.0.21#253ce88906757a7a74b46245538d1af943b03736"
+dependencies = [
+ "indexmap",
+ "libc",
  "serde_json",
  "tokio",
  "tokio-util",
@@ -1094,14 +1104,14 @@ name = "polyspec-http-media-type"
 version = "0.0.8"
 source = "git+https://github.com/polyspec/http-media-type.git?tag=v0.0.8#d311d2acccc81845dd9ba935ac3e768713cea86f"
 dependencies = [
- "polyspec-binding-core",
+ "polyspec-binding-core 0.0.17",
 ]
 
 [[package]]
 name = "polyspec-http-negotiation"
 version = "0.0.5"
 dependencies = [
- "polyspec-binding-core",
+ "polyspec-binding-core 0.0.21",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
  "proptest",
@@ -1112,7 +1122,7 @@ dependencies = [
 name = "polyspec-http-negotiation-go"
 version = "0.0.5"
 dependencies = [
- "polyspec-binding-core",
+ "polyspec-binding-core 0.0.21",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
 ]
@@ -1124,7 +1134,7 @@ dependencies = [
  "napi",
  "napi-build",
  "napi-derive",
- "polyspec-binding-core",
+ "polyspec-binding-core 0.0.21",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
 ]
@@ -1134,7 +1144,7 @@ name = "polyspec-http-negotiation-php-ext"
 version = "0.0.5"
 dependencies = [
  "ext-php-rs",
- "polyspec-binding-core",
+ "polyspec-binding-core 0.0.21",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
 ]
@@ -1143,7 +1153,7 @@ dependencies = [
 name = "polyspec-http-negotiation-python"
 version = "0.0.5"
 dependencies = [
- "polyspec-binding-core",
+ "polyspec-binding-core 0.0.21",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
  "pyo3",
@@ -1154,7 +1164,7 @@ name = "polyspec-http-negotiation-wasm"
 version = "0.0.5"
 dependencies = [
  "js-sys",
- "polyspec-binding-core",
+ "polyspec-binding-core 0.0.21",
  "polyspec-http-media-type",
  "polyspec-http-negotiation",
  "wasm-bindgen",
