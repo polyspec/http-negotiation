@@ -4,6 +4,8 @@
 
 - The recipes read the test features of each binding crate from its manifest (T1.22), and the build tags of `go test`
   come from the same list.
+- The jobs of `assets.yml` run `bindings-check` when they do not release (T1.23), so that CI runs on each runner of the
+  release what the release runs.
 
 ## 0.0.5
 
