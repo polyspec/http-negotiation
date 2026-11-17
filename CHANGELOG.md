@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The recipes read the test features of each binding crate from its manifest (T1.22), and the build tags of `go test`
+  come from the same list.
+
 ## 0.0.5
 
 - http-media-type 0.0.8 (T1.21): `polyspec-http-media-type` of every Cargo manifest names `tag = "v0.0.8"`, and the

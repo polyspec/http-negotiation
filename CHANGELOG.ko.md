@@ -1,7 +1,9 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 514cad8a10a161fceba2ddae94ab7fd6d2cda139acabac5646a75ef9866975d6 -->
+<!-- source-sha256: 34d51ffa709d47e337c6e6ff41ecf7ab9e07eeb5d220a6b54fe057c5987c65a8 -->
 
 ## Unreleased
+
+- recipe는 각 binding crate의 test feature를 그 manifest에서 읽고(T1.22), `go test`의 build tag도 같은 목록에서 만든다.
 
 ## 0.0.5
 

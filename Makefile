@@ -53,17 +53,29 @@ MATURIN ?= $(KIT_TOOLS)/mise/shims/maturin
 # of http-media-type at its release v0.0.1 (binding GN-15f), and the test builds that module from the checkout (T1.7,
 # T1.9).
 MEDIA_TYPE := $(VAR)/deps/http-media-type
-MEDIA_TYPE_FEATURES := panic-test
-MEDIA_TYPE_GO_FEATURES := panic-test,codec-test
+# The test features of a crate are the names of the [features] table of its manifest, which binding scaffold writes
+# (binding GN-5): a crate built without one has no entry point that a generated test calls. The manifests of
+# http-media-type are those of its checkout, which make reads when a recipe runs.
+comma := ,
+space := $(subst ,, )
+features_of = $(subst $(space),$(comma),$(strip $(shell sed -n '/^\[features\]$$/,/^\[/s/^\([a-z][a-z0-9-]*\) = .*/\1/p' $(1))))
+MEDIA_TYPE_PYTHON_FEATURES = $(call features_of,$(MEDIA_TYPE)/packages/python/Cargo.toml)
+MEDIA_TYPE_PHP_FEATURES = $(call features_of,$(MEDIA_TYPE)/packages/php-ext/Cargo.toml)
+MEDIA_TYPE_GO_FEATURES = $(call features_of,$(MEDIA_TYPE)/packages/go/internal/ffi/Cargo.toml)
 HTTP_MEDIA_TYPE_WHEEL = $(wildcard $(VAR)/deps/wheels/*.whl)
 HTTP_MEDIA_TYPE_EXTENSION = $(CARGO_TARGET_DIR)/debug/libpolyspec_http_media_type.$(CDYLIB)
 GO_WORK := $(VAR)/go.work
 # The test features of the Python, Node, PHP and WASM binding crates (binding GN-5, G-5): panic-test, and fault-test,
 # because the contract has the fault injection point internal, whose entry points the case of the group internal and
 # the generated tests arm.
-TEST_FEATURES := panic-test,fault-test
+CORE_FEATURES = $(call features_of,packages/rust/Cargo.toml)
+PYTHON_FEATURES = $(call features_of,packages/python/Cargo.toml)
+NODE_FEATURES = $(call features_of,packages/ts/Cargo.toml)
+WASM_FEATURES = $(call features_of,packages/ts/wasm/Cargo.toml)
+PHP_FEATURES = $(call features_of,packages/php-ext/Cargo.toml)
+GO_FEATURES = $(call features_of,packages/go/internal/ffi/Cargo.toml)
+TEST_FEATURES = $(subst $(space),$(comma),$(sort $(subst $(comma),$(space),$(PYTHON_FEATURES),$(NODE_FEATURES),$(WASM_FEATURES),$(PHP_FEATURES),$(GO_FEATURES))))
 # The Go crate has codec-test too (binding GN-13b), so the lint of the workspace and the build of the Go crate take it.
-GO_FEATURES := $(TEST_FEATURES),codec-test
 # The Go of the go directive of packages/go/go.mod and the wasm-bindgen CLI of the release of the wasm-bindgen crate of
 # packages/ts/wasm/Cargo.toml (binding GN-15, GN-18), both of mise.toml, which make install-tools installs into
 # var/tools/mise; test-go and node-package compare both releases before they use them.
@@ -135,7 +147,7 @@ test:
 
 lint-rust:
 	$(CARGO) clippy $(CARGOFLAGS) -p $(CORE) --locked --all-targets -- -D warnings
-	$(CARGO) clippy $(CARGOFLAGS) -p $(CORE) --locked --all-targets --features fault-test -- -D warnings
+	$(CARGO) clippy $(CARGOFLAGS) -p $(CORE) --locked --all-targets --features $(CORE_FEATURES) -- -D warnings
 
 fmt-check:
 	$(CARGO) fmt --all --check
@@ -165,7 +177,7 @@ $(BINDING_PHONY):
 test-bindings: lint-bindings check-declarations test-python test-node test-wasm test-php test-go
 
 lint-bindings: bindings
-	$(CARGO) clippy $(CARGOFLAGS) --workspace --locked --all-targets --features $(GO_FEATURES) -- -D warnings
+	$(CARGO) clippy $(CARGOFLAGS) --workspace --locked --all-targets --features $(TEST_FEATURES) -- -D warnings
 
 # The TypeScript compiler of package-lock.json, which make install-packages installs, checks the generated declarations
 # of the Node binding.
@@ -183,11 +195,11 @@ media-type-checkout:
 media-type-python: media-type-checkout
 	$(BINDING) generate --root $(MEDIA_TYPE) --target python --cargo "$(CARGO)"
 	rm -rf $(VAR)/deps/wheels
-	$(MATURIN) build --locked --manifest-path $(MEDIA_TYPE)/packages/python/Cargo.toml --interpreter $(PYTHON) --features $(MEDIA_TYPE_FEATURES) --out $(VAR)/deps/wheels $(CARGOFLAGS)
+	$(MATURIN) build --locked --manifest-path $(MEDIA_TYPE)/packages/python/Cargo.toml --interpreter $(PYTHON) --features $(MEDIA_TYPE_PYTHON_FEATURES) --out $(VAR)/deps/wheels $(CARGOFLAGS)
 
 media-type-php: media-type-checkout
 	$(BINDING) generate --root $(MEDIA_TYPE) --target php --cargo "$(CARGO)"
-	$(CARGO) build $(CARGOFLAGS) --manifest-path $(MEDIA_TYPE)/Cargo.toml -p polyspec-http-media-type-php-ext --locked --features $(MEDIA_TYPE_FEATURES)
+	$(CARGO) build $(CARGOFLAGS) --manifest-path $(MEDIA_TYPE)/Cargo.toml -p polyspec-http-media-type-php-ext --locked --features $(MEDIA_TYPE_PHP_FEATURES)
 
 media-type-go: media-type-checkout
 	$(BINDING) generate --root $(MEDIA_TYPE) --target go --cargo "$(CARGO)"
@@ -200,7 +212,7 @@ test-python: bindings-python media-type-python
 	test -f "$(HTTP_MEDIA_TYPE_WHEEL)"
 	$(PYTHON) -m venv --clear $(VAR)/venv
 	rm -rf $(VAR)/wheels
-	cd packages/python && $(MATURIN) build --locked --interpreter $(VAR)/venv/bin/python --features $(TEST_FEATURES) --out $(VAR)/wheels $(CARGOFLAGS)
+	cd packages/python && $(MATURIN) build --locked --interpreter $(VAR)/venv/bin/python --features $(PYTHON_FEATURES) --out $(VAR)/wheels $(CARGOFLAGS)
 	$(VAR)/venv/bin/pip install -q --no-index --force-reinstall $(HTTP_MEDIA_TYPE_WHEEL) $(VAR)/wheels/*.whl
 	cd $(VAR) && venv/bin/python -m unittest discover -s $(CURDIR)/packages/python/generated/tests -t $(CURDIR)/packages/python/generated/tests
 	cd $(VAR) && HTTP_NEGOTIATION_CASES=$(CASES) venv/bin/python -m unittest discover -s $(CURDIR)/packages/python/tests -t $(CURDIR)/packages/python/tests
@@ -214,10 +226,10 @@ NODE_ADDON := http-negotiation.$(PLATFORM).node
 WASM_BINDGEN_RELEASE := $(shell sed -n 's/^wasm-bindgen = "=\(.*\)"$$/\1/p' packages/ts/wasm/Cargo.toml)
 node-package: bindings-node bindings-wasm
 	test "$$($(WASM_BINDGEN) --version)" = "wasm-bindgen $(WASM_BINDGEN_RELEASE)"
-	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-wasm --locked --target wasm32-unknown-unknown --features $(TEST_FEATURES)
+	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-wasm --locked --target wasm32-unknown-unknown --features $(WASM_FEATURES)
 	$(WASM_BINDGEN) --target web --out-dir packages/ts/wasm/generated --out-name http_negotiation_wasm \
 		$(CARGO_TARGET_DIR)/wasm32-unknown-unknown/debug/polyspec_http_negotiation_wasm.wasm
-	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-node --locked --features $(TEST_FEATURES)
+	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-node --locked --features $(NODE_FEATURES)
 	rm -rf $(VAR)/node $(VAR)/node-platform && mkdir -p $(VAR)/node $(VAR)/node-platform
 	cp $(CARGO_TARGET_DIR)/debug/libpolyspec_http_negotiation_node.$(CDYLIB) $(VAR)/node-platform/$(NODE_ADDON)
 	$(NODE) -e 'const p = require("./packages/ts/package.json"); require("fs").writeFileSync("$(VAR)/node-platform/package.json", JSON.stringify({ name: p.name + "-$(PLATFORM)", version: p.version, os: [process.platform], cpu: [process.arch], main: "$(NODE_ADDON)", files: ["$(NODE_ADDON)"] }, null, 2) + "\n")'
@@ -235,7 +247,7 @@ test-node: node-package
 # contract cases run on PHPUnit.
 test-php: bindings-php media-type-php
 	test -f "$(HTTP_MEDIA_TYPE_EXTENSION)"
-	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-php-ext --locked --features $(TEST_FEATURES)
+	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-php-ext --locked --features $(PHP_FEATURES)
 	$(PHP) -l packages/php-ext/generated/polyspec_http_negotiation.stub.php
 	$(PHP) -d extension=$(HTTP_MEDIA_TYPE_EXTENSION) -d extension=$(CARGO_TARGET_DIR)/debug/libpolyspec_http_negotiation.$(CDYLIB) $(PHPUNIT) packages/php-ext/generated/tests
 	HTTP_NEGOTIATION_CASES=$(CASES) $(PHP) -d extension=$(HTTP_MEDIA_TYPE_EXTENSION) -d extension=$(CARGO_TARGET_DIR)/debug/libpolyspec_http_negotiation.$(CDYLIB) $(PHPUNIT) packages/php-ext/tests
@@ -253,9 +265,8 @@ test-wasm: node-package
 # of the Go crate.
 # GOTOOLCHAIN=local: a go of another release than the go directive fails instead of fetching that release.
 GO_RELEASE := $(shell sed -n 's/^go \(.*\)$$/\1/p' packages/go/go.mod)
-comma := ,
-GO_TAGS := $(subst -,_,$(subst $(comma),$(comma)polyspec_http_negotiation_,polyspec_http_negotiation_$(GO_FEATURES)))
-GO_ENV := GOTOOLCHAIN=local GOWORK=$(GO_WORK) CGO_LDFLAGS=-L$(CARGO_TARGET_DIR)/debug GOFLAGS=-tags=$(GO_TAGS)
+GO_TAGS = $(subst -,_,$(subst $(comma),$(comma)polyspec_http_negotiation_,polyspec_http_negotiation_$(GO_FEATURES)))
+GO_ENV = GOTOOLCHAIN=local GOWORK=$(GO_WORK) CGO_LDFLAGS=-L$(CARGO_TARGET_DIR)/debug GOFLAGS=-tags=$(GO_TAGS)
 test-go: bindings-go media-type-go
 	test "$$($(GO_ENV) $(GO) env GOVERSION)" = "go$(GO_RELEASE)"
 	$(CARGO) build $(CARGOFLAGS) -p $(CORE)-go --locked --features $(GO_FEATURES)
