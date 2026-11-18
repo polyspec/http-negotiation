@@ -15,3 +15,6 @@ __pycache__/
 /.links
 /packages/go/go.work
 /packages/go/go.work.sum
+
+# The native modules that the build writes beside a package (packages/ts/*.darwin-arm64.node and the other platforms).
+*.node
