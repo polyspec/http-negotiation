@@ -27,7 +27,7 @@ fault-test = ["polyspec-binding-core/fault-test"]
 polyspec-binding-core = { git = "https://github.com/polyspec/binding.git", tag = "v0.0.22" }
 # The media type grammar and its parameter values (NG-2, MT-3, MT-5). A Git dependency on the tag of the release 0.0.1
 # of http-media-type; Cargo.lock pins its commit, so the build never reads another checkout's working tree (S15).
-polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", tag = "v0.0.9" }
+polyspec-http-media-type = { git = "https://github.com/polyspec/http-media-type.git", tag = "v0.0.10" }
 
 [dev-dependencies]
 serde_json = "1"
