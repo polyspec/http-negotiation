@@ -502,3 +502,15 @@ release-undraft:
 
 release-coverage:
 	$(NODE) $(KIT)/release.mjs coverage
+
+# Writes package-lock.json with the pinned npm of var/tools and no install (T1.34); the one target that writes the npm lock.
+npm-lock:
+	$(ONLINE) $(NPM) install --package-lock-only
+
+# Sets the version of the release on every place of config/release-version.json (T1.34) and then writes the locks: cargo
+# for Cargo.lock, with the workspace only, and the pinned npm for package-lock.json. make release-version VERSION=X.Y.Z.
+release-version:
+	test -n "$(VERSION)" || { echo 'release-version: VERSION=X.Y.Z is required' >&2; exit 2; }
+	$(NODE) scripts/release-version.mts $(VERSION)
+	$(CARGO) update --workspace --offline
+	$(MAKE) --no-print-directory npm-lock
