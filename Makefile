@@ -222,6 +222,8 @@ test-python: bindings-python media-type-python
 	rm -rf $(VAR)/wheels
 	cd packages/python && $(MATURIN) build --locked --interpreter $(VAR)/venv/bin/python --features $(PYTHON_FEATURES) --out $(VAR)/wheels $(CARGOFLAGS)
 	$(VAR)/venv/bin/pip install -q --no-index --force-reinstall $(HTTP_MEDIA_TYPE_WHEEL) $(VAR)/wheels/*.whl
+	rm -rf $(VAR)/native && unzip -q $(VAR)/wheels/*.whl 'polyspec/http_negotiation/_native*.so' -d $(VAR)/native
+	cp $(VAR)/native/polyspec/http_negotiation/_native*.so packages/python/generated/python/polyspec/http_negotiation/
 	cd $(VAR) && venv/bin/python -m unittest discover -s $(CURDIR)/packages/python/generated/tests -t $(CURDIR)/packages/python/generated/tests
 	cd $(VAR) && HTTP_NEGOTIATION_CASES=$(CASES) venv/bin/python -m unittest discover -s $(CURDIR)/packages/python/tests -t $(CURDIR)/packages/python/tests
 
