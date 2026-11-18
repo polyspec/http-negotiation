@@ -225,6 +225,7 @@ test-python: bindings-python media-type-python
 	rm -rf $(VAR)/wheels
 	cd packages/python && $(MATURIN) build --locked --interpreter $(VAR)/venv/bin/python --features $(PYTHON_FEATURES) --out $(VAR)/wheels $(CARGOFLAGS)
 	$(VAR)/venv/bin/pip install -q --no-index --force-reinstall $(HTTP_MEDIA_TYPE_WHEEL) $(VAR)/wheels/*.whl
+	test "$$(ls $(VAR)/wheels/*.whl 2>/dev/null | wc -l | tr -d ' ')" = 1 || { echo "test-python: $(VAR)/wheels must hold exactly one wheel, the one of this build, to take the native module from" >&2; exit 1; }
 	rm -rf $(VAR)/native && unzip -q $(VAR)/wheels/*.whl 'polyspec/http_negotiation/_native*.so' -d $(VAR)/native
 	rm -rf packages/python/generated/python/polyspec/http_negotiation/.native-stage && mkdir packages/python/generated/python/polyspec/http_negotiation/.native-stage
 	cp $(VAR)/native/polyspec/http_negotiation/_native*.so packages/python/generated/python/polyspec/http_negotiation/.native-stage/
