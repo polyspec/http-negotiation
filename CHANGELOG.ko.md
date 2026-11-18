@@ -1,7 +1,9 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: ab74f07ef9ff0d553ab455a0023efddf9c35ef8b6a24743f3d9812bb7cf23456 -->
+<!-- source-sha256: b2f21d20f4a69ac39f47db37027d62ccab09a00aa3bb4487daf093553cc56265 -->
 
 ## Unreleased
+
+- Go 모듈의 release 리허설은 release 레시피를 먼저 돌려, 새 checkout에서도 리허설이 시작할 때 packages/release.mk가 있다(T1.35).
 
 ## 0.0.6
 

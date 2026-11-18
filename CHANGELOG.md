@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The rehearsal of the Go module runs release-recipes before rehearse-go-module, so a new checkout has packages/release.mk
+  when the rehearsal starts (T1.35).
+
 ## 0.0.6
 
 - binding 0.0.21 and http-media-type 0.0.9 (T1.28): the bindings and the core use the release of http-media-type that pins
