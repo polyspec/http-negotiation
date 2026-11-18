@@ -1,7 +1,9 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 1d26a3f9d0f02382599c9dd075e99e54e1fa0da9f2c690bec722f196b500cf89 -->
+<!-- source-sha256: 7ef64c86f5fab161d3a5a51edbdaf46672b397ab5fb931d2be608d659f06232b -->
 
 ## Unreleased
+
+## 0.0.7
 
 - Go 모듈의 release 리허설은 release 레시피를 먼저 돌려, 새 checkout에서도 리허설이 시작할 때 packages/release.mk가 있다(T1.35).
 - ci.yml의 job check는 전체 history를 받는다(fetch-depth: 0). 그래서 Go 모듈의 리허설이 HEAD의 부모 commit을 찾는다(T1.36).

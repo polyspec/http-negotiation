@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.0.7
+
 - The rehearsal of the Go module runs release-recipes before rehearse-go-module, so a new checkout has packages/release.mk
   when the rehearsal starts (T1.35).
 - The job check of ci.yml checks out the full history (fetch-depth: 0), so the rehearsal of the Go module finds the parent
