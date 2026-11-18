@@ -8,6 +8,7 @@
   when the rehearsal starts (T1.35).
 - The job check of ci.yml checks out the full history (fetch-depth: 0), so the rehearsal of the Go module finds the parent
   commits of HEAD (T1.36).
+- The php-ext composer.json names http-media-type 0.0.10 as the binding scaffold writes it, so bindings-check passes (T1.39).
 
 ## 0.0.6
 
