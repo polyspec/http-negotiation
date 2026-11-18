@@ -1,5 +1,5 @@
 <!-- doc-id: changelog -->
-<!-- source-sha256: 741dc88b9a41fe8ead27982c32a6cf7b16d2b195a8e5e8202feef86ff33357df -->
+<!-- source-sha256: 7f4bfed18b060e709e0d8f1547f31d71675ff272c2ac80b38cd7bdb99a0ed84e -->
 
 ## Unreleased
 
@@ -8,6 +8,7 @@
 - Go 모듈의 release 리허설은 release 레시피를 먼저 돌려, 새 checkout에서도 리허설이 시작할 때 packages/release.mk가 있다(T1.35).
 - ci.yml의 job check는 전체 history를 받는다(fetch-depth: 0). 그래서 Go 모듈의 리허설이 HEAD의 부모 commit을 찾는다(T1.36).
 - php-ext의 composer.json은 binding scaffold가 쓰는 대로 http-media-type 0.0.10을 적어, bindings-check가 통과한다(T1.39).
+- 빌드가 패키지 옆에 쓰는 네이티브 모듈은 git이 무시한다(`*.node`). 그래서 변경으로 보이지 않는다(T1.29 행).
 
 ## 0.0.6
 

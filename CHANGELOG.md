@@ -9,6 +9,7 @@
 - The job check of ci.yml checks out the full history (fetch-depth: 0), so the rehearsal of the Go module finds the parent
   commits of HEAD (T1.36).
 - The php-ext composer.json names http-media-type 0.0.10 as the binding scaffold writes it, so bindings-check passes (T1.39).
+- The native modules that the build writes beside a package are ignored by git (`*.node`), so they are not shown as changes (T1.29 row).
 
 ## 0.0.6
 
